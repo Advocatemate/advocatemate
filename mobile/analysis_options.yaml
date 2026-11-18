@@ -1,0 +1,19 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - lib/l10n/gen/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - build/**
+    - android/**
+    - ios/**
+  errors:
+    deprecated_member_use: ignore   # Flutter 3.47+ material/cupertino split; tracked in docs/DEVELOPMENT_PROGRESS.md
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    always_declare_return_types: true
+    avoid_print: true
+    require_trailing_commas: false
