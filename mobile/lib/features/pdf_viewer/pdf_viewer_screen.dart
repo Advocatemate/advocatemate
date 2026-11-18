@@ -83,10 +83,22 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
       final official = headers.value('x-document-official') == 'true';
       final bytes = await File(path).openRead(0, 5).first;
       if (String.fromCharCodes(bytes) != '%PDF-') throw ApiException.unknown('The file received is not a PDF.');
+      // Open here (not lazily inside the controller) so a corrupt or truncated PDF is
+      // caught below and shown as an error with Retry instead of an unhandled exception.
+      final PdfDocument document;
+      try {
+        document = await PdfDocument.openFile(path);
+      } catch (_) {
+        throw ApiException.unknown('This PDF could not be opened. It may be incomplete or damaged.');
+      }
+      if (!mounted) {
+        await document.close();
+        return;
+      }
       setState(() {
         _file = path;
         _official = official;
-        _controller = PdfControllerPinch(document: PdfDocument.openFile(path));
+        _controller = PdfControllerPinch(document: Future.value(document));
       });
     } catch (e) {
       if (mounted) setState(() => _error = e);

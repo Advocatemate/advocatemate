@@ -4,6 +4,7 @@
 import 'dart:typed_data';
 
 import 'package:advocatemate/features/authentication/session_controller.dart';
+import 'package:advocatemate/shared/widgets/widgets.dart' show ErrorState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -54,15 +55,34 @@ void main() {
     expect(routerOf(c).state.uri.path, '/cases/c1');
   });
 
-  testWidgets('PDF retrieval shows download then viewer or error', (tester) async {
+  testWidgets('PDF retrieval: download completes and a damaged PDF shows an error with retry', (tester) async {
     final deps = await makeDeps(signedIn: true);
     deps.backend.on('GET', '/cause-list/weekly.pdf', (_) => FakeResponse(200,
         Uint8List.fromList('%PDF-1.4\n%%EOF'.codeUnits), headers: {'content-type': ['application/pdf'],
         'x-document-official': ['true']}));
     final c = await pumpApp(tester, deps);
     routerOf(c).go('/pdf?kind=weekly');
-    await tester.pump(const Duration(seconds: 2));
-    expect(deps.backend.paths().any((p) => p.contains('/cause-list/weekly.pdf')), isTrue);
+    bool requested() => deps.backend.paths().any((p) => p.contains('/cause-list/weekly.pdf'));
+    // On a device pump(duration) does not wait in real time; the download involves real
+    // platform I/O (temp directory, file write), so wait in real time instead.
+    await pumpUntil(tester, requested);
+    expect(requested(), isTrue);
+    // The served bytes are a deliberately damaged PDF: the app must show its error state
+    // (with Retry), not crash or spin forever.
+    await pumpUntil(tester, () => find.byType(ErrorState).evaluate().isNotEmpty);
+    expect(find.byType(ErrorState), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
     expect(find.byKey(const Key('generatedNotice')), findsNothing); // official PDF is not labelled generated
   });
+}
+
+/// Pumps frames with real delays until [condition] holds or [timeout] passes.
+Future<void> pumpUntil(WidgetTester tester, bool Function() condition,
+    {Duration timeout = const Duration(seconds: 10)}) async {
+  final end = DateTime.now().add(timeout);
+  while (!condition() && DateTime.now().isBefore(end)) {
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    await tester.pump();
+  }
 }
