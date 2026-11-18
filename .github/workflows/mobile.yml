@@ -1,0 +1,75 @@
+name: Mobile
+
+on:
+  push:
+    paths: ["mobile/**", ".github/workflows/mobile.yml"]
+  pull_request:
+    paths: ["mobile/**", ".github/workflows/mobile.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  analyze-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.50.0
+          cache: true
+      - run: flutter pub get
+      - name: Generated code is up to date
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          flutter gen-l10n
+          git diff --exit-code -- lib
+      - run: flutter analyze
+      - run: flutter test
+
+  android-build:
+    needs: analyze-test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.50.0
+          cache: true
+      - run: flutter pub get
+      # Verification build only (debug-signed). Release signing secrets are never used in CI here.
+      - run: flutter build apk --debug --dart-define=APP_ENV=ci --dart-define=API_BASE_URL=https://staging.invalid
+      - uses: actions/upload-artifact@v4
+        with:
+          name: advocatemate-debug-apk
+          path: mobile/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
+
+  ios-build:
+    needs: analyze-test
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.50.0
+          cache: true
+      - run: flutter pub get
+      # Unsigned simulator-independent compile check; signing/TestFlight is done manually (docs/IOS_RELEASE.md).
+      - run: flutter build ios --no-codesign --debug --dart-define=APP_ENV=ci
