@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -14,6 +15,7 @@ import 'storage/preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  _registerFontLicences();
   final firebaseReady = await _initFirebase();
   final prefs = await AppPreferences.load();
 
@@ -24,6 +26,15 @@ Future<void> main() async {
     ],
     child: const AdvocateMateApp(),
   ));
+}
+
+/// Bundled Noto fonts are SIL OFL 1.1; show their licences on the Flutter licences page.
+void _registerFontLicences() {
+  LicenseRegistry.addLicense(() async* {
+    for (final (family, file) in [('Noto Sans', 'OFL-NotoSans.txt'), ('Noto Sans Telugu', 'OFL-NotoSansTelugu.txt')]) {
+      yield LicenseEntryWithLineBreaks([family], await rootBundle.loadString('assets/fonts/$file'));
+    }
+  });
 }
 
 /// Firebase (FCM + Crashlytics) is optional: it needs google-services.json /

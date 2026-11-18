@@ -21,6 +21,12 @@ abstract final class AppColors {
   static const darkText = Color(0xFFE6E9EF);
 }
 
+/// Font families declared in pubspec.yaml (bundled, not taken from the device).
+abstract final class AppFonts {
+  static const primary = 'NotoSans';
+  static const fallback = ['NotoSansTelugu'];
+}
+
 abstract final class AppSpacing {
   static const xs = 4.0;
   static const sm = 8.0;
@@ -71,7 +77,14 @@ class AppTheme {
       );
 
   static ThemeData _build({required Brightness brightness, required ColorScheme scheme, required Color background}) {
-    final base = ThemeData(useMaterial3: true, colorScheme: scheme, brightness: brightness);
+    final base = ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      brightness: brightness,
+      // Bundled fonts: ignore device/OEM system font overrides; Telugu glyphs fall back to Noto Sans Telugu.
+      fontFamily: AppFonts.primary,
+      fontFamilyFallback: AppFonts.fallback,
+    );
     final text = base.textTheme.apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface);
     return base.copyWith(
       scaffoldBackgroundColor: background,
