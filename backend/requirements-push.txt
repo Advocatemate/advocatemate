@@ -1,0 +1,2 @@
+# Optional: only needed when FCM push delivery is enabled (FCM_ENABLED=true).
+firebase-admin==6.6.0

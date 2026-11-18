@@ -1,0 +1,70 @@
+# Local development stack. Not a production deployment (see docs/DEPLOYMENT.md).
+#   cp .env.example .env   # then set JWT_SECRET / OTP_HASH_SECRET
+#   docker compose up --build
+name: advocatemate
+
+x-backend: &backend
+  build:
+    context: ./backend
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-advocatemate}:${POSTGRES_PASSWORD:-change-me-local-only}@db:5432/${POSTGRES_DB:-advocatemate}
+    REDIS_URL: redis://redis:6379/0
+    STORAGE_DIR: /var/lib/advocatemate
+  volumes:
+    - storage:/var/lib/advocatemate
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-advocatemate}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-only}
+      POSTGRES_DB: ${POSTGRES_DB:-advocatemate}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"   # bound to localhost only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  api:
+    <<: *backend
+    command: ["api"]
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  worker-enrichment:
+    <<: *backend
+    command: ["worker-enrichment"]
+
+  worker-sync:
+    <<: *backend
+    command: ["worker-sync"]
+
+  beat:
+    <<: *backend
+    command: ["beat"]
+
+volumes:
+  pgdata:
+  redisdata:
+  storage:

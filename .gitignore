@@ -1,0 +1,51 @@
+# --- secrets / environment ---
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+*.jks
+*.keystore
+key.properties
+google-services.json
+GoogleService-Info.plist
+firebase-service-account*.json
+**/secrets/
+
+# --- python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+backend/var/
+
+# --- flutter / dart ---
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/build/
+mobile/.packages
+mobile/coverage/
+mobile/**/*.g.dart.bak
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/app/release/
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+mobile/ios/Flutter/Flutter.framework
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/ios/Runner.xcworkspace/xcuserdata/
+mobile/ios/Runner.xcodeproj/xcuserdata/
+
+# --- editors / OS ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

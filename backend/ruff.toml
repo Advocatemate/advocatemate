@@ -1,0 +1,10 @@
+line-length = 130
+target-version = "py311"
+extend-exclude = ["migrations/versions"]
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "BLE"]
+ignore = ["S101", "B008", "S311", "UP040"]
+
+[lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S108", "E501", "BLE001"]
