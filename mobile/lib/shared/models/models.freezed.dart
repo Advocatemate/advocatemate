@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Me {
 
- String get userId; String get role; String get preferredLanguage; String? get advocateCode; String? get advocateName; String? get displayName; String? get email; String? get identityVerification; String? get mobile; String? get createdAt;
+ String get userId; String get role; String get preferredLanguage; String? get advocateCode; String? get advocateName; String? get displayName; String? get email; String? get googleEmail; String? get identityVerification; String? get verificationMethod; String? get linkedAt; String? get mobile; String? get createdAt;
 /// Create a copy of Me
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $MeCopyWith<Me> get copyWith => _$MeCopyWithImpl<Me>(this as Me, _$identity);
 @override
 bool operator ==(Object other) {
   final _this = this as Me;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Me&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.preferredLanguage, _this.preferredLanguage) || other.preferredLanguage == _this.preferredLanguage)&&(identical(other.advocateCode, _this.advocateCode) || other.advocateCode == _this.advocateCode)&&(identical(other.advocateName, _this.advocateName) || other.advocateName == _this.advocateName)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.identityVerification, _this.identityVerification) || other.identityVerification == _this.identityVerification)&&(identical(other.mobile, _this.mobile) || other.mobile == _this.mobile)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Me&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.preferredLanguage, _this.preferredLanguage) || other.preferredLanguage == _this.preferredLanguage)&&(identical(other.advocateCode, _this.advocateCode) || other.advocateCode == _this.advocateCode)&&(identical(other.advocateName, _this.advocateName) || other.advocateName == _this.advocateName)&&(identical(other.displayName, _this.displayName) || other.displayName == _this.displayName)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.googleEmail, _this.googleEmail) || other.googleEmail == _this.googleEmail)&&(identical(other.identityVerification, _this.identityVerification) || other.identityVerification == _this.identityVerification)&&(identical(other.verificationMethod, _this.verificationMethod) || other.verificationMethod == _this.verificationMethod)&&(identical(other.linkedAt, _this.linkedAt) || other.linkedAt == _this.linkedAt)&&(identical(other.mobile, _this.mobile) || other.mobile == _this.mobile)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Me;
-  return Object.hash(runtimeType,_this.userId,_this.role,_this.preferredLanguage,_this.advocateCode,_this.advocateName,_this.displayName,_this.email,_this.identityVerification,_this.mobile,_this.createdAt);
+  return Object.hash(runtimeType,_this.userId,_this.role,_this.preferredLanguage,_this.advocateCode,_this.advocateName,_this.displayName,_this.email,_this.googleEmail,_this.identityVerification,_this.verificationMethod,_this.linkedAt,_this.mobile,_this.createdAt);
 }
 
 @override
 String toString() {
   final _this = this as Me;
-  return 'Me(userId: ${_this.userId}, role: ${_this.role}, preferredLanguage: ${_this.preferredLanguage}, advocateCode: ${_this.advocateCode}, advocateName: ${_this.advocateName}, displayName: ${_this.displayName}, email: ${_this.email}, identityVerification: ${_this.identityVerification}, mobile: ${_this.mobile}, createdAt: ${_this.createdAt})';
+  return 'Me(userId: ${_this.userId}, role: ${_this.role}, preferredLanguage: ${_this.preferredLanguage}, advocateCode: ${_this.advocateCode}, advocateName: ${_this.advocateName}, displayName: ${_this.displayName}, email: ${_this.email}, googleEmail: ${_this.googleEmail}, identityVerification: ${_this.identityVerification}, verificationMethod: ${_this.verificationMethod}, linkedAt: ${_this.linkedAt}, mobile: ${_this.mobile}, createdAt: ${_this.createdAt})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $MeCopyWith<$Res>  {
   factory $MeCopyWith(Me value, $Res Function(Me) _then) = _$MeCopyWithImpl;
 @useResult
 $Res call({
- String userId, String role, String preferredLanguage, String? advocateCode, String? advocateName, String? displayName, String? email, String? identityVerification, String? mobile, String? createdAt
+ String userId, String role, String preferredLanguage, String? advocateCode, String? advocateName, String? displayName, String? email, String? googleEmail, String? identityVerification, String? verificationMethod, String? linkedAt, String? mobile, String? createdAt
 });
 
 
@@ -71,7 +71,7 @@ class _$MeCopyWithImpl<$Res>
 
 /// Create a copy of Me
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? role = null,Object? preferredLanguage = null,Object? advocateCode = freezed,Object? advocateName = freezed,Object? displayName = freezed,Object? email = freezed,Object? identityVerification = freezed,Object? mobile = freezed,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? role = null,Object? preferredLanguage = null,Object? advocateCode = freezed,Object? advocateName = freezed,Object? displayName = freezed,Object? email = freezed,Object? googleEmail = freezed,Object? identityVerification = freezed,Object? verificationMethod = freezed,Object? linkedAt = freezed,Object? mobile = freezed,Object? createdAt = freezed,}) {
   return _then(Me(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
@@ -80,7 +80,10 @@ as String,advocateCode: freezed == advocateCode ? _self.advocateCode : advocateC
 as String?,advocateName: freezed == advocateName ? _self.advocateName : advocateName // ignore: cast_nullable_to_non_nullable
 as String?,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,googleEmail: freezed == googleEmail ? _self.googleEmail : googleEmail // ignore: cast_nullable_to_non_nullable
 as String?,identityVerification: freezed == identityVerification ? _self.identityVerification : identityVerification // ignore: cast_nullable_to_non_nullable
+as String?,verificationMethod: freezed == verificationMethod ? _self.verificationMethod : verificationMethod // ignore: cast_nullable_to_non_nullable
+as String?,linkedAt: freezed == linkedAt ? _self.linkedAt : linkedAt // ignore: cast_nullable_to_non_nullable
 as String?,mobile: freezed == mobile ? _self.mobile : mobile // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -168,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String role,  String preferredLanguage,  String? advocateCode,  String? advocateName,  String? displayName,  String? email,  String? identityVerification,  String? mobile,  String? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String role,  String preferredLanguage,  String? advocateCode,  String? advocateName,  String? displayName,  String? email,  String? googleEmail,  String? identityVerification,  String? verificationMethod,  String? linkedAt,  String? mobile,  String? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Me() when $default != null:
-return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCode,_that.advocateName,_that.displayName,_that.email,_that.identityVerification,_that.mobile,_that.createdAt);case _:
+return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCode,_that.advocateName,_that.displayName,_that.email,_that.googleEmail,_that.identityVerification,_that.verificationMethod,_that.linkedAt,_that.mobile,_that.createdAt);case _:
   return orElse();
 
 }
@@ -189,10 +192,10 @@ return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String role,  String preferredLanguage,  String? advocateCode,  String? advocateName,  String? displayName,  String? email,  String? identityVerification,  String? mobile,  String? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String role,  String preferredLanguage,  String? advocateCode,  String? advocateName,  String? displayName,  String? email,  String? googleEmail,  String? identityVerification,  String? verificationMethod,  String? linkedAt,  String? mobile,  String? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Me():
-return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCode,_that.advocateName,_that.displayName,_that.email,_that.identityVerification,_that.mobile,_that.createdAt);case _:
+return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCode,_that.advocateName,_that.displayName,_that.email,_that.googleEmail,_that.identityVerification,_that.verificationMethod,_that.linkedAt,_that.mobile,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +212,10 @@ return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String role,  String preferredLanguage,  String? advocateCode,  String? advocateName,  String? displayName,  String? email,  String? identityVerification,  String? mobile,  String? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String role,  String preferredLanguage,  String? advocateCode,  String? advocateName,  String? displayName,  String? email,  String? googleEmail,  String? identityVerification,  String? verificationMethod,  String? linkedAt,  String? mobile,  String? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Me() when $default != null:
-return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCode,_that.advocateName,_that.displayName,_that.email,_that.identityVerification,_that.mobile,_that.createdAt);case _:
+return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCode,_that.advocateName,_that.displayName,_that.email,_that.googleEmail,_that.identityVerification,_that.verificationMethod,_that.linkedAt,_that.mobile,_that.createdAt);case _:
   return null;
 
 }
@@ -224,7 +227,7 @@ return $default(_that.userId,_that.role,_that.preferredLanguage,_that.advocateCo
 @JsonSerializable()
 
 class _Me implements Me {
-  const _Me({required this.userId, required this.role, this.preferredLanguage = 'en', this.advocateCode, this.advocateName, this.displayName, this.email, this.identityVerification, this.mobile, this.createdAt});
+  const _Me({required this.userId, required this.role, this.preferredLanguage = 'en', this.advocateCode, this.advocateName, this.displayName, this.email, this.googleEmail, this.identityVerification, this.verificationMethod, this.linkedAt, this.mobile, this.createdAt});
   factory _Me.fromJson(Map<String, dynamic> json) => _$MeFromJson(json);
 
 @override final  String userId;
@@ -234,7 +237,10 @@ class _Me implements Me {
 @override final  String? advocateName;
 @override final  String? displayName;
 @override final  String? email;
+@override final  String? googleEmail;
 @override final  String? identityVerification;
+@override final  String? verificationMethod;
+@override final  String? linkedAt;
 @override final  String? mobile;
 @override final  String? createdAt;
 
@@ -251,18 +257,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Me&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.role, role) || other.role == role)&&(identical(other.preferredLanguage, preferredLanguage) || other.preferredLanguage == preferredLanguage)&&(identical(other.advocateCode, advocateCode) || other.advocateCode == advocateCode)&&(identical(other.advocateName, advocateName) || other.advocateName == advocateName)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.identityVerification, identityVerification) || other.identityVerification == identityVerification)&&(identical(other.mobile, mobile) || other.mobile == mobile)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Me&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.role, role) || other.role == role)&&(identical(other.preferredLanguage, preferredLanguage) || other.preferredLanguage == preferredLanguage)&&(identical(other.advocateCode, advocateCode) || other.advocateCode == advocateCode)&&(identical(other.advocateName, advocateName) || other.advocateName == advocateName)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.googleEmail, googleEmail) || other.googleEmail == googleEmail)&&(identical(other.identityVerification, identityVerification) || other.identityVerification == identityVerification)&&(identical(other.verificationMethod, verificationMethod) || other.verificationMethod == verificationMethod)&&(identical(other.linkedAt, linkedAt) || other.linkedAt == linkedAt)&&(identical(other.mobile, mobile) || other.mobile == mobile)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,userId,role,preferredLanguage,advocateCode,advocateName,displayName,email,identityVerification,mobile,createdAt);
+    return Object.hash(runtimeType,userId,role,preferredLanguage,advocateCode,advocateName,displayName,email,googleEmail,identityVerification,verificationMethod,linkedAt,mobile,createdAt);
 }
 
 @override
 String toString() {
-    return 'Me(userId: $userId, role: $role, preferredLanguage: $preferredLanguage, advocateCode: $advocateCode, advocateName: $advocateName, displayName: $displayName, email: $email, identityVerification: $identityVerification, mobile: $mobile, createdAt: $createdAt)';
+    return 'Me(userId: $userId, role: $role, preferredLanguage: $preferredLanguage, advocateCode: $advocateCode, advocateName: $advocateName, displayName: $displayName, email: $email, googleEmail: $googleEmail, identityVerification: $identityVerification, verificationMethod: $verificationMethod, linkedAt: $linkedAt, mobile: $mobile, createdAt: $createdAt)';
 }
 
 
@@ -273,7 +279,7 @@ abstract mixin class _$MeCopyWith<$Res> implements $MeCopyWith<$Res> {
   factory _$MeCopyWith(_Me value, $Res Function(_Me) _then) = __$MeCopyWithImpl;
 @override @useResult
 $Res call({
- String userId, String role, String preferredLanguage, String? advocateCode, String? advocateName, String? displayName, String? email, String? identityVerification, String? mobile, String? createdAt
+ String userId, String role, String preferredLanguage, String? advocateCode, String? advocateName, String? displayName, String? email, String? googleEmail, String? identityVerification, String? verificationMethod, String? linkedAt, String? mobile, String? createdAt
 });
 
 
@@ -290,7 +296,7 @@ class __$MeCopyWithImpl<$Res>
 
 /// Create a copy of Me
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? role = null,Object? preferredLanguage = null,Object? advocateCode = freezed,Object? advocateName = freezed,Object? displayName = freezed,Object? email = freezed,Object? identityVerification = freezed,Object? mobile = freezed,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? role = null,Object? preferredLanguage = null,Object? advocateCode = freezed,Object? advocateName = freezed,Object? displayName = freezed,Object? email = freezed,Object? googleEmail = freezed,Object? identityVerification = freezed,Object? verificationMethod = freezed,Object? linkedAt = freezed,Object? mobile = freezed,Object? createdAt = freezed,}) {
   return _then(_Me(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
@@ -299,7 +305,10 @@ as String,advocateCode: freezed == advocateCode ? _self.advocateCode : advocateC
 as String?,advocateName: freezed == advocateName ? _self.advocateName : advocateName // ignore: cast_nullable_to_non_nullable
 as String?,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,googleEmail: freezed == googleEmail ? _self.googleEmail : googleEmail // ignore: cast_nullable_to_non_nullable
 as String?,identityVerification: freezed == identityVerification ? _self.identityVerification : identityVerification // ignore: cast_nullable_to_non_nullable
+as String?,verificationMethod: freezed == verificationMethod ? _self.verificationMethod : verificationMethod // ignore: cast_nullable_to_non_nullable
+as String?,linkedAt: freezed == linkedAt ? _self.linkedAt : linkedAt // ignore: cast_nullable_to_non_nullable
 as String?,mobile: freezed == mobile ? _self.mobile : mobile // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -311,47 +320,47 @@ as String?,
 
 
 /// @nodoc
-mixin _$RegisterInfo {
+mixin _$GoogleSignInResult {
 
- String get advocateCode; String get advocateName; String get source; bool get alreadyRegistered; String? get registeredMobileHint; bool get otpAvailable; String get identityNote;
-/// Create a copy of RegisterInfo
+ String get status; String? get accessToken; String? get refreshToken; int? get expiresIn; String? get sessionId; String? get linkToken; int? get linkExpiresIn; String? get googleEmail;
+/// Create a copy of GoogleSignInResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$RegisterInfoCopyWith<RegisterInfo> get copyWith => _$RegisterInfoCopyWithImpl<RegisterInfo>(this as RegisterInfo, _$identity);
+$GoogleSignInResultCopyWith<GoogleSignInResult> get copyWith => _$GoogleSignInResultCopyWithImpl<GoogleSignInResult>(this as GoogleSignInResult, _$identity);
 
-  /// Serializes this RegisterInfo to a JSON map.
+  /// Serializes this GoogleSignInResult to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  final _this = this as RegisterInfo;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegisterInfo&&(identical(other.advocateCode, _this.advocateCode) || other.advocateCode == _this.advocateCode)&&(identical(other.advocateName, _this.advocateName) || other.advocateName == _this.advocateName)&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.alreadyRegistered, _this.alreadyRegistered) || other.alreadyRegistered == _this.alreadyRegistered)&&(identical(other.registeredMobileHint, _this.registeredMobileHint) || other.registeredMobileHint == _this.registeredMobileHint)&&(identical(other.otpAvailable, _this.otpAvailable) || other.otpAvailable == _this.otpAvailable)&&(identical(other.identityNote, _this.identityNote) || other.identityNote == _this.identityNote));
+  final _this = this as GoogleSignInResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GoogleSignInResult&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.accessToken, _this.accessToken) || other.accessToken == _this.accessToken)&&(identical(other.refreshToken, _this.refreshToken) || other.refreshToken == _this.refreshToken)&&(identical(other.expiresIn, _this.expiresIn) || other.expiresIn == _this.expiresIn)&&(identical(other.sessionId, _this.sessionId) || other.sessionId == _this.sessionId)&&(identical(other.linkToken, _this.linkToken) || other.linkToken == _this.linkToken)&&(identical(other.linkExpiresIn, _this.linkExpiresIn) || other.linkExpiresIn == _this.linkExpiresIn)&&(identical(other.googleEmail, _this.googleEmail) || other.googleEmail == _this.googleEmail));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-  final _this = this as RegisterInfo;
-  return Object.hash(runtimeType,_this.advocateCode,_this.advocateName,_this.source,_this.alreadyRegistered,_this.registeredMobileHint,_this.otpAvailable,_this.identityNote);
+  final _this = this as GoogleSignInResult;
+  return Object.hash(runtimeType,_this.status,_this.accessToken,_this.refreshToken,_this.expiresIn,_this.sessionId,_this.linkToken,_this.linkExpiresIn,_this.googleEmail);
 }
 
 @override
 String toString() {
-  final _this = this as RegisterInfo;
-  return 'RegisterInfo(advocateCode: ${_this.advocateCode}, advocateName: ${_this.advocateName}, source: ${_this.source}, alreadyRegistered: ${_this.alreadyRegistered}, registeredMobileHint: ${_this.registeredMobileHint}, otpAvailable: ${_this.otpAvailable}, identityNote: ${_this.identityNote})';
+  final _this = this as GoogleSignInResult;
+  return 'GoogleSignInResult(status: ${_this.status}, accessToken: ${_this.accessToken}, refreshToken: ${_this.refreshToken}, expiresIn: ${_this.expiresIn}, sessionId: ${_this.sessionId}, linkToken: ${_this.linkToken}, linkExpiresIn: ${_this.linkExpiresIn}, googleEmail: ${_this.googleEmail})';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $RegisterInfoCopyWith<$Res>  {
-  factory $RegisterInfoCopyWith(RegisterInfo value, $Res Function(RegisterInfo) _then) = _$RegisterInfoCopyWithImpl;
+abstract mixin class $GoogleSignInResultCopyWith<$Res>  {
+  factory $GoogleSignInResultCopyWith(GoogleSignInResult value, $Res Function(GoogleSignInResult) _then) = _$GoogleSignInResultCopyWithImpl;
 @useResult
 $Res call({
- String advocateCode, String advocateName, String source, bool alreadyRegistered, String? registeredMobileHint, bool otpAvailable, String identityNote
+ String status, String? accessToken, String? refreshToken, int? expiresIn, String? sessionId, String? linkToken, int? linkExpiresIn, String? googleEmail
 });
 
 
@@ -359,310 +368,25 @@ $Res call({
 
 }
 /// @nodoc
-class _$RegisterInfoCopyWithImpl<$Res>
-    implements $RegisterInfoCopyWith<$Res> {
-  _$RegisterInfoCopyWithImpl(this._self, this._then);
+class _$GoogleSignInResultCopyWithImpl<$Res>
+    implements $GoogleSignInResultCopyWith<$Res> {
+  _$GoogleSignInResultCopyWithImpl(this._self, this._then);
 
-  final RegisterInfo _self;
-  final $Res Function(RegisterInfo) _then;
+  final GoogleSignInResult _self;
+  final $Res Function(GoogleSignInResult) _then;
 
-/// Create a copy of RegisterInfo
+/// Create a copy of GoogleSignInResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? advocateCode = null,Object? advocateName = null,Object? source = null,Object? alreadyRegistered = null,Object? registeredMobileHint = freezed,Object? otpAvailable = null,Object? identityNote = null,}) {
-  return _then(RegisterInfo(
-advocateCode: null == advocateCode ? _self.advocateCode : advocateCode // ignore: cast_nullable_to_non_nullable
-as String,advocateName: null == advocateName ? _self.advocateName : advocateName // ignore: cast_nullable_to_non_nullable
-as String,source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
-as String,alreadyRegistered: null == alreadyRegistered ? _self.alreadyRegistered : alreadyRegistered // ignore: cast_nullable_to_non_nullable
-as bool,registeredMobileHint: freezed == registeredMobileHint ? _self.registeredMobileHint : registeredMobileHint // ignore: cast_nullable_to_non_nullable
-as String?,otpAvailable: null == otpAvailable ? _self.otpAvailable : otpAvailable // ignore: cast_nullable_to_non_nullable
-as bool,identityNote: null == identityNote ? _self.identityNote : identityNote // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [RegisterInfo].
-extension RegisterInfoPatterns on RegisterInfo {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _RegisterInfo value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _RegisterInfo() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _RegisterInfo value)  $default,){
-final _that = this;
-switch (_that) {
-case _RegisterInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _RegisterInfo value)?  $default,){
-final _that = this;
-switch (_that) {
-case _RegisterInfo() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String advocateCode,  String advocateName,  String source,  bool alreadyRegistered,  String? registeredMobileHint,  bool otpAvailable,  String identityNote)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _RegisterInfo() when $default != null:
-return $default(_that.advocateCode,_that.advocateName,_that.source,_that.alreadyRegistered,_that.registeredMobileHint,_that.otpAvailable,_that.identityNote);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String advocateCode,  String advocateName,  String source,  bool alreadyRegistered,  String? registeredMobileHint,  bool otpAvailable,  String identityNote)  $default,) {final _that = this;
-switch (_that) {
-case _RegisterInfo():
-return $default(_that.advocateCode,_that.advocateName,_that.source,_that.alreadyRegistered,_that.registeredMobileHint,_that.otpAvailable,_that.identityNote);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String advocateCode,  String advocateName,  String source,  bool alreadyRegistered,  String? registeredMobileHint,  bool otpAvailable,  String identityNote)?  $default,) {final _that = this;
-switch (_that) {
-case _RegisterInfo() when $default != null:
-return $default(_that.advocateCode,_that.advocateName,_that.source,_that.alreadyRegistered,_that.registeredMobileHint,_that.otpAvailable,_that.identityNote);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class _RegisterInfo implements RegisterInfo {
-  const _RegisterInfo({required this.advocateCode, required this.advocateName, required this.source, required this.alreadyRegistered, this.registeredMobileHint, required this.otpAvailable, required this.identityNote});
-  factory _RegisterInfo.fromJson(Map<String, dynamic> json) => _$RegisterInfoFromJson(json);
-
-@override final  String advocateCode;
-@override final  String advocateName;
-@override final  String source;
-@override final  bool alreadyRegistered;
-@override final  String? registeredMobileHint;
-@override final  bool otpAvailable;
-@override final  String identityNote;
-
-/// Create a copy of RegisterInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$RegisterInfoCopyWith<_RegisterInfo> get copyWith => __$RegisterInfoCopyWithImpl<_RegisterInfo>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$RegisterInfoToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterInfo&&(identical(other.advocateCode, advocateCode) || other.advocateCode == advocateCode)&&(identical(other.advocateName, advocateName) || other.advocateName == advocateName)&&(identical(other.source, source) || other.source == source)&&(identical(other.alreadyRegistered, alreadyRegistered) || other.alreadyRegistered == alreadyRegistered)&&(identical(other.registeredMobileHint, registeredMobileHint) || other.registeredMobileHint == registeredMobileHint)&&(identical(other.otpAvailable, otpAvailable) || other.otpAvailable == otpAvailable)&&(identical(other.identityNote, identityNote) || other.identityNote == identityNote));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-    return Object.hash(runtimeType,advocateCode,advocateName,source,alreadyRegistered,registeredMobileHint,otpAvailable,identityNote);
-}
-
-@override
-String toString() {
-    return 'RegisterInfo(advocateCode: $advocateCode, advocateName: $advocateName, source: $source, alreadyRegistered: $alreadyRegistered, registeredMobileHint: $registeredMobileHint, otpAvailable: $otpAvailable, identityNote: $identityNote)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$RegisterInfoCopyWith<$Res> implements $RegisterInfoCopyWith<$Res> {
-  factory _$RegisterInfoCopyWith(_RegisterInfo value, $Res Function(_RegisterInfo) _then) = __$RegisterInfoCopyWithImpl;
-@override @useResult
-$Res call({
- String advocateCode, String advocateName, String source, bool alreadyRegistered, String? registeredMobileHint, bool otpAvailable, String identityNote
-});
-
-
-
-
-}
-/// @nodoc
-class __$RegisterInfoCopyWithImpl<$Res>
-    implements _$RegisterInfoCopyWith<$Res> {
-  __$RegisterInfoCopyWithImpl(this._self, this._then);
-
-  final _RegisterInfo _self;
-  final $Res Function(_RegisterInfo) _then;
-
-/// Create a copy of RegisterInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? advocateCode = null,Object? advocateName = null,Object? source = null,Object? alreadyRegistered = null,Object? registeredMobileHint = freezed,Object? otpAvailable = null,Object? identityNote = null,}) {
-  return _then(_RegisterInfo(
-advocateCode: null == advocateCode ? _self.advocateCode : advocateCode // ignore: cast_nullable_to_non_nullable
-as String,advocateName: null == advocateName ? _self.advocateName : advocateName // ignore: cast_nullable_to_non_nullable
-as String,source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
-as String,alreadyRegistered: null == alreadyRegistered ? _self.alreadyRegistered : alreadyRegistered // ignore: cast_nullable_to_non_nullable
-as bool,registeredMobileHint: freezed == registeredMobileHint ? _self.registeredMobileHint : registeredMobileHint // ignore: cast_nullable_to_non_nullable
-as String?,otpAvailable: null == otpAvailable ? _self.otpAvailable : otpAvailable // ignore: cast_nullable_to_non_nullable
-as bool,identityNote: null == identityNote ? _self.identityNote : identityNote // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-
-/// @nodoc
-mixin _$OtpSent {
-
- String get otpId; int get expiresIn; String get sentTo; String get advocateName; String? get devOtp;
-/// Create a copy of OtpSent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$OtpSentCopyWith<OtpSent> get copyWith => _$OtpSentCopyWithImpl<OtpSent>(this as OtpSent, _$identity);
-
-  /// Serializes this OtpSent to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as OtpSent;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OtpSent&&(identical(other.otpId, _this.otpId) || other.otpId == _this.otpId)&&(identical(other.expiresIn, _this.expiresIn) || other.expiresIn == _this.expiresIn)&&(identical(other.sentTo, _this.sentTo) || other.sentTo == _this.sentTo)&&(identical(other.advocateName, _this.advocateName) || other.advocateName == _this.advocateName)&&(identical(other.devOtp, _this.devOtp) || other.devOtp == _this.devOtp));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-  final _this = this as OtpSent;
-  return Object.hash(runtimeType,_this.otpId,_this.expiresIn,_this.sentTo,_this.advocateName,_this.devOtp);
-}
-
-@override
-String toString() {
-  final _this = this as OtpSent;
-  return 'OtpSent(otpId: ${_this.otpId}, expiresIn: ${_this.expiresIn}, sentTo: ${_this.sentTo}, advocateName: ${_this.advocateName}, devOtp: ${_this.devOtp})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $OtpSentCopyWith<$Res>  {
-  factory $OtpSentCopyWith(OtpSent value, $Res Function(OtpSent) _then) = _$OtpSentCopyWithImpl;
-@useResult
-$Res call({
- String otpId, int expiresIn, String sentTo, String advocateName, String? devOtp
-});
-
-
-
-
-}
-/// @nodoc
-class _$OtpSentCopyWithImpl<$Res>
-    implements $OtpSentCopyWith<$Res> {
-  _$OtpSentCopyWithImpl(this._self, this._then);
-
-  final OtpSent _self;
-  final $Res Function(OtpSent) _then;
-
-/// Create a copy of OtpSent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? otpId = null,Object? expiresIn = null,Object? sentTo = null,Object? advocateName = null,Object? devOtp = freezed,}) {
-  return _then(OtpSent(
-otpId: null == otpId ? _self.otpId : otpId // ignore: cast_nullable_to_non_nullable
-as String,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
-as int,sentTo: null == sentTo ? _self.sentTo : sentTo // ignore: cast_nullable_to_non_nullable
-as String,advocateName: null == advocateName ? _self.advocateName : advocateName // ignore: cast_nullable_to_non_nullable
-as String,devOtp: freezed == devOtp ? _self.devOtp : devOtp // ignore: cast_nullable_to_non_nullable
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? accessToken = freezed,Object? refreshToken = freezed,Object? expiresIn = freezed,Object? sessionId = freezed,Object? linkToken = freezed,Object? linkExpiresIn = freezed,Object? googleEmail = freezed,}) {
+  return _then(GoogleSignInResult(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,accessToken: freezed == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
+as String?,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
+as String?,expiresIn: freezed == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as int?,sessionId: freezed == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
+as String?,linkToken: freezed == linkToken ? _self.linkToken : linkToken // ignore: cast_nullable_to_non_nullable
+as String?,linkExpiresIn: freezed == linkExpiresIn ? _self.linkExpiresIn : linkExpiresIn // ignore: cast_nullable_to_non_nullable
+as int?,googleEmail: freezed == googleEmail ? _self.googleEmail : googleEmail // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -670,8 +394,8 @@ as String?,
 }
 
 
-/// Adds pattern-matching-related methods to [OtpSent].
-extension OtpSentPatterns on OtpSent {
+/// Adds pattern-matching-related methods to [GoogleSignInResult].
+extension GoogleSignInResultPatterns on GoogleSignInResult {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -684,10 +408,10 @@ extension OtpSentPatterns on OtpSent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _OtpSent value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GoogleSignInResult value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _OtpSent() when $default != null:
+case _GoogleSignInResult() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -706,10 +430,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _OtpSent value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GoogleSignInResult value)  $default,){
 final _that = this;
 switch (_that) {
-case _OtpSent():
+case _GoogleSignInResult():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -727,10 +451,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _OtpSent value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GoogleSignInResult value)?  $default,){
 final _that = this;
 switch (_that) {
-case _OtpSent() when $default != null:
+case _GoogleSignInResult() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -748,10 +472,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String otpId,  int expiresIn,  String sentTo,  String advocateName,  String? devOtp)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String status,  String? accessToken,  String? refreshToken,  int? expiresIn,  String? sessionId,  String? linkToken,  int? linkExpiresIn,  String? googleEmail)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _OtpSent() when $default != null:
-return $default(_that.otpId,_that.expiresIn,_that.sentTo,_that.advocateName,_that.devOtp);case _:
+case _GoogleSignInResult() when $default != null:
+return $default(_that.status,_that.accessToken,_that.refreshToken,_that.expiresIn,_that.sessionId,_that.linkToken,_that.linkExpiresIn,_that.googleEmail);case _:
   return orElse();
 
 }
@@ -769,10 +493,10 @@ return $default(_that.otpId,_that.expiresIn,_that.sentTo,_that.advocateName,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String otpId,  int expiresIn,  String sentTo,  String advocateName,  String? devOtp)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String status,  String? accessToken,  String? refreshToken,  int? expiresIn,  String? sessionId,  String? linkToken,  int? linkExpiresIn,  String? googleEmail)  $default,) {final _that = this;
 switch (_that) {
-case _OtpSent():
-return $default(_that.otpId,_that.expiresIn,_that.sentTo,_that.advocateName,_that.devOtp);case _:
+case _GoogleSignInResult():
+return $default(_that.status,_that.accessToken,_that.refreshToken,_that.expiresIn,_that.sessionId,_that.linkToken,_that.linkExpiresIn,_that.googleEmail);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -789,10 +513,10 @@ return $default(_that.otpId,_that.expiresIn,_that.sentTo,_that.advocateName,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String otpId,  int expiresIn,  String sentTo,  String advocateName,  String? devOtp)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String status,  String? accessToken,  String? refreshToken,  int? expiresIn,  String? sessionId,  String? linkToken,  int? linkExpiresIn,  String? googleEmail)?  $default,) {final _that = this;
 switch (_that) {
-case _OtpSent() when $default != null:
-return $default(_that.otpId,_that.expiresIn,_that.sentTo,_that.advocateName,_that.devOtp);case _:
+case _GoogleSignInResult() when $default != null:
+return $default(_that.status,_that.accessToken,_that.refreshToken,_that.expiresIn,_that.sessionId,_that.linkToken,_that.linkExpiresIn,_that.googleEmail);case _:
   return null;
 
 }
@@ -803,52 +527,55 @@ return $default(_that.otpId,_that.expiresIn,_that.sentTo,_that.advocateName,_tha
 /// @nodoc
 @JsonSerializable()
 
-class _OtpSent implements OtpSent {
-  const _OtpSent({required this.otpId, required this.expiresIn, required this.sentTo, required this.advocateName, this.devOtp});
-  factory _OtpSent.fromJson(Map<String, dynamic> json) => _$OtpSentFromJson(json);
+class _GoogleSignInResult implements GoogleSignInResult {
+  const _GoogleSignInResult({required this.status, this.accessToken, this.refreshToken, this.expiresIn, this.sessionId, this.linkToken, this.linkExpiresIn, this.googleEmail});
+  factory _GoogleSignInResult.fromJson(Map<String, dynamic> json) => _$GoogleSignInResultFromJson(json);
 
-@override final  String otpId;
-@override final  int expiresIn;
-@override final  String sentTo;
-@override final  String advocateName;
-@override final  String? devOtp;
+@override final  String status;
+@override final  String? accessToken;
+@override final  String? refreshToken;
+@override final  int? expiresIn;
+@override final  String? sessionId;
+@override final  String? linkToken;
+@override final  int? linkExpiresIn;
+@override final  String? googleEmail;
 
-/// Create a copy of OtpSent
+/// Create a copy of GoogleSignInResult
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$OtpSentCopyWith<_OtpSent> get copyWith => __$OtpSentCopyWithImpl<_OtpSent>(this, _$identity);
+_$GoogleSignInResultCopyWith<_GoogleSignInResult> get copyWith => __$GoogleSignInResultCopyWithImpl<_GoogleSignInResult>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$OtpSentToJson(this, );
+  return _$GoogleSignInResultToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OtpSent&&(identical(other.otpId, otpId) || other.otpId == otpId)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn)&&(identical(other.sentTo, sentTo) || other.sentTo == sentTo)&&(identical(other.advocateName, advocateName) || other.advocateName == advocateName)&&(identical(other.devOtp, devOtp) || other.devOtp == devOtp));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GoogleSignInResult&&(identical(other.status, status) || other.status == status)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.linkToken, linkToken) || other.linkToken == linkToken)&&(identical(other.linkExpiresIn, linkExpiresIn) || other.linkExpiresIn == linkExpiresIn)&&(identical(other.googleEmail, googleEmail) || other.googleEmail == googleEmail));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,otpId,expiresIn,sentTo,advocateName,devOtp);
+    return Object.hash(runtimeType,status,accessToken,refreshToken,expiresIn,sessionId,linkToken,linkExpiresIn,googleEmail);
 }
 
 @override
 String toString() {
-    return 'OtpSent(otpId: $otpId, expiresIn: $expiresIn, sentTo: $sentTo, advocateName: $advocateName, devOtp: $devOtp)';
+    return 'GoogleSignInResult(status: $status, accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn, sessionId: $sessionId, linkToken: $linkToken, linkExpiresIn: $linkExpiresIn, googleEmail: $googleEmail)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$OtpSentCopyWith<$Res> implements $OtpSentCopyWith<$Res> {
-  factory _$OtpSentCopyWith(_OtpSent value, $Res Function(_OtpSent) _then) = __$OtpSentCopyWithImpl;
+abstract mixin class _$GoogleSignInResultCopyWith<$Res> implements $GoogleSignInResultCopyWith<$Res> {
+  factory _$GoogleSignInResultCopyWith(_GoogleSignInResult value, $Res Function(_GoogleSignInResult) _then) = __$GoogleSignInResultCopyWithImpl;
 @override @useResult
 $Res call({
- String otpId, int expiresIn, String sentTo, String advocateName, String? devOtp
+ String status, String? accessToken, String? refreshToken, int? expiresIn, String? sessionId, String? linkToken, int? linkExpiresIn, String? googleEmail
 });
 
 
@@ -856,302 +583,26 @@ $Res call({
 
 }
 /// @nodoc
-class __$OtpSentCopyWithImpl<$Res>
-    implements _$OtpSentCopyWith<$Res> {
-  __$OtpSentCopyWithImpl(this._self, this._then);
+class __$GoogleSignInResultCopyWithImpl<$Res>
+    implements _$GoogleSignInResultCopyWith<$Res> {
+  __$GoogleSignInResultCopyWithImpl(this._self, this._then);
 
-  final _OtpSent _self;
-  final $Res Function(_OtpSent) _then;
+  final _GoogleSignInResult _self;
+  final $Res Function(_GoogleSignInResult) _then;
 
-/// Create a copy of OtpSent
+/// Create a copy of GoogleSignInResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? otpId = null,Object? expiresIn = null,Object? sentTo = null,Object? advocateName = null,Object? devOtp = freezed,}) {
-  return _then(_OtpSent(
-otpId: null == otpId ? _self.otpId : otpId // ignore: cast_nullable_to_non_nullable
-as String,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
-as int,sentTo: null == sentTo ? _self.sentTo : sentTo // ignore: cast_nullable_to_non_nullable
-as String,advocateName: null == advocateName ? _self.advocateName : advocateName // ignore: cast_nullable_to_non_nullable
-as String,devOtp: freezed == devOtp ? _self.devOtp : devOtp // ignore: cast_nullable_to_non_nullable
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? accessToken = freezed,Object? refreshToken = freezed,Object? expiresIn = freezed,Object? sessionId = freezed,Object? linkToken = freezed,Object? linkExpiresIn = freezed,Object? googleEmail = freezed,}) {
+  return _then(_GoogleSignInResult(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,accessToken: freezed == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
+as String?,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
+as String?,expiresIn: freezed == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as int?,sessionId: freezed == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
+as String?,linkToken: freezed == linkToken ? _self.linkToken : linkToken // ignore: cast_nullable_to_non_nullable
+as String?,linkExpiresIn: freezed == linkExpiresIn ? _self.linkExpiresIn : linkExpiresIn // ignore: cast_nullable_to_non_nullable
+as int?,googleEmail: freezed == googleEmail ? _self.googleEmail : googleEmail // ignore: cast_nullable_to_non_nullable
 as String?,
-  ));
-}
-
-
-}
-
-
-/// @nodoc
-mixin _$AuthTokens {
-
- String get accessToken; String get refreshToken; int get expiresIn; String get sessionId;
-/// Create a copy of AuthTokens
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$AuthTokensCopyWith<AuthTokens> get copyWith => _$AuthTokensCopyWithImpl<AuthTokens>(this as AuthTokens, _$identity);
-
-  /// Serializes this AuthTokens to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as AuthTokens;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthTokens&&(identical(other.accessToken, _this.accessToken) || other.accessToken == _this.accessToken)&&(identical(other.refreshToken, _this.refreshToken) || other.refreshToken == _this.refreshToken)&&(identical(other.expiresIn, _this.expiresIn) || other.expiresIn == _this.expiresIn)&&(identical(other.sessionId, _this.sessionId) || other.sessionId == _this.sessionId));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-  final _this = this as AuthTokens;
-  return Object.hash(runtimeType,_this.accessToken,_this.refreshToken,_this.expiresIn,_this.sessionId);
-}
-
-@override
-String toString() {
-  final _this = this as AuthTokens;
-  return 'AuthTokens(accessToken: ${_this.accessToken}, refreshToken: ${_this.refreshToken}, expiresIn: ${_this.expiresIn}, sessionId: ${_this.sessionId})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $AuthTokensCopyWith<$Res>  {
-  factory $AuthTokensCopyWith(AuthTokens value, $Res Function(AuthTokens) _then) = _$AuthTokensCopyWithImpl;
-@useResult
-$Res call({
- String accessToken, String refreshToken, int expiresIn, String sessionId
-});
-
-
-
-
-}
-/// @nodoc
-class _$AuthTokensCopyWithImpl<$Res>
-    implements $AuthTokensCopyWith<$Res> {
-  _$AuthTokensCopyWithImpl(this._self, this._then);
-
-  final AuthTokens _self;
-  final $Res Function(AuthTokens) _then;
-
-/// Create a copy of AuthTokens
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? accessToken = null,Object? refreshToken = null,Object? expiresIn = null,Object? sessionId = null,}) {
-  return _then(AuthTokens(
-accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
-as String,refreshToken: null == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
-as String,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
-as int,sessionId: null == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [AuthTokens].
-extension AuthTokensPatterns on AuthTokens {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AuthTokens value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _AuthTokens() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AuthTokens value)  $default,){
-final _that = this;
-switch (_that) {
-case _AuthTokens():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AuthTokens value)?  $default,){
-final _that = this;
-switch (_that) {
-case _AuthTokens() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String accessToken,  String refreshToken,  int expiresIn,  String sessionId)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _AuthTokens() when $default != null:
-return $default(_that.accessToken,_that.refreshToken,_that.expiresIn,_that.sessionId);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String accessToken,  String refreshToken,  int expiresIn,  String sessionId)  $default,) {final _that = this;
-switch (_that) {
-case _AuthTokens():
-return $default(_that.accessToken,_that.refreshToken,_that.expiresIn,_that.sessionId);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String accessToken,  String refreshToken,  int expiresIn,  String sessionId)?  $default,) {final _that = this;
-switch (_that) {
-case _AuthTokens() when $default != null:
-return $default(_that.accessToken,_that.refreshToken,_that.expiresIn,_that.sessionId);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class _AuthTokens implements AuthTokens {
-  const _AuthTokens({required this.accessToken, required this.refreshToken, required this.expiresIn, required this.sessionId});
-  factory _AuthTokens.fromJson(Map<String, dynamic> json) => _$AuthTokensFromJson(json);
-
-@override final  String accessToken;
-@override final  String refreshToken;
-@override final  int expiresIn;
-@override final  String sessionId;
-
-/// Create a copy of AuthTokens
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$AuthTokensCopyWith<_AuthTokens> get copyWith => __$AuthTokensCopyWithImpl<_AuthTokens>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$AuthTokensToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthTokens&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-    return Object.hash(runtimeType,accessToken,refreshToken,expiresIn,sessionId);
-}
-
-@override
-String toString() {
-    return 'AuthTokens(accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn, sessionId: $sessionId)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$AuthTokensCopyWith<$Res> implements $AuthTokensCopyWith<$Res> {
-  factory _$AuthTokensCopyWith(_AuthTokens value, $Res Function(_AuthTokens) _then) = __$AuthTokensCopyWithImpl;
-@override @useResult
-$Res call({
- String accessToken, String refreshToken, int expiresIn, String sessionId
-});
-
-
-
-
-}
-/// @nodoc
-class __$AuthTokensCopyWithImpl<$Res>
-    implements _$AuthTokensCopyWith<$Res> {
-  __$AuthTokensCopyWithImpl(this._self, this._then);
-
-  final _AuthTokens _self;
-  final $Res Function(_AuthTokens) _then;
-
-/// Create a copy of AuthTokens
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? accessToken = null,Object? refreshToken = null,Object? expiresIn = null,Object? sessionId = null,}) {
-  return _then(_AuthTokens(
-accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
-as String,refreshToken: null == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
-as String,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
-as int,sessionId: null == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
-as String,
   ));
 }
 

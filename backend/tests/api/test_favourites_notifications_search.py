@@ -111,6 +111,6 @@ def test_search(client, user_headers):
 
 def test_second_user_login_isolated(client):
     a = auth(login(client))
-    b = auth(login(client, code="67890", mobile="9123456789"))
+    b = auth(login(client, code="67890", email="adv.two@example.com"))
     assert client.get("/api/v1/auth/me", headers=a).json()["advocate_code"] == "12345"
     assert client.get("/api/v1/auth/me", headers=b).json()["advocate_code"] == "67890"

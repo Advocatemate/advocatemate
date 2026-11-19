@@ -26,7 +26,6 @@ from app.models import (
     SourceCache,
     User,
 )
-from app.schemas import AdminVerifyIn
 from app.services import audit, circuit
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -43,8 +42,10 @@ def dashboard(_: CurrentUser = Depends(require_admin), db: Session = Depends(get
         "users": {
             "total": _count(db, select(User.id).where(User.deleted_at.is_(None))),
             "advocates": _count(db, select(AdvocateProfile.id)),
-            "identity_verified": _count(db, select(AdvocateProfile.id)
-                                        .where(AdvocateProfile.identity_verification == "verified")),
+            "google_linked_registry_verified": _count(
+                db, select(AdvocateProfile.id).where(AdvocateProfile.google_sub.is_not(None),
+                                                     AdvocateProfile.identity_verification == "registry_verified")),
+            "legacy_unlinked": _count(db, select(AdvocateProfile.id).where(AdvocateProfile.google_sub.is_(None))),
             "active_sessions_24h": _count(db, select(AuthSession.id).where(AuthSession.last_seen_at >= day,
                                                                            AuthSession.revoked_at.is_(None))),
             "push_devices": _count(db, select(DeviceToken.id).where(DeviceToken.revoked_at.is_(None))),
@@ -161,14 +162,5 @@ def audit_log(limit: int = Query(100, ge=1, le=500), _: CurrentUser = Depends(re
                        "created_at": as_utc(r.created_at)} for r in rows]}
 
 
-@router.post("/advocates/verify")
-def verify_advocate(body: AdminVerifyIn, current: CurrentUser = Depends(require_admin), db: Session = Depends(get_db)):
-    p = db.scalar(select(AdvocateProfile).where(AdvocateProfile.advocate_code == body.advocate_code))
-    if p is None:
-        raise NotFound("No account for this advocate code")
-    p.identity_verification = body.decision
-    p.identity_verified_at = utcnow() if body.decision == "verified" else None
-    p.identity_verified_by = current.id if body.decision == "verified" else None
-    audit.record(db, "admin_identity_decision", actor=current.id, target_type="advocate",
-                 target_id=body.advocate_code, decision=body.decision)
-    return {"advocate_code": body.advocate_code, "identity_verification": body.decision}
+# Manual identity verification was removed: access is decided only by the automatic
+# advocate-registry match at Google sign-in (services/google_auth.py).

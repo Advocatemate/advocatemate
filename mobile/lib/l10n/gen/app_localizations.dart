@@ -224,84 +224,6 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get loginTitle;
 
-  /// No description provided for @loginSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Use your advocate code. We verify your mobile number with a one-time password.'**
-  String get loginSubtitle;
-
-  /// No description provided for @isThisYou.
-  ///
-  /// In en, this message translates to:
-  /// **'Is this you?'**
-  String get isThisYou;
-
-  /// No description provided for @identityConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Yes, this is me'**
-  String get identityConfirm;
-
-  /// No description provided for @identityDeny.
-  ///
-  /// In en, this message translates to:
-  /// **'No, change code'**
-  String get identityDeny;
-
-  /// No description provided for @mobileNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Mobile number'**
-  String get mobileNumber;
-
-  /// No description provided for @mobileHint.
-  ///
-  /// In en, this message translates to:
-  /// **'10-digit mobile number'**
-  String get mobileHint;
-
-  /// No description provided for @sendOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Send OTP'**
-  String get sendOtp;
-
-  /// No description provided for @enterOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter the OTP sent to {target}'**
-  String enterOtp(String target);
-
-  /// No description provided for @verifyOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Verify & sign in'**
-  String get verifyOtp;
-
-  /// No description provided for @otpUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'OTP sign-in is not available on this server yet.'**
-  String get otpUnavailable;
-
-  /// No description provided for @registeredMobileHint.
-  ///
-  /// In en, this message translates to:
-  /// **'This code is registered to {hint}'**
-  String registeredMobileHint(String hint);
-
-  /// No description provided for @identityNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Advocate codes are public, so your identity is verified through your mobile number.'**
-  String get identityNote;
-
-  /// No description provided for @devOtpNotice.
-  ///
-  /// In en, this message translates to:
-  /// **'Development build: OTP is {otp}'**
-  String devOtpNotice(String otp);
-
   /// No description provided for @today.
   ///
   /// In en, this message translates to:
@@ -836,12 +758,6 @@ abstract class AppLocalizations {
   /// **'Identity verification'**
   String get identityStatus;
 
-  /// No description provided for @identitySelfDeclared.
-  ///
-  /// In en, this message translates to:
-  /// **'Self-declared (mobile verified)'**
-  String get identitySelfDeclared;
-
   /// No description provided for @identityVerified.
   ///
   /// In en, this message translates to:
@@ -889,6 +805,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Court data is retrieved from public Andhra Pradesh High Court sources. Always verify with the official cause list.'**
   String get dataNotice;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @googleSignInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the Google account registered for your advocate code.'**
+  String get googleSignInSubtitle;
+
+  /// No description provided for @googleSignInNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your identity is verified automatically against the advocate registry.'**
+  String get googleSignInNote;
+
+  /// No description provided for @advocateCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your Advocate Code'**
+  String get advocateCodeTitle;
+
+  /// No description provided for @signedInAsGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in with Google as {email}'**
+  String signedInAsGoogle(String email);
+
+  /// No description provided for @verifyAndContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify and continue'**
+  String get verifyAndContinue;
+
+  /// No description provided for @useDifferentAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different Google account'**
+  String get useDifferentAccount;
+
+  /// No description provided for @switchGoogleAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Google account'**
+  String get switchGoogleAccount;
+
+  /// No description provided for @googleAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Google account'**
+  String get googleAccount;
+
+  /// No description provided for @identityRegistryVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified against the advocate registry'**
+  String get identityRegistryVerified;
+
+  /// No description provided for @errInvalidAdvocateCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Advocate Code. Please check your code and try again.'**
+  String get errInvalidAdvocateCode;
+
+  /// No description provided for @errEmailMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Google account email does not match the email registered for this advocate code. Please sign in with your registered email address.'**
+  String get errEmailMismatch;
+
+  /// No description provided for @errAdvocateAlreadyLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'This advocate code is already linked to a different Google account.'**
+  String get errAdvocateAlreadyLinked;
+
+  /// No description provided for @errGoogleLinkedElsewhere.
+  ///
+  /// In en, this message translates to:
+  /// **'This Google account is already linked to a different advocate code.'**
+  String get errGoogleLinkedElsewhere;
+
+  /// No description provided for @errAdvocateNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'This advocate code is not active for AdvocateMate access.'**
+  String get errAdvocateNotEligible;
+
+  /// No description provided for @errRegistryEmailMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This advocate code has no registered email address, so it cannot be verified.'**
+  String get errRegistryEmailMissing;
+
+  /// No description provided for @errGoogleCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was cancelled.'**
+  String get errGoogleCancelled;
+
+  /// No description provided for @errGoogleNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in is not set up in this version of the app.'**
+  String get errGoogleNotConfigured;
+
+  /// No description provided for @errGoogleUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in is not available on this device.'**
+  String get errGoogleUnavailable;
+
+  /// No description provided for @errGoogleEmailUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Google account email is not verified.'**
+  String get errGoogleEmailUnverified;
+
+  /// No description provided for @errLinkExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Google sign-in expired. Please sign in again.'**
+  String get errLinkExpired;
+
+  /// No description provided for @accessEndedNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'Access ended: this advocate code is no longer active.'**
+  String get accessEndedNotEligible;
 }
 
 class _AppLocalizationsDelegate

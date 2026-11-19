@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../features/advocate_profile/profile_screen.dart';
+import '../features/authentication/advocate_code_screen.dart';
 import '../features/authentication/login_screen.dart';
 import '../features/authentication/session_controller.dart';
 import '../features/authentication/splash_screen.dart';
@@ -56,12 +57,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loc = state.matchedLocation;
       if (session is SessionUnknown) return loc == '/splash' ? null : '/splash';
       if (session is SessionSignedOut) return loc == '/login' ? null : '/login';
-      if (loc == '/login' || loc == '/splash') return '/';
+      if (session is SessionNeedsAdvocateCode) return loc == '/link-advocate' ? null : '/link-advocate';
+      if (loc == '/login' || loc == '/splash' || loc == '/link-advocate') return '/';
       return null;
     },
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/link-advocate', builder: (_, _) => const AdvocateCodeScreen()),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => HomeShell(shell: shell),
         branches: [

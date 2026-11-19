@@ -35,20 +35,53 @@ class Advocate(Timestamps, Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
 
+class AdvocateRegistryEntry(Timestamps, Base):
+    """Authoritative advocate registry, imported from the official source (scripts/import_registry.py).
+
+    This - not the public Lexika directory in ``advocates`` and not any user-entered data - is what
+    decides whether a Google account may be linked to an advocate code.
+    """
+
+    __tablename__ = "advocate_registry"
+
+    advocate_code: Mapped[str] = mapped_column(String(16), primary_key=True)
+    full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    # Lower-cased, trimmed; NULL when the registry has no email for this advocate.
+    email_normalized: Mapped[str | None] = mapped_column(String(320), index=True)
+    status: Mapped[str] = mapped_column(String(16), nullable=False)  # active | inactive | suspended | ...
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_reference: Mapped[str | None] = mapped_column(String(128))
+    imported_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+    @property
+    def is_eligible(self) -> bool:
+        return self.status == "active"
+
+
 class AdvocateProfile(UUIDPk, Timestamps, Base):
+    """The link between one user, one advocate code and (once verified) one Google account.
+
+    Unique advocate_code + unique google_sub + unique user_id make the link strictly one-to-one.
+    """
+
     __tablename__ = "advocate_profiles"
 
     user_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="CASCADE"), unique=True)
     advocate_code: Mapped[str] = mapped_column(String(16), ForeignKey("advocates.advocate_code"), unique=True)
+    # Google's stable account id ("sub"), taken only from a server-verified ID token.
+    google_sub: Mapped[str | None] = mapped_column(String(255), unique=True)
+    google_email: Mapped[str | None] = mapped_column(String(320))
+    linked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    verification_method: Mapped[str | None] = mapped_column(String(32))  # registry_email_match
     # Name as returned by the source - not user-editable.
     source_name: Mapped[str] = mapped_column(String(255), nullable=False)
     # User-editable presentation fields.
     display_name: Mapped[str | None] = mapped_column(String(255))
     email: Mapped[str | None] = mapped_column(String(255))
-    # self_declared: mobile OTP proves phone possession only, NOT that the person is
-    # the advocate holding this code. Upgrade requires an authorised verification
-    # (e.g. Bar Council / APHC records) performed by an administrator.
-    identity_verification: Mapped[str] = mapped_column(String(16), default="self_declared", nullable=False)
+    # registry_verified: Google account email matched the advocate registry automatically.
+    # legacy_unverified: profile created by the retired mobile-OTP login; cannot sign in until
+    # the advocate links a Google account that passes the registry check.
+    identity_verification: Mapped[str] = mapped_column(String(24), default="registry_verified", nullable=False)
     identity_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     identity_verified_by: Mapped[uuid.UUID | None] = mapped_column(Uuid, ForeignKey("users.id"))
 

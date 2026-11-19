@@ -75,53 +75,6 @@ class AppLocalizationsTe extends AppLocalizations {
   String get loginTitle => 'సైన్ ఇన్';
 
   @override
-  String get loginSubtitle =>
-      'మీ న్యాయవాది కోడ్ ఉపయోగించండి. మీ మొబైల్ నంబర్‌ను వన్-టైమ్ పాస్‌వర్డ్‌తో ధృవీకరిస్తాము.';
-
-  @override
-  String get isThisYou => 'ఇది మీరేనా?';
-
-  @override
-  String get identityConfirm => 'అవును, ఇది నేనే';
-
-  @override
-  String get identityDeny => 'కాదు, కోడ్ మార్చండి';
-
-  @override
-  String get mobileNumber => 'మొబైల్ నంబర్';
-
-  @override
-  String get mobileHint => '10 అంకెల మొబైల్ నంబర్';
-
-  @override
-  String get sendOtp => 'OTP పంపండి';
-
-  @override
-  String enterOtp(String target) {
-    return '$target కు పంపిన OTP నమోదు చేయండి';
-  }
-
-  @override
-  String get verifyOtp => 'ధృవీకరించి సైన్ ఇన్ చేయండి';
-
-  @override
-  String get otpUnavailable => 'ఈ సర్వర్‌లో OTP సైన్-ఇన్ ఇంకా అందుబాటులో లేదు.';
-
-  @override
-  String registeredMobileHint(String hint) {
-    return 'ఈ కోడ్ $hint నంబర్‌తో నమోదైంది';
-  }
-
-  @override
-  String get identityNote =>
-      'న్యాయవాది కోడ్‌లు బహిరంగమైనవి, కాబట్టి మీ గుర్తింపును మీ మొబైల్ నంబర్ ద్వారా ధృవీకరిస్తాము.';
-
-  @override
-  String devOtpNotice(String otp) {
-    return 'డెవలప్‌మెంట్ బిల్డ్: OTP $otp';
-  }
-
-  @override
   String get today => 'ఈరోజు';
 
   @override
@@ -413,10 +366,6 @@ class AppLocalizationsTe extends AppLocalizations {
   String get identityStatus => 'గుర్తింపు ధృవీకరణ';
 
   @override
-  String get identitySelfDeclared =>
-      'స్వయంగా ప్రకటించినది (మొబైల్ ధృవీకరించబడింది)';
-
-  @override
   String get identityVerified => 'ధృవీకరించబడింది';
 
   @override
@@ -444,4 +393,86 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get dataNotice =>
       'కోర్టు సమాచారం బహిరంగ ఆంధ్రప్రదేశ్ హైకోర్టు మూలాల నుండి పొందబడుతుంది. ఎల్లప్పుడూ అధికారిక కేసుల జాబితాతో సరిచూసుకోండి.';
+
+  @override
+  String get signInWithGoogle => 'Google తో సైన్ ఇన్ చేయండి';
+
+  @override
+  String get googleSignInSubtitle =>
+      'మీ న్యాయవాది కోడ్‌కు నమోదైన Google ఖాతాను ఉపయోగించండి.';
+
+  @override
+  String get googleSignInNote =>
+      'మీ గుర్తింపు న్యాయవాదుల రిజిస్ట్రీతో స్వయంచాలకంగా ధృవీకరించబడుతుంది.';
+
+  @override
+  String get advocateCodeTitle => 'మీ న్యాయవాది కోడ్ నమోదు చేయండి';
+
+  @override
+  String signedInAsGoogle(String email) {
+    return '$email గా Google తో సైన్ ఇన్ అయ్యారు';
+  }
+
+  @override
+  String get verifyAndContinue => 'ధృవీకరించి కొనసాగించండి';
+
+  @override
+  String get useDifferentAccount => 'వేరే Google ఖాతాను ఉపయోగించండి';
+
+  @override
+  String get switchGoogleAccount => 'Google ఖాతా మార్చండి';
+
+  @override
+  String get googleAccount => 'Google ఖాతా';
+
+  @override
+  String get identityRegistryVerified =>
+      'న్యాయవాదుల రిజిస్ట్రీతో ధృవీకరించబడింది';
+
+  @override
+  String get errInvalidAdvocateCode =>
+      'చెల్లని న్యాయవాది కోడ్. దయచేసి మీ కోడ్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get errEmailMismatch =>
+      'మీ Google ఖాతా ఇమెయిల్ ఈ న్యాయవాది కోడ్‌కు నమోదైన ఇమెయిల్‌తో సరిపోలడం లేదు. దయచేసి మీ నమోదిత ఇమెయిల్‌తో సైన్ ఇన్ చేయండి.';
+
+  @override
+  String get errAdvocateAlreadyLinked =>
+      'ఈ న్యాయవాది కోడ్ ఇప్పటికే వేరే Google ఖాతాకు లింక్ చేయబడింది.';
+
+  @override
+  String get errGoogleLinkedElsewhere =>
+      'ఈ Google ఖాతా ఇప్పటికే వేరే న్యాయవాది కోడ్‌కు లింక్ చేయబడింది.';
+
+  @override
+  String get errAdvocateNotEligible =>
+      'ఈ న్యాయవాది కోడ్ అడ్వకేట్‌మేట్ ఉపయోగానికి క్రియాశీలంగా లేదు.';
+
+  @override
+  String get errRegistryEmailMissing =>
+      'ఈ న్యాయవాది కోడ్‌కు నమోదైన ఇమెయిల్ లేదు, కాబట్టి ధృవీకరించలేము.';
+
+  @override
+  String get errGoogleCancelled => 'Google సైన్ ఇన్ రద్దు చేయబడింది.';
+
+  @override
+  String get errGoogleNotConfigured =>
+      'ఈ యాప్ వెర్షన్‌లో Google సైన్ ఇన్ సెటప్ చేయబడలేదు.';
+
+  @override
+  String get errGoogleUnavailable =>
+      'ఈ పరికరంలో Google సైన్ ఇన్ అందుబాటులో లేదు.';
+
+  @override
+  String get errGoogleEmailUnverified =>
+      'మీ Google ఖాతా ఇమెయిల్ ధృవీకరించబడలేదు.';
+
+  @override
+  String get errLinkExpired =>
+      'మీ Google సైన్ ఇన్ గడువు ముగిసింది. దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.';
+
+  @override
+  String get accessEndedNotEligible =>
+      'యాక్సెస్ ముగిసింది: ఈ న్యాయవాది కోడ్ ఇకపై క్రియాశీలంగా లేదు.';
 }

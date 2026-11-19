@@ -22,6 +22,7 @@ os.environ.update(
     JWT_SECRET="test-secret-test-secret-test-secret-1234",
     OTP_HASH_SECRET="test-otp-secret-test-otp-secret-123456",
     FCM_ENABLED="false",
+    GOOGLE_CLIENT_IDS="test-web-client.apps.googleusercontent.com",
 )
 
 import pytest  # noqa: E402
@@ -30,9 +31,12 @@ from sqlalchemy import create_engine  # noqa: E402
 
 import app.models  # noqa: E402,F401
 from app.core import rate_limit  # noqa: E402
+from app.core.errors import Unauthorized  # noqa: E402
 from app.db.base import Base  # noqa: E402
 from app.db.session import set_engine  # noqa: E402
+from app.integrations import google_identity  # noqa: E402
 from app.integrations.aphc import parsers as aphc_parsers  # noqa: E402
+from app.integrations.google_identity import GoogleIdentity  # noqa: E402
 from app.integrations.lexika import parsers as lx  # noqa: E402
 from app.integrations.lexika.client import CaseStatusResult  # noqa: E402
 from app.services import sources  # noqa: E402
@@ -64,6 +68,42 @@ def clean_db(engine):
         for table in reversed(Base.metadata.sorted_tables):
             conn.execute(table.delete())
     yield
+
+
+def load_sample_registry() -> None:
+    """Fictional registry (tests/fixtures/registry/sample_registry.csv), loaded via the real importer."""
+    import csv
+
+    from app.db.session import db_session
+    from app.services.registry import import_rows
+
+    with open(FIXTURES / "registry" / "sample_registry.csv", newline="", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    with db_session() as db:
+        import_rows(db, rows, source="sample-test-registry")
+
+
+@pytest.fixture(autouse=True)
+def sample_registry(clean_db):
+    load_sample_registry()
+
+
+def fake_google_token(sub: str, email: str, *, verified: bool = True) -> str:
+    """Stands in for a Google ID token in API tests (the real verifier has its own tests)."""
+    return f"fake-google-id-token:{sub}:{email}:{'1' if verified else '0'}"
+
+
+@pytest.fixture(autouse=True)
+def fake_google(monkeypatch):
+    def verify(token: str, *, transport=None) -> GoogleIdentity:
+        parts = (token or "").split(":")
+        if len(parts) != 4 or parts[0] != "fake-google-id-token":
+            raise Unauthorized("Google sign-in failed. Please try again.", code="google_token_invalid")
+        if parts[3] != "1":
+            raise Unauthorized("Your Google account email is not verified.", code="google_email_unverified")
+        return GoogleIdentity(sub=parts[1], email=parts[2].lower(), email_verified=True)
+
+    monkeypatch.setattr(google_identity, "verify_id_token", verify)
 
 
 # ---------------------------------------------------------------- fakes
@@ -187,14 +227,19 @@ def client(engine, fake_aphc, fake_lexika):
         yield c
 
 
-def login(client: TestClient, code: str = "12345", mobile: str = "9876543210") -> dict:
-    r = client.post("/api/v1/auth/send-otp", json={"advocate_code": code, "mobile": mobile, "identity_confirmed": True})
+def login(client: TestClient, code: str = "12345", email: str = "adv.one@example.com",
+          sub: str | None = None) -> dict:
+    """Google sign-in (step 1) + advocate-code link (step 2) - or step 1 only when already linked."""
+    sub = sub or f"google-sub-{code}"
+    r = client.post("/api/v1/auth/google", json={"id_token": fake_google_token(sub, email)})
     assert r.status_code == 200, r.text
-    otp = r.json()["dev_otp"]
-    r = client.post("/api/v1/auth/verify-otp", json={"advocate_code": code, "mobile": mobile, "otp": otp})
-    assert r.status_code == 200, r.text
-    tokens = r.json()
-    return {"Authorization": f"Bearer {tokens['access_token']}", "_refresh": tokens["refresh_token"]}
+    body = r.json()
+    if body["status"] == "advocate_code_required":
+        r = client.post("/api/v1/auth/google/link", json={"link_token": body["link_token"], "advocate_code": code})
+        assert r.status_code == 200, r.text
+        body = r.json()
+    assert body["status"] == "signed_in", body
+    return {"Authorization": f"Bearer {body['access_token']}", "_refresh": body["refresh_token"]}
 
 
 def auth(headers: dict) -> dict:
@@ -208,7 +253,7 @@ def user_headers(client):
 
 @pytest.fixture
 def admin_headers(client, engine):
-    h = login(client, code="67890", mobile="9123456789")
+    h = login(client, code="67890", email="adv.two@example.com")
     from sqlalchemy import select, update
 
     from app.models import AdvocateProfile, User

@@ -2,7 +2,7 @@ import logging
 
 from app.core.logging import JsonFormatter, redact_mapping, redact_text
 from app.core.security import create_access_token, decode_access_token, hash_otp, hash_token
-from app.services.auth import mask_phone, normalise_phone
+from app.services.auth import mask_phone
 
 
 def test_redaction_of_secrets_in_text_and_mappings():
@@ -28,17 +28,8 @@ def test_tokens_and_hashes():
     assert hash_otp("+919876543210", "123456", "s1") != hash_otp("+919876543210", "123456", "s2")
 
 
-def test_phone_normalisation():
-    assert normalise_phone("98765 43210") == "+919876543210"
-    assert normalise_phone("+91-9876543210") == "+919876543210"
+def test_phone_masking():
     assert mask_phone("+919876543210") == "+91******3210"
-    import pytest
-
-    from app.core.errors import AppError
-
-    for bad in ("12345", "5876543210", "+1 9876543210"):
-        with pytest.raises(AppError):
-            normalise_phone(bad)
 
 
 def test_production_refuses_dev_defaults(monkeypatch):
@@ -51,5 +42,9 @@ def test_production_refuses_dev_defaults(monkeypatch):
         Settings(environment="production", jwt_secret="x" * 40, otp_hash_secret="y" * 40, otp_provider="dev_echo")
     with pytest.raises(ValidationError):
         Settings(environment="production", jwt_secret="too-short", otp_hash_secret="y" * 40, otp_provider="disabled")
-    ok = Settings(environment="production", jwt_secret="x" * 40, otp_hash_secret="y" * 40, otp_provider="disabled")
+    with pytest.raises(ValidationError):  # Google sign-in client IDs are mandatory outside dev/test
+        Settings(environment="production", jwt_secret="x" * 40, otp_hash_secret="y" * 40, otp_provider="disabled",
+                 google_client_ids="")
+    ok = Settings(environment="production", jwt_secret="x" * 40, otp_hash_secret="y" * 40, otp_provider="disabled",
+                  google_client_ids="web-client.apps.googleusercontent.com")
     assert ok.environment == "production"

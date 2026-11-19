@@ -16,7 +16,10 @@ abstract class Me with _$Me {
     String? advocateName,
     String? displayName,
     String? email,
+    String? googleEmail,
     String? identityVerification,
+    String? verificationMethod,
+    String? linkedAt,
     String? mobile,
     String? createdAt,
   }) = _Me;
@@ -24,44 +27,21 @@ abstract class Me with _$Me {
   factory Me.fromJson(Map<String, dynamic> json) => _$MeFromJson(json);
 }
 
+/// Response of POST /auth/google and /auth/google/link.
 @freezed
-abstract class RegisterInfo with _$RegisterInfo {
-  const factory RegisterInfo({
-    required String advocateCode,
-    required String advocateName,
-    required String source,
-    required bool alreadyRegistered,
-    String? registeredMobileHint,
-    required bool otpAvailable,
-    required String identityNote,
-  }) = _RegisterInfo;
+abstract class GoogleSignInResult with _$GoogleSignInResult {
+  const factory GoogleSignInResult({
+    required String status, // signed_in | advocate_code_required
+    String? accessToken,
+    String? refreshToken,
+    int? expiresIn,
+    String? sessionId,
+    String? linkToken,
+    int? linkExpiresIn,
+    String? googleEmail,
+  }) = _GoogleSignInResult;
 
-  factory RegisterInfo.fromJson(Map<String, dynamic> json) => _$RegisterInfoFromJson(json);
-}
-
-@freezed
-abstract class OtpSent with _$OtpSent {
-  const factory OtpSent({
-    required String otpId,
-    required int expiresIn,
-    required String sentTo,
-    required String advocateName,
-    String? devOtp,
-  }) = _OtpSent;
-
-  factory OtpSent.fromJson(Map<String, dynamic> json) => _$OtpSentFromJson(json);
-}
-
-@freezed
-abstract class AuthTokens with _$AuthTokens {
-  const factory AuthTokens({
-    required String accessToken,
-    required String refreshToken,
-    required int expiresIn,
-    required String sessionId,
-  }) = _AuthTokens;
-
-  factory AuthTokens.fromJson(Map<String, dynamic> json) => _$AuthTokensFromJson(json);
+  factory GoogleSignInResult.fromJson(Map<String, dynamic> json) => _$GoogleSignInResultFromJson(json);
 }
 
 // ------------------------------------------------------------------ advocate cause list

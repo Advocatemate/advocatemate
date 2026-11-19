@@ -18,12 +18,22 @@ from app.models.lexika import (
     LexikaCaseVakalathMapping,
     LexikaSafetyCircuit,
 )
-from app.models.users import Advocate, AdvocateProfile, AuthSession, OtpRecord, RefreshToken, User, VerifiedMobile
+from app.models.users import (
+    Advocate,
+    AdvocateProfile,
+    AdvocateRegistryEntry,
+    AuthSession,
+    OtpRecord,
+    RefreshToken,
+    User,
+    VerifiedMobile,
+)
 
 __all__ = [
     "Advocate",
     "AdvocateCaseLink",
     "AdvocateProfile",
+    "AdvocateRegistryEntry",
     "AuditRecord",
     "AuthSession",
     "Case",

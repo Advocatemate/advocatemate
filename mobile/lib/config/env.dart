@@ -13,6 +13,11 @@ class Env {
   /// and this flag is set (they are not committed to the repository).
   static const firebaseEnabled = bool.fromEnvironment('FIREBASE_ENABLED', defaultValue: false);
 
+  /// Google Sign-In: the backend's Web OAuth client ID (ID tokens are issued for it and the
+  /// backend checks the audience) and, on iOS, the iOS OAuth client ID. Not secrets.
+  static const googleServerClientId = String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+  static const googleIosClientId = String.fromEnvironment('GOOGLE_IOS_CLIENT_ID');
+
   static bool get isProduction => appEnv == 'production';
 
   static String get apiPrefix => '$apiBaseUrl/api/v1';

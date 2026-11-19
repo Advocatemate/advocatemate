@@ -9,41 +9,47 @@ from app.core import rate_limit
 from app.core.errors import AppError
 from app.db.session import get_db
 from app.models import VerifiedMobile
-from app.schemas import (
-    MeOut,
-    ProfileUpdateIn,
-    RefreshIn,
-    RegisterIn,
-    RegisterOut,
-    SendOtpIn,
-    SendOtpOut,
-    TokenOut,
-    VerifyOtpIn,
-)
-from app.services import audit
+from app.schemas import GoogleLinkIn, GoogleSignInIn, GoogleSignInOut, MeOut, ProfileUpdateIn, RefreshIn, TokenOut
+from app.services import audit, google_auth
 from app.services import auth as auth_service
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 
-@router.post("/register", response_model=RegisterOut, summary="Validate an advocate code against APHC")
-def register(body: RegisterIn, request: Request, db: Session = Depends(get_db)):
-    rate_limit.hit(f"register:{client_ip(request)}", 20, 3600)
-    return auth_service.register(db, body.advocate_code)
+@router.post("/google", response_model=GoogleSignInOut, response_model_exclude_none=True,
+             summary="Step 1: verify a Google ID token on the server")
+def google_sign_in(body: GoogleSignInIn, request: Request, db: Session = Depends(get_db)):
+    """Returns a session straight away when this Google account is already linked to an eligible
+    advocate (Scenario B); otherwise `advocate_code_required` with a short-lived link token."""
+    return google_auth.sign_in_with_google(db, body.id_token, device_label=body.device_label,
+                                           user_agent=request.headers.get("user-agent"), ip=client_ip(request))
 
 
-@router.post("/send-otp", response_model=SendOtpOut)
-def send_otp(body: SendOtpIn, request: Request, db: Session = Depends(get_db)):
-    if not body.identity_confirmed:
-        raise AppError("Please confirm the advocate details are yours", code="identity_not_confirmed",
-                       status_code=422)
-    return auth_service.send_otp(db, body.advocate_code, body.mobile, client_ip(request))
+@router.post("/google/link", response_model=GoogleSignInOut, response_model_exclude_none=True,
+             summary="Step 2: link the verified Google account to an advocate code (automatic registry check)")
+def google_link(body: GoogleLinkIn, request: Request, db: Session = Depends(get_db)):
+    return google_auth.link_advocate(db, body.link_token, body.advocate_code, device_label=body.device_label,
+                                     user_agent=request.headers.get("user-agent"), ip=client_ip(request))
 
 
-@router.post("/verify-otp", response_model=TokenOut)
-def verify_otp(body: VerifyOtpIn, request: Request, db: Session = Depends(get_db)):
-    return auth_service.verify_otp(db, body.advocate_code, body.mobile, body.otp, device_label=body.device_label,
-                                   user_agent=request.headers.get("user-agent"), ip=client_ip(request))
+def _retired():
+    raise AppError("This sign-in method has been replaced by Google sign-in. Please update the app.",
+                   code="login_method_retired", status_code=410)
+
+
+@router.post("/register", include_in_schema=False)
+def register_retired():
+    _retired()
+
+
+@router.post("/send-otp", include_in_schema=False)
+def send_otp_retired():
+    _retired()
+
+
+@router.post("/verify-otp", include_in_schema=False)
+def verify_otp_retired():
+    _retired()
 
 
 @router.post("/refresh", response_model=TokenOut)
@@ -69,7 +75,10 @@ def me_payload(db: Session, current: CurrentUser) -> dict:
         "advocate_name": p.source_name if p else None,
         "display_name": p.display_name if p else None,
         "email": p.email if p else None,
+        "google_email": p.google_email if p else None,
         "identity_verification": p.identity_verification if p else None,
+        "verification_method": p.verification_method if p else None,
+        "linked_at": p.linked_at if p else None,
         "mobile": auth_service.mask_phone(mobile.phone_e164) if mobile else None,
         "created_at": current.user.created_at,
     }

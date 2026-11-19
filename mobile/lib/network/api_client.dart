@@ -29,7 +29,17 @@ class ApiClient {
   SessionExpiredCallback? onSessionExpired;
   Completer<bool>? _refreshing;
 
-  static const _noAuthPaths = ['/auth/register', '/auth/send-otp', '/auth/verify-otp', '/auth/refresh'];
+  static const _noAuthPaths = ['/auth/google', '/auth/google/link', '/auth/refresh'];
+
+  /// Server says this account may no longer use the app (registry status changed, or the
+  /// profile was never linked to Google): end the session instead of retrying.
+  static const _accessEndedCodes = ['advocate_not_eligible', 'google_link_required'];
+
+  static String? _errorCode(Response<dynamic>? r) {
+    final body = r?.data;
+    if (body is Map && body['error'] is Map) return (body['error'] as Map)['code']?.toString();
+    return null;
+  }
 
   Future<void> _attachToken(RequestOptions options, RequestInterceptorHandler handler) async {
     if (!_noAuthPaths.contains(options.path)) {
@@ -42,6 +52,11 @@ class ApiClient {
   Future<void> _onError(DioException err, ErrorInterceptorHandler handler) async {
     final req = err.requestOptions;
     final is401 = err.response?.statusCode == 401;
+    if (!_noAuthPaths.contains(req.path) && _accessEndedCodes.contains(_errorCode(err.response))) {
+      await tokens.clear();
+      onSessionExpired?.call();
+      return handler.next(err);
+    }
     if (!is401 || _noAuthPaths.contains(req.path) || req.extra['retried'] == true) {
       return handler.next(err);
     }

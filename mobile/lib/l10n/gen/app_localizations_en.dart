@@ -75,54 +75,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginTitle => 'Sign in';
 
   @override
-  String get loginSubtitle =>
-      'Use your advocate code. We verify your mobile number with a one-time password.';
-
-  @override
-  String get isThisYou => 'Is this you?';
-
-  @override
-  String get identityConfirm => 'Yes, this is me';
-
-  @override
-  String get identityDeny => 'No, change code';
-
-  @override
-  String get mobileNumber => 'Mobile number';
-
-  @override
-  String get mobileHint => '10-digit mobile number';
-
-  @override
-  String get sendOtp => 'Send OTP';
-
-  @override
-  String enterOtp(String target) {
-    return 'Enter the OTP sent to $target';
-  }
-
-  @override
-  String get verifyOtp => 'Verify & sign in';
-
-  @override
-  String get otpUnavailable =>
-      'OTP sign-in is not available on this server yet.';
-
-  @override
-  String registeredMobileHint(String hint) {
-    return 'This code is registered to $hint';
-  }
-
-  @override
-  String get identityNote =>
-      'Advocate codes are public, so your identity is verified through your mobile number.';
-
-  @override
-  String devOtpNotice(String otp) {
-    return 'Development build: OTP is $otp';
-  }
-
-  @override
   String get today => 'Today';
 
   @override
@@ -415,9 +367,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get identityStatus => 'Identity verification';
 
   @override
-  String get identitySelfDeclared => 'Self-declared (mobile verified)';
-
-  @override
   String get identityVerified => 'Verified';
 
   @override
@@ -443,4 +392,86 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dataNotice =>
       'Court data is retrieved from public Andhra Pradesh High Court sources. Always verify with the official cause list.';
+
+  @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get googleSignInSubtitle =>
+      'Use the Google account registered for your advocate code.';
+
+  @override
+  String get googleSignInNote =>
+      'Your identity is verified automatically against the advocate registry.';
+
+  @override
+  String get advocateCodeTitle => 'Enter your Advocate Code';
+
+  @override
+  String signedInAsGoogle(String email) {
+    return 'Signed in with Google as $email';
+  }
+
+  @override
+  String get verifyAndContinue => 'Verify and continue';
+
+  @override
+  String get useDifferentAccount => 'Use a different Google account';
+
+  @override
+  String get switchGoogleAccount => 'Switch Google account';
+
+  @override
+  String get googleAccount => 'Google account';
+
+  @override
+  String get identityRegistryVerified =>
+      'Verified against the advocate registry';
+
+  @override
+  String get errInvalidAdvocateCode =>
+      'Invalid Advocate Code. Please check your code and try again.';
+
+  @override
+  String get errEmailMismatch =>
+      'Your Google account email does not match the email registered for this advocate code. Please sign in with your registered email address.';
+
+  @override
+  String get errAdvocateAlreadyLinked =>
+      'This advocate code is already linked to a different Google account.';
+
+  @override
+  String get errGoogleLinkedElsewhere =>
+      'This Google account is already linked to a different advocate code.';
+
+  @override
+  String get errAdvocateNotEligible =>
+      'This advocate code is not active for AdvocateMate access.';
+
+  @override
+  String get errRegistryEmailMissing =>
+      'This advocate code has no registered email address, so it cannot be verified.';
+
+  @override
+  String get errGoogleCancelled => 'Google sign-in was cancelled.';
+
+  @override
+  String get errGoogleNotConfigured =>
+      'Google sign-in is not set up in this version of the app.';
+
+  @override
+  String get errGoogleUnavailable =>
+      'Google sign-in is not available on this device.';
+
+  @override
+  String get errGoogleEmailUnverified =>
+      'Your Google account email is not verified.';
+
+  @override
+  String get errLinkExpired =>
+      'Your Google sign-in expired. Please sign in again.';
+
+  @override
+  String get accessEndedNotEligible =>
+      'Access ended: this advocate code is no longer active.';
 }

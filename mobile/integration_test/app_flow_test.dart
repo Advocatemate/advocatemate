@@ -15,19 +15,13 @@ import '../test/support/pump_app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('authentication to dashboard', (tester) async {
+  testWidgets('authentication to dashboard (Google -> advocate code -> registry check)', (tester) async {
     final deps = await makeDeps();
     final c = await pumpApp(tester, deps);
+    await tester.tap(find.byKey(const Key('googleSignInButton')));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('advocateCodeField')), '12345');
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Yes, this is me'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('mobileField')), '9876543210');
-    await tester.tap(find.text('Send OTP'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('otpField')), '123456');
-    await tester.tap(find.text('Verify & sign in'));
+    await tester.tap(find.byKey(const Key('verifyAdvocateButton')));
     await tester.pumpAndSettle();
     expect(c.read(sessionProvider), isA<SessionSignedIn>());
     expect(find.text('Welcome, ADVOCATE ONE'), findsOneWidget);

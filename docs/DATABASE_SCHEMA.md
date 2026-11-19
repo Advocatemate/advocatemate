@@ -1,4 +1,4 @@
-# Database schema (PostgreSQL 16, Alembic revision `0001`)
+# Database schema (PostgreSQL 16, Alembic revision `0002`)
 
 UUID primary keys unless noted; all timestamps `timestamptz` (UTC). JSON columns are `JSONB` on PostgreSQL.
 Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && alembic check && alembic downgrade base`.
@@ -8,9 +8,9 @@ Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && ale
 |---|---|
 | `users` | role (`advocate`/`admin`), status, preferred_language, last_login_at, soft-delete `deleted_at` |
 | `advocates` | PK `advocate_code`; name + source + fetched_at (public directory from Lexika) |
-| `advocate_profiles` | 1:1 user; `advocate_code` UNIQUE FK; `source_name` (read-only), editable `display_name`/`email`; `identity_verification` (`self_declared`/`verified`/`rejected`) + verifier |
-| `verified_mobiles` | UNIQUE(user_id, phone_e164) |
-| `otp_records` | HMAC of OTP only (never the code), attempts, expires_at, consumed_at; index (phone, created_at) |
+| `advocate_registry` | **authoritative** advocate registry (migration 0002): PK `advocate_code`, `full_name`, `email_normalized` (indexed, nullable), `status`, `source`, `source_reference`, `imported_at`. Loaded only by `scripts/import_registry.py` |
+| `advocate_profiles` | the Google ↔ user ↔ advocate link: UNIQUE `user_id`, UNIQUE `advocate_code` (FK), UNIQUE `google_sub`; `google_email`, `linked_at`, `verification_method` (`registry_email_match`); `identity_verification` (`registry_verified` / `legacy_unverified`); editable `display_name`/`email` |
+| `verified_mobiles`, `otp_records` | from the retired mobile-OTP login; kept (no data deleted), unused |
 | `auth_sessions` | per device; revoked_at + reason |
 | `refresh_tokens` | `token_hash` UNIQUE (HMAC), used_at (rotation), revoked_at |
 

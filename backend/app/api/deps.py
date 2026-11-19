@@ -60,8 +60,13 @@ def get_current_user(
     user = db.get(User, user_id)
     if user is None or user.status != "active" or user.deleted_at is not None:
         raise Unauthorized("Account is not active", code="account_inactive")
-    session.last_seen_at = utcnow()
     profile = db.query(AdvocateProfile).filter(AdvocateProfile.user_id == user.id).one_or_none()
+    # Access requires a verified Google link and an advocate who is still eligible in the registry;
+    # otherwise this session is revoked and the app must sign in again.
+    from app.services.google_auth import assert_access_allowed
+
+    assert_access_allowed(db, profile, session_id=session_id)
+    session.last_seen_at = utcnow()
     rate_limit.hit(f"user:{user.id}", get_settings().rate_limit_per_minute, 60)
     return CurrentUser(user=user, session_id=session_id, profile=profile)
 

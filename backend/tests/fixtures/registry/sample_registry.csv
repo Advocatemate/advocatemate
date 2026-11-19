@@ -1,0 +1,7 @@
+advocate_code,full_name,email,status,source_reference
+12345,ADVOCATE ONE,Adv.One@Example.com,active,SAMPLE-0001
+67890,ADVOCATE TWO,adv.two@example.com,active,SAMPLE-0002
+24680,ADVOCATE THREE,adv.three@example.com,active,SAMPLE-0003
+11111,INACTIVE ADVOCATE,inactive.adv@example.com,inactive,SAMPLE-0004
+22222,NO EMAIL ADVOCATE,,active,SAMPLE-0005
+33333,SUSPENDED ADVOCATE,suspended.adv@example.com,suspended,SAMPLE-0006

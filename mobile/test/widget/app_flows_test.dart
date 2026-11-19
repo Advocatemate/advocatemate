@@ -1,3 +1,4 @@
+import 'package:advocatemate/features/authentication/google_auth_service.dart';
 import 'package:advocatemate/features/authentication/session_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -6,35 +7,133 @@ import '../support/fake_backend.dart';
 import '../support/pump_app.dart';
 
 void main() {
-  testWidgets('login: code -> confirm identity -> mobile -> OTP -> dashboard', (tester) async {
+  Future<void> googleThenCode(WidgetTester tester, String code) async {
+    await tester.tap(find.byKey(const Key('googleSignInButton')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('advocateCodeField')), code);
+    await tester.tap(find.byKey(const Key('verifyAdvocateButton')));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('Scenario A: Google -> advocate code -> automatic verification -> dashboard', (tester) async {
     final deps = await makeDeps();
     final c = await pumpApp(tester, deps);
-    expect(find.text('Sign in'), findsOneWidget);
+    expect(find.text('Sign in with Google'), findsOneWidget);
+    expect(find.byKey(const Key('advocateCodeField')), findsNothing); // code is never asked first
+
+    await tester.tap(find.byKey(const Key('googleSignInButton')));
+    await tester.pumpAndSettle();
+    expect(c.read(sessionProvider), isA<SessionNeedsAdvocateCode>());
+    expect(find.text('Signed in with Google as adv.one@example.com'), findsOneWidget);
+    expect(deps.tokens.tokens, isNull); // no session until the registry check passes
+
+    // Scenario C: unknown code, exact message, and the user can correct it.
+    await tester.enterText(find.byKey(const Key('advocateCodeField')), '99999');
+    await tester.tap(find.byKey(const Key('verifyAdvocateButton')));
+    await tester.pumpAndSettle();
+    expect(find.text('Invalid Advocate Code. Please check your code and try again.'), findsOneWidget);
 
     await tester.enterText(find.byKey(const Key('advocateCodeField')), '12345');
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('advocateNameText')), findsOneWidget);
-    expect(find.text('ADVOCATE ONE'), findsOneWidget);
-
-    await tester.tap(find.text('Yes, this is me'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('mobileField')), '9876543210');
-    await tester.tap(find.text('Send OTP'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Development build: OTP is 123456'), findsOneWidget);
-
-    await tester.enterText(find.byKey(const Key('otpField')), '000000');
-    await tester.tap(find.text('Verify & sign in'));
-    await tester.pumpAndSettle();
-    expect(find.text('Incorrect OTP'), findsOneWidget);
-
-    await tester.enterText(find.byKey(const Key('otpField')), '123456');
-    await tester.tap(find.text('Verify & sign in'));
+    await tester.tap(find.byKey(const Key('verifyAdvocateButton')));
     await tester.pumpAndSettle();
     expect(c.read(sessionProvider), isA<SessionSignedIn>());
     expect(find.text('Welcome, ADVOCATE ONE'), findsOneWidget);
-    expect(deps.tokens.tokens?.accessToken, 'acc');
+    expect(deps.tokens.tokens?.accessToken, 'acc-12345');
+  });
+
+  testWidgets('Scenario B: already linked Google account goes straight to the dashboard', (tester) async {
+    final deps = await makeDeps();
+    final c = await pumpApp(tester, deps);
+    await googleThenCode(tester, '12345');
+    routerOf(c).go('/more');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Log out'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sign in with Google'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('googleSignInButton')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('advocateCodeField')), findsNothing);
+    expect(find.text('Welcome, ADVOCATE ONE'), findsOneWidget);
+  });
+
+  for (final (name, email, code, message) in [
+    ('D email mismatch', 'someone.else@example.com', '12345',
+        'Your Google account email does not match the email registered for this advocate code. Please sign in with your registered email address.'),
+    ('G not eligible', 'inactive.adv@example.com', '11111', 'This advocate code is not active for AdvocateMate access.'),
+    ('no registered email', 'any@example.com', '22222',
+        'This advocate code has no registered email address, so it cannot be verified.'),
+  ]) {
+    testWidgets('Scenario $name is denied with a clear message', (tester) async {
+      final deps = await makeDeps();
+      deps.google.email = email;
+      final c = await pumpApp(tester, deps);
+      await googleThenCode(tester, code);
+      expect(find.text(message), findsOneWidget);
+      expect(c.read(sessionProvider), isA<SessionNeedsAdvocateCode>());
+      expect(deps.tokens.tokens, isNull);
+    });
+  }
+
+  testWidgets('Scenarios E and F: one Google account <-> one advocate', (tester) async {
+    final deps = await makeDeps();
+    final c = await pumpApp(tester, deps);
+    await googleThenCode(tester, '12345'); // google-sub-1 linked to 12345
+    routerOf(c).go('/more');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Switch Google account'));
+    await tester.pumpAndSettle();
+
+    // E: a different Google account (same registered email) tries the already-linked code.
+    deps.google.sub = 'google-sub-2';
+    await googleThenCode(tester, '12345');
+    expect(find.text('This advocate code is already linked to a different Google account.'), findsOneWidget);
+    await tester.tap(find.text('Use a different Google account'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sign in with Google'), findsOneWidget);
+
+    // F: a link token for the already-linked google-sub-1 is used against a second advocate.
+    deps.google.sub = 'google-sub-1';
+    deps.backend.on('POST', '/auth/google', (_) => {'status': 'advocate_code_required',
+      'link_token': 'link:google-sub-1:adv.two@example.com', 'link_expires_in': 600, 'google_email': 'adv.two@example.com'});
+    await googleThenCode(tester, '67890');
+    expect(find.text('This Google account is already linked to a different advocate code.'), findsOneWidget);
+  });
+
+  testWidgets('cancelling the Google picker shows no error', (tester) async {
+    final deps = await makeDeps();
+    deps.google.failWith = GoogleSignInFailure.cancelled;
+    await pumpApp(tester, deps);
+    await tester.tap(find.byKey(const Key('googleSignInButton')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('loginError')), findsNothing);
+    expect(find.text('Sign in with Google'), findsOneWidget);
+  });
+
+  testWidgets('switch Google account clears the session but not the permanent link', (tester) async {
+    final deps = await makeDeps();
+    final c = await pumpApp(tester, deps);
+    await googleThenCode(tester, '12345');
+    routerOf(c).go('/more');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Switch Google account'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sign in with Google'), findsOneWidget);
+    expect(deps.tokens.tokens, isNull);
+    expect(deps.google.signOutCalls, greaterThan(0));
+    deps.google
+      ..sub = 'google-sub-2'
+      ..email = 'adv.two@example.com';
+    await googleThenCode(tester, '67890');
+    expect(find.text('Welcome, ADVOCATE TWO'), findsOneWidget);
+  });
+
+  testWidgets('advocate deactivated in the registry is signed out with a message', (tester) async {
+    final deps = await makeDeps(signedIn: true);
+    deps.backend.on('GET', '/auth/me', (_) => apiError(403, 'advocate_not_eligible', 'not active'));
+    await pumpApp(tester, deps);
+    expect(find.text('Sign in with Google'), findsOneWidget);
+    expect(find.text('Access ended: this advocate code is no longer active.'), findsOneWidget);
+    expect(deps.tokens.tokens, isNull);
   });
 
   testWidgets('dashboard shows my list summary, publication status and unread badge', (tester) async {

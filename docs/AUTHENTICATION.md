@@ -1,45 +1,92 @@
 # Authentication
 
+Sign-in is **Google Sign-In + automatic advocate verification against the advocate registry**.
+There is no admin approval, no manual verification and no "pending" state: access is granted only when a
+server-verified Google identity matches the authoritative registry. The earlier advocate-code + mobile-OTP
+login is retired (its endpoints return `410 login_method_retired`).
+
 ## Flow
-1. `POST /auth/register {advocate_code}` — validates the code with the Lexika chatbot and returns the advocate
-   name as published by APHC, whether the code already has an account, and a masked hint of its mobile.
-2. The app shows the name and asks **"Is this you?"**; `send-otp` requires `identity_confirmed=true`.
-3. `POST /auth/send-otp {advocate_code, mobile, identity_confirmed}` — Indian 10-digit mobile, normalised to
-   E.164. If the code is already bound to an account, only that account's verified mobile is accepted.
-4. `POST /auth/verify-otp {advocate_code, mobile, otp}` — on first success creates user + profile + verified
-   mobile; returns `access_token` (JWT HS256, 15 min, claims `sub`, `sid`, `role`, `iss`, `exp`, `jti`) and an
-   opaque `refresh_token` (30 days).
-5. `POST /auth/refresh` — **rotation**: each refresh token is single-use; presenting a used token revokes the
-   whole session (`refresh_reused`). `POST /auth/logout` revokes the session and its tokens.
+```
+App: Google account picker ──ID token──► POST /auth/google
+                                         backend verifies the token with Google (google-auth)
+          ┌── Google account already linked & advocate still eligible ──► session (Scenario B) ──► dashboard
+          └── otherwise ──► { status: advocate_code_required, link_token (10 min, single use), google_email }
+App: Advocate Code screen ──► POST /auth/google/link { link_token, advocate_code }
+                              checks, in one locked transaction:
+                              C code not in registry ............ 404 invalid_advocate_code
+                              F Google account linked elsewhere .. 409 google_account_linked_elsewhere
+                              G registry status not active ....... 403 advocate_not_eligible
+                                registry has no email ............ 403 registry_email_missing
+                              D Google email ≠ registry email .... 403 email_mismatch
+                              E code linked to another Google acct 409 advocate_already_linked
+                              A all pass ─► link (one-to-one) + session ─► dashboard
+Later launches: saved session ─► GET /auth/me (re-checks link + eligibility) ─► dashboard
+```
+Message for C (shown verbatim): *"Invalid Advocate Code. Please check your code and try again."*
 
-## What is and is not verified — read this
-* **Advocate codes are public** and are never treated as a secret.
-* **No authorised source of advocates' registered mobile numbers was found** (APHC pages and the chatbot do
-  not expose one). Therefore the OTP proves **possession of the mobile number only**. It does *not* prove that
-  the person is the advocate who holds the code.
-* Accounts are created with `identity_verification = self_declared`. The profile screen shows this status.
-  An administrator can set `verified`/`rejected` (`POST /admin/advocates/verify`) after an out-of-band check
-  (e.g. Bar Council ID / APHC registry). A proper integration needs an authorised verification service.
-* First-come binding: the first verified mobile for a code owns it; later attempts with another number get
-  `mobile_mismatch`. A dispute/transfer process must be defined by the product owner.
-* All data the app exposes is public court information, which limits the impact of a false claim, but the
-  limitation must be stated to users and is shown in the UI.
+## Security properties
+* **Google ID token is verified only on the server** (`app/integrations/google_identity.py`): signature
+  against Google's certificates, issuer `accounts.google.com`, expiry, audience = `GOOGLE_CLIENT_IDS`, and
+  `email_verified = true`. The app never sends an email or Google ID that the server trusts; extra request
+  fields are rejected (422).
+* Identity is Google's stable `sub`; the email is compared (lower-cased, exact) only at link time.
+* **An advocate code alone never grants access**: linking needs a server-signed link token that only exists
+  after Google verification. Link tokens are HS256 JWTs (`typ=google_link`), expire after
+  `GOOGLE_LINK_TOKEN_MINUTES` (10), and are single-use after a successful link. A wrong code can be retried
+  with the same token (rate-limited: 10 attempts/hour per Google account, 30/hour per IP).
+* **One-to-one links** are enforced by unique constraints on `advocate_profiles.google_sub`,
+  `advocate_profiles.advocate_code` and `advocate_profiles.user_id`, plus a row lock on the registry entry
+  during linking; a lost race maps to `google_account_linked_elsewhere`.
+* **Eligibility is re-checked on every authenticated request and every token refresh.** If the registry marks
+  an advocate inactive/suspended, the session is revoked and the app returns to sign-in with
+  "Access ended: this advocate code is no longer active." The link itself is kept.
+* Nothing is stored for failed attempts except audit records (`advocate_link_attempt` with the result code,
+  never the email or tokens).
+* Sessions are unchanged: 15-minute JWT access token bound to a live session row, 30-day single-use refresh
+  token stored as an HMAC, reuse detection revokes the session. Tokens live in Android Keystore / iOS
+  Keychain via `flutter_secure_storage`.
 
-## OTP delivery
-`OTP_PROVIDER`:
-* `dev_echo` — development/test only; the OTP is returned in the API response (`dev_otp`) and shown in the app.
-  The settings validator **refuses to start** staging/production with this value.
-* `disabled` — `send-otp` returns `503 otp_unavailable`; nothing pretends an SMS was sent.
+## Logout and switching Google accounts
+* **Log out** revokes this device's session, clears tokens and cached data, and signs out of Google on the device.
+* **Switch Google account** (More, Profile, or "Use a different Google account" on the code screen) does the
+  same and shows the account picker again. **The permanent Google ↔ advocate link in the database is not
+  deleted**; signing in again with the linked account goes straight to the dashboard (Scenario B).
 
-**Required before launch:** an SMS gateway account (DLT-registered sender ID and OTP template as required by
-TRAI in India, e.g. MSG91/Gupshup/Twilio Verify), its API credentials in the secret manager, and an adapter in
-`app/services/auth.py` (interface point: `send_otp`). Not implemented because no provider/credentials exist yet.
+## Existing and new users
+* **Profiles from the retired OTP login** were marked `legacy_unverified` by migration `0002`. They cannot
+  sign in (`401 google_link_required`) until the advocate signs in with Google and passes the registry check;
+  then the **same profile is reused** (favourites, notification history kept) and every older session for it
+  is revoked.
+* **New / unregistered users** can complete Google sign-in, but are refused with C, D, F or G as applicable.
+  Nothing is saved and there is no waiting list. With no admin path, fixes are: sign in with the Google
+  account that uses the registered email, or have the registry corrected at its source.
 
-## Controls
-* OTP: 6 digits, 5 min expiry, stored as HMAC-SHA256 with per-OTP salt; max 5 verify attempts then locked;
-  max 5 sends/hour per phone and 20/hour per IP; new OTP invalidates older ones; constant-time compare.
-* Refresh tokens stored as HMAC; access tokens checked against a live session row on every request.
-* Disabled/deleted users are rejected even with a valid token.
-* Mobile: tokens in Android Keystore / iOS Keychain (`first_unlock_this_device`), excluded from backups.
-* Audit records: `otp_sent`, `otp_failed`, `account_registered`, `login`, `logout`, `refresh_reuse_detected`,
-  `profile_updated`, admin actions — no OTPs, tokens or phone numbers in details.
+## The advocate registry (required)
+`advocate_registry` holds the authoritative data: advocate code, full name, registered email, status. It is
+separate from the public `advocates` directory (names scraped from APHC), which is never used for
+verification and never modified by imports.
+
+```
+python -m scripts.import_registry registry.csv --source "<official source>" --dry-run
+python -m scripts.import_registry registry.csv --source "<official source>"
+```
+CSV header: `advocate_code,full_name,email,status[,source_reference]`; status ∈ active, inactive, suspended,
+struck_off, deceased, retired. Codes missing from a full import become `inactive` (use `--keep-missing` to
+avoid). Imports with no valid rows are refused. A fictional sample is in
+`backend/tests/fixtures/registry/sample_registry.csv`.
+
+**Status:** only sample data has been imported in tests. Real verification requires the official registry
+(with advocates' registered emails) and permission to use it.
+
+## Configuration
+| Setting | Where | Notes |
+|---|---|---|
+| `GOOGLE_CLIENT_IDS` | backend env | Web OAuth client ID (the `serverClientId` the apps use); comma-separate several. Required in staging/production. |
+| `GOOGLE_LINK_TOKEN_MINUTES` | backend env | default 10 |
+| `GOOGLE_SERVER_CLIENT_ID` | app `--dart-define` | same Web client ID |
+| `GOOGLE_IOS_CLIENT_ID` | app `--dart-define` | iOS OAuth client ID |
+
+Google Cloud setup (project owner): OAuth consent screen; OAuth clients for **Web**, **Android** (package
+`in.advocatemate.app` + SHA-1 of the debug keystore and of the release / Play app-signing key) and **iOS**
+(bundle `in.advocatemate.app`; add its reversed client ID as a URL scheme in `ios/Runner/Info.plist`).
+Until configured, the app shows "Google sign-in is not set up in this version of the app".

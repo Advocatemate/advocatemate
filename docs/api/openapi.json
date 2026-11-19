@@ -6,18 +6,19 @@
     "version": "0.1.0"
   },
   "paths": {
-    "/api/v1/auth/register": {
+    "/api/v1/auth/google": {
       "post": {
         "tags": [
           "authentication"
         ],
-        "summary": "Validate an advocate code against APHC",
-        "operationId": "register_api_v1_auth_register_post",
+        "summary": "Step 1: verify a Google ID token on the server",
+        "description": "Returns a session straight away when this Google account is already linked to an eligible\nadvocate (Scenario B); otherwise `advocate_code_required` with a short-lived link token.",
+        "operationId": "google_sign_in_api_v1_auth_google_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegisterIn"
+                "$ref": "#/components/schemas/GoogleSignInIn"
               }
             }
           },
@@ -29,7 +30,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegisterOut"
+                  "$ref": "#/components/schemas/GoogleSignInOut"
                 }
               }
             }
@@ -47,18 +48,18 @@
         }
       }
     },
-    "/api/v1/auth/send-otp": {
+    "/api/v1/auth/google/link": {
       "post": {
         "tags": [
           "authentication"
         ],
-        "summary": "Send Otp",
-        "operationId": "send_otp_api_v1_auth_send_otp_post",
+        "summary": "Step 2: link the verified Google account to an advocate code (automatic registry check)",
+        "operationId": "google_link_api_v1_auth_google_link_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SendOtpIn"
+                "$ref": "#/components/schemas/GoogleLinkIn"
               }
             }
           },
@@ -70,48 +71,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SendOtpOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/auth/verify-otp": {
-      "post": {
-        "tags": [
-          "authentication"
-        ],
-        "summary": "Verify Otp",
-        "operationId": "verify_otp_api_v1_auth_verify_otp_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VerifyOtpIn"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenOut"
+                  "$ref": "#/components/schemas/GoogleSignInOut"
                 }
               }
             }
@@ -2154,50 +2114,6 @@
         }
       }
     },
-    "/api/v1/admin/advocates/verify": {
-      "post": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "Verify Advocate",
-        "operationId": "verify_advocate_api_v1_admin_advocates_verify_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AdminVerifyIn"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ]
-      }
-    },
     "/health/live": {
       "get": {
         "tags": [
@@ -2239,31 +2155,6 @@
   },
   "components": {
     "schemas": {
-      "AdminVerifyIn": {
-        "properties": {
-          "advocate_code": {
-            "type": "string",
-            "pattern": "^\\d+$",
-            "title": "Advocate Code"
-          },
-          "decision": {
-            "type": "string",
-            "enum": [
-              "verified",
-              "rejected",
-              "self_declared"
-            ],
-            "title": "Decision"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "advocate_code",
-          "decision"
-        ],
-        "title": "AdminVerifyIn"
-      },
       "DeviceIn": {
         "properties": {
           "token": {
@@ -2521,6 +2412,177 @@
         ],
         "title": "FavouriteCaseOut"
       },
+      "GoogleLinkIn": {
+        "properties": {
+          "link_token": {
+            "type": "string",
+            "maxLength": 4096,
+            "minLength": 20,
+            "title": "Link Token"
+          },
+          "advocate_code": {
+            "type": "string",
+            "maxLength": 8,
+            "minLength": 1,
+            "pattern": "^\\d+$",
+            "title": "Advocate Code"
+          },
+          "device_label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Label"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "link_token",
+          "advocate_code"
+        ],
+        "title": "GoogleLinkIn"
+      },
+      "GoogleSignInIn": {
+        "properties": {
+          "id_token": {
+            "type": "string",
+            "maxLength": 8192,
+            "minLength": 20,
+            "title": "Id Token",
+            "description": "Google ID token from Google Sign-In"
+          },
+          "device_label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Label"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id_token"
+        ],
+        "title": "GoogleSignInIn"
+      },
+      "GoogleSignInOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "signed_in",
+              "advocate_code_required"
+            ],
+            "title": "Status"
+          },
+          "access_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Token"
+          },
+          "token_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "bearer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Token Type"
+          },
+          "expires_in": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires In"
+          },
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refresh Token"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          },
+          "link_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link Token"
+          },
+          "link_expires_in": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link Expires In"
+          },
+          "google_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Google Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "GoogleSignInOut"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2612,6 +2674,17 @@
             ],
             "title": "Email"
           },
+          "google_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Google Email"
+          },
           "identity_verification": {
             "anyOf": [
               {
@@ -2622,6 +2695,29 @@
               }
             ],
             "title": "Identity Verification"
+          },
+          "verification_method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification Method"
+          },
+          "linked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linked At"
           },
           "mobile": {
             "anyOf": [
@@ -2837,143 +2933,6 @@
         ],
         "title": "RefreshIn"
       },
-      "RegisterIn": {
-        "properties": {
-          "advocate_code": {
-            "type": "string",
-            "maxLength": 8,
-            "minLength": 1,
-            "pattern": "^\\d+$",
-            "title": "Advocate Code"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "advocate_code"
-        ],
-        "title": "RegisterIn"
-      },
-      "RegisterOut": {
-        "properties": {
-          "advocate_code": {
-            "type": "string",
-            "title": "Advocate Code"
-          },
-          "advocate_name": {
-            "type": "string",
-            "title": "Advocate Name"
-          },
-          "source": {
-            "type": "string",
-            "title": "Source"
-          },
-          "already_registered": {
-            "type": "boolean",
-            "title": "Already Registered"
-          },
-          "registered_mobile_hint": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Registered Mobile Hint"
-          },
-          "otp_available": {
-            "type": "boolean",
-            "title": "Otp Available"
-          },
-          "identity_note": {
-            "type": "string",
-            "title": "Identity Note"
-          }
-        },
-        "type": "object",
-        "required": [
-          "advocate_code",
-          "advocate_name",
-          "source",
-          "already_registered",
-          "registered_mobile_hint",
-          "otp_available",
-          "identity_note"
-        ],
-        "title": "RegisterOut"
-      },
-      "SendOtpIn": {
-        "properties": {
-          "advocate_code": {
-            "type": "string",
-            "maxLength": 8,
-            "minLength": 1,
-            "pattern": "^\\d+$",
-            "title": "Advocate Code"
-          },
-          "mobile": {
-            "type": "string",
-            "maxLength": 16,
-            "minLength": 10,
-            "title": "Mobile"
-          },
-          "identity_confirmed": {
-            "type": "boolean",
-            "title": "Identity Confirmed",
-            "description": "User confirmed the advocate name returned by the source is theirs"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "advocate_code",
-          "mobile",
-          "identity_confirmed"
-        ],
-        "title": "SendOtpIn"
-      },
-      "SendOtpOut": {
-        "properties": {
-          "otp_id": {
-            "type": "string",
-            "title": "Otp Id"
-          },
-          "expires_in": {
-            "type": "integer",
-            "title": "Expires In"
-          },
-          "sent_to": {
-            "type": "string",
-            "title": "Sent To"
-          },
-          "advocate_name": {
-            "type": "string",
-            "title": "Advocate Name"
-          },
-          "dev_otp": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Dev Otp",
-            "description": "Development/test environments only"
-          }
-        },
-        "type": "object",
-        "required": [
-          "otp_id",
-          "expires_in",
-          "sent_to",
-          "advocate_name"
-        ],
-        "title": "SendOtpOut"
-      },
       "TokenOut": {
         "properties": {
           "access_token": {
@@ -3040,50 +2999,6 @@
           "type"
         ],
         "title": "ValidationError"
-      },
-      "VerifyOtpIn": {
-        "properties": {
-          "advocate_code": {
-            "type": "string",
-            "maxLength": 8,
-            "minLength": 1,
-            "pattern": "^\\d+$",
-            "title": "Advocate Code"
-          },
-          "mobile": {
-            "type": "string",
-            "maxLength": 16,
-            "minLength": 10,
-            "title": "Mobile"
-          },
-          "otp": {
-            "type": "string",
-            "maxLength": 8,
-            "minLength": 4,
-            "pattern": "^\\d+$",
-            "title": "Otp"
-          },
-          "device_label": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 120
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Device Label"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "advocate_code",
-          "mobile",
-          "otp"
-        ],
-        "title": "VerifyOtpIn"
       }
     },
     "securitySchemes": {

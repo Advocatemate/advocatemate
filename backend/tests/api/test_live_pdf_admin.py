@@ -70,11 +70,13 @@ def test_admin_routes_are_role_protected(client, user_headers, admin_headers):
     assert "9876543210" not in audit_text and "dev_otp" not in audit_text
 
 
-def test_admin_identity_verification(client, user_headers, admin_headers):
+def test_no_manual_identity_verification(client, user_headers, admin_headers):
+    # Manual/admin verification was removed: access comes only from the automatic registry match.
     r = client.post("/api/v1/admin/advocates/verify", headers=admin_headers,
                     json={"advocate_code": "12345", "decision": "verified"})
-    assert r.status_code == 200
-    assert client.get("/api/v1/auth/me", headers=user_headers).json()["identity_verification"] == "verified"
+    assert r.status_code in (404, 405)
+    dash = client.get("/api/v1/admin/dashboard", headers=admin_headers).json()
+    assert dash["users"]["google_linked_registry_verified"] == 2 and dash["users"]["legacy_unlinked"] == 0
 
 
 def test_health(client):

@@ -42,7 +42,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final l = context.l10n;
     final me = ref.watch(currentMeProvider);
     if (me == null) return const Scaffold(body: SizedBox.shrink());
-    final verified = me.identityVerification == 'verified';
+    final verified = me.identityVerification == 'registry_verified';
     return Scaffold(
       appBar: AppBar(title: Text(l.profile)),
       body: ListView(padding: const EdgeInsets.all(AppSpacing.lg), children: [
@@ -52,11 +52,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             // Source-owned fields: read only.
             LabelValue(l.advocateName, me.advocateName ?? '-'),
             LabelValue(l.advocateCode, me.advocateCode ?? '-'),
-            LabelValue(l.mobileNumber, me.mobile ?? '-'),
+            LabelValue(l.googleAccount, me.googleEmail ?? '-'),
             Row(children: [
               SizedBox(width: 140, child: Text(l.identityStatus, style: Theme.of(context).textTheme.bodySmall)),
-              StatusChip(verified ? l.identityVerified : l.identitySelfDeclared,
-                  color: verified ? AppColors.success : AppColors.warning),
+              Flexible(
+                child: StatusChip(verified ? l.identityRegistryVerified : l.notYetAvailable,
+                    color: verified ? AppColors.success : AppColors.warning,
+                    icon: verified ? Icons.verified_outlined : null),
+              ),
             ]),
           ]),
         ),
@@ -73,6 +76,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ]),
         ),
         const SizedBox(height: AppSpacing.lg),
+        OutlinedButton.icon(
+          key: const Key('switchGoogleAccount'),
+          onPressed: () => ref.read(sessionProvider.notifier).useDifferentAccount(),
+          icon: const Icon(Icons.switch_account_outlined),
+          label: Text(l.switchGoogleAccount),
+        ),
+        const SizedBox(height: AppSpacing.sm),
         OutlinedButton.icon(
           onPressed: () => ref.read(sessionProvider.notifier).logout(),
           icon: const Icon(Icons.logout),

@@ -13,39 +13,29 @@ class _In(BaseModel):
 
 
 # ------------------------------------------------------------------ auth
-class RegisterIn(_In):
-    advocate_code: str = Field(min_length=1, max_length=8, pattern=r"^\d+$")
-
-
-class RegisterOut(BaseModel):
-    advocate_code: str
-    advocate_name: str
-    source: str
-    already_registered: bool
-    registered_mobile_hint: str | None
-    otp_available: bool
-    identity_note: str
-
-
-class SendOtpIn(_In):
-    advocate_code: str = Field(min_length=1, max_length=8, pattern=r"^\d+$")
-    mobile: str = Field(min_length=10, max_length=16)
-    identity_confirmed: bool = Field(description="User confirmed the advocate name returned by the source is theirs")
-
-
-class SendOtpOut(BaseModel):
-    otp_id: str
-    expires_in: int
-    sent_to: str
-    advocate_name: str
-    dev_otp: str | None = Field(default=None, description="Development/test environments only")
-
-
-class VerifyOtpIn(_In):
-    advocate_code: str = Field(min_length=1, max_length=8, pattern=r"^\d+$")
-    mobile: str = Field(min_length=10, max_length=16)
-    otp: str = Field(min_length=4, max_length=8, pattern=r"^\d+$")
+class GoogleSignInIn(_In):
+    id_token: str = Field(min_length=20, max_length=8192, description="Google ID token from Google Sign-In")
     device_label: str | None = Field(default=None, max_length=120)
+
+
+class GoogleLinkIn(_In):
+    link_token: str = Field(min_length=20, max_length=4096)
+    advocate_code: str = Field(min_length=1, max_length=8, pattern=r"^\d+$")
+    device_label: str | None = Field(default=None, max_length=120)
+
+
+class GoogleSignInOut(BaseModel):
+    status: Literal["signed_in", "advocate_code_required"]
+    # signed_in
+    access_token: str | None = None
+    token_type: Literal["bearer"] | None = None  # noqa: S105
+    expires_in: int | None = None
+    refresh_token: str | None = None
+    session_id: str | None = None
+    # advocate_code_required
+    link_token: str | None = None
+    link_expires_in: int | None = None
+    google_email: str | None = None
 
 
 class TokenOut(BaseModel):
@@ -68,7 +58,10 @@ class MeOut(BaseModel):
     advocate_name: str | None
     display_name: str | None
     email: str | None
+    google_email: str | None = None
     identity_verification: str | None
+    verification_method: str | None = None
+    linked_at: datetime | None = None
     mobile: str | None
     created_at: datetime
 
@@ -156,11 +149,6 @@ class PreferencesIO(_In):
 
 class CaseDetailsQuery(_In):
     case_number: str
-
-
-class AdminVerifyIn(_In):
-    advocate_code: str = Field(pattern=r"^\d+$")
-    decision: Literal["verified", "rejected", "self_declared"]
 
 
 class DateParam(BaseModel):

@@ -22,7 +22,9 @@ access to `Advocatemate/advocatemate`, and the remote repository is empty.
 * Live APHC data through the API: daily/weekly/supplementary dates, courts, court-wise lists, publication status,
   live board, weekly + court PDFs, Lexika advocate lookup, advocate cause list, six-operation case status.
 * Async enrichment with leases, retries/backoff, circuit breaker, duplicate prevention, identity validation.
-* OTP auth (dev echo), refresh rotation with reuse detection, RBAC, rate limits, audit, redaction.
+* Google Sign-In (token verified on the server) + automatic advocate-registry verification (Scenarios A–G),
+  refresh rotation with reuse detection, RBAC, rate limits, audit, redaction. Tested with fictional sample
+  registry data only (branch `feature/google-auth`, 2026-11-19: 141 backend tests, 42 Flutter tests).
 * Flutter app: all listed screens, offline cache + notices, Telugu, dark mode; 31 tests.
 
 ## Not available / not done
@@ -30,8 +32,8 @@ access to `Advocatemate/advocatemate`, and the remote repository is empty.
 |---|---|---|
 | Orders, case history, IA/USR/MP, connected matters, lower court | `caseDetails1.jsp` blocks server requests; chatbot ops beyond the 6-call cap unverified | APHC permission/whitelist or official API; approval to extend the call cap |
 | Official per-case order PDFs | same as above | same |
-| Real SMS OTP | no provider/credentials | SMS gateway + DLT templates; adapter |
-| Verified advocate identity | no authorised registry access | Bar Council / APHC verification service or manual admin process |
+| Real Google sign-in on devices | no Google Cloud project / OAuth clients yet | Web + Android (debug and release SHA-1) + iOS OAuth clients; `GOOGLE_CLIENT_IDS`, `GOOGLE_SERVER_CLIENT_ID`, `GOOGLE_IOS_CLIENT_ID` |
+| Real advocate registry | no authoritative list of advocate codes with registered emails | official registry export + permission; load with `scripts/import_registry.py` |
 | Push notifications on devices | no Firebase project/config | Firebase project, `google-services.json`, `GoogleService-Info.plist`, APNs key, backend service account |
 | Case-calling alerts | backend data model supports board + listing; alert rule not enabled to avoid speculative "being called" claims | product decision on wording/thresholds |
 | Android APK/AAB | Android SDK not installed (licence acceptance) | install SDK or rely on CI job |
@@ -40,7 +42,7 @@ access to `Advocatemate/advocatemate`, and the remote repository is empty.
 | Production-scale access | no written permission from APHC | approval + agreed rate limits |
 
 ## Credentials / approvals required
-APHC permission; SMS provider; Firebase (Android + iOS) and FCM service account; Apple Developer + APNs key;
+APHC permission; Google Cloud OAuth clients; official advocate registry; Firebase (Android + iOS) and FCM service account; Apple Developer + APNs key;
 Google Play Console; Android upload keystore; Sentry DSN (optional); hosting account + domain + TLS; GitHub
 write access to `Advocatemate/advocatemate`.
 

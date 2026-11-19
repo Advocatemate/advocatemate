@@ -3,16 +3,17 @@
 Interactive docs: `http://localhost:8000/docs` (Swagger) and `/redoc` in development/staging; machine-readable
 spec committed at [`docs/api/openapi.json`](api/openapi.json). These are **AdvocateMate's own endpoints**, not APHC's.
 
-Base: `/api/v1`. Auth: `Authorization: Bearer <access_token>` on everything except `/auth/register`,
-`/auth/send-otp`, `/auth/verify-otp`, `/auth/refresh`, `/health/*`. Errors:
+Base: `/api/v1`. Auth: `Authorization: Bearer <access_token>` on everything except `/auth/google`,
+`/auth/google/link`, `/auth/refresh`, `/health/*`. Every authenticated call also re-checks that the account is
+Google-linked and the advocate is still active in the registry (403 `advocate_not_eligible` otherwise). Errors:
 `{"error": {"code": "...", "message": "...", "request_id": "..."}}`. Dates: ISO `yyyy-mm-dd`.
 
 ## Authentication
 | Method | Path | Notes |
 |---|---|---|
-| POST | `/auth/register` | `{advocate_code}` → advocate name from APHC, registration state |
-| POST | `/auth/send-otp` | `{advocate_code, mobile, identity_confirmed}` → `{otp_id, expires_in, sent_to, dev_otp?}` |
-| POST | `/auth/verify-otp` | `{advocate_code, mobile, otp, device_label?}` → tokens |
+| POST | `/auth/google` | `{id_token, device_label?}` → `{status: "signed_in", access_token, refresh_token, …}` if this Google account is already linked, else `{status: "advocate_code_required", link_token, link_expires_in, google_email}` |
+| POST | `/auth/google/link` | `{link_token, advocate_code, device_label?}` → session, or 404 `invalid_advocate_code`, 403 `email_mismatch` / `advocate_not_eligible` / `registry_email_missing`, 409 `advocate_already_linked` / `google_account_linked_elsewhere` (see AUTHENTICATION.md) |
+| POST | `/auth/register`, `/auth/send-otp`, `/auth/verify-otp` | retired: 410 `login_method_retired` |
 | POST | `/auth/refresh` | `{refresh_token}` → rotated tokens |
 | POST | `/auth/logout` | revokes current session |
 | GET/PATCH | `/auth/me` | profile; PATCH accepts only `display_name`, `email`, `preferred_language` |
@@ -62,8 +63,8 @@ Case-details payload sections: `identity`, `information`, `parties`, `advocates`
 
 ## Admin (role `admin`)
 `GET /admin/dashboard`, `/admin/sync-status`, `/admin/jobs?status=`, `POST /admin/jobs/{id}/retry`,
-`GET /admin/source-health`, `POST /admin/source-health/{name}/reset`, `GET /admin/audit`,
-`POST /admin/advocates/verify`.
+`GET /admin/source-health`, `POST /admin/source-health/{name}/reset`, `GET /admin/audit`.
+(Manual advocate verification was removed: access is decided only by the automatic registry match.)
 
 ## Health
 `GET /health/live`, `GET /health/ready` (checks DB).

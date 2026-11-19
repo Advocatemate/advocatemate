@@ -35,6 +35,13 @@ class Settings(BaseSettings):
     jwt_issuer: str = "advocatemate"
     access_token_ttl_minutes: int = 15
     refresh_token_ttl_days: int = 30
+    # --- Google sign-in -------------------------------------------------------
+    # Comma-separated OAuth client IDs an ID token may be issued for (its "aud" claim). Use the
+    # Web client ID that the mobile apps pass as serverClientId. Not secrets, but must be correct.
+    google_client_ids: str = ""
+    google_link_token_minutes: int = 10
+
+    # Retired mobile-OTP login (kept only so existing configuration still loads).
     otp_hash_secret: str = _DEV_SECRET
     otp_ttl_seconds: int = 300
     otp_length: int = 6
@@ -80,6 +87,10 @@ class Settings(BaseSettings):
     fcm_credentials_file: str | None = None
 
     @property
+    def google_client_id_list(self) -> list[str]:
+        return [c.strip() for c in self.google_client_ids.split(",") if c.strip()]
+
+    @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
@@ -93,6 +104,8 @@ class Settings(BaseSettings):
                 problems.append("OTP_HASH_SECRET must be set to a strong unique value")
             if self.otp_provider == "dev_echo":
                 problems.append("OTP_PROVIDER=dev_echo is forbidden outside development/test")
+            if not self.google_client_id_list:
+                problems.append("GOOGLE_CLIENT_IDS must list the OAuth client ID(s) used for Google sign-in")
             if problems:
                 raise ValueError("; ".join(problems))
         return self

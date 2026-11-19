@@ -14,7 +14,10 @@ _Me _$MeFromJson(Map<String, dynamic> json) => _Me(
   advocateName: json['advocate_name'] as String?,
   displayName: json['display_name'] as String?,
   email: json['email'] as String?,
+  googleEmail: json['google_email'] as String?,
   identityVerification: json['identity_verification'] as String?,
+  verificationMethod: json['verification_method'] as String?,
+  linkedAt: json['linked_at'] as String?,
   mobile: json['mobile'] as String?,
   createdAt: json['created_at'] as String?,
 );
@@ -27,62 +30,36 @@ Map<String, dynamic> _$MeToJson(_Me instance) => <String, dynamic>{
   'advocate_name': ?instance.advocateName,
   'display_name': ?instance.displayName,
   'email': ?instance.email,
+  'google_email': ?instance.googleEmail,
   'identity_verification': ?instance.identityVerification,
+  'verification_method': ?instance.verificationMethod,
+  'linked_at': ?instance.linkedAt,
   'mobile': ?instance.mobile,
   'created_at': ?instance.createdAt,
 };
 
-_RegisterInfo _$RegisterInfoFromJson(Map<String, dynamic> json) =>
-    _RegisterInfo(
-      advocateCode: json['advocate_code'] as String,
-      advocateName: json['advocate_name'] as String,
-      source: json['source'] as String,
-      alreadyRegistered: json['already_registered'] as bool,
-      registeredMobileHint: json['registered_mobile_hint'] as String?,
-      otpAvailable: json['otp_available'] as bool,
-      identityNote: json['identity_note'] as String,
+_GoogleSignInResult _$GoogleSignInResultFromJson(Map<String, dynamic> json) =>
+    _GoogleSignInResult(
+      status: json['status'] as String,
+      accessToken: json['access_token'] as String?,
+      refreshToken: json['refresh_token'] as String?,
+      expiresIn: (json['expires_in'] as num?)?.toInt(),
+      sessionId: json['session_id'] as String?,
+      linkToken: json['link_token'] as String?,
+      linkExpiresIn: (json['link_expires_in'] as num?)?.toInt(),
+      googleEmail: json['google_email'] as String?,
     );
 
-Map<String, dynamic> _$RegisterInfoToJson(_RegisterInfo instance) =>
+Map<String, dynamic> _$GoogleSignInResultToJson(_GoogleSignInResult instance) =>
     <String, dynamic>{
-      'advocate_code': instance.advocateCode,
-      'advocate_name': instance.advocateName,
-      'source': instance.source,
-      'already_registered': instance.alreadyRegistered,
-      'registered_mobile_hint': ?instance.registeredMobileHint,
-      'otp_available': instance.otpAvailable,
-      'identity_note': instance.identityNote,
-    };
-
-_OtpSent _$OtpSentFromJson(Map<String, dynamic> json) => _OtpSent(
-  otpId: json['otp_id'] as String,
-  expiresIn: (json['expires_in'] as num).toInt(),
-  sentTo: json['sent_to'] as String,
-  advocateName: json['advocate_name'] as String,
-  devOtp: json['dev_otp'] as String?,
-);
-
-Map<String, dynamic> _$OtpSentToJson(_OtpSent instance) => <String, dynamic>{
-  'otp_id': instance.otpId,
-  'expires_in': instance.expiresIn,
-  'sent_to': instance.sentTo,
-  'advocate_name': instance.advocateName,
-  'dev_otp': ?instance.devOtp,
-};
-
-_AuthTokens _$AuthTokensFromJson(Map<String, dynamic> json) => _AuthTokens(
-  accessToken: json['access_token'] as String,
-  refreshToken: json['refresh_token'] as String,
-  expiresIn: (json['expires_in'] as num).toInt(),
-  sessionId: json['session_id'] as String,
-);
-
-Map<String, dynamic> _$AuthTokensToJson(_AuthTokens instance) =>
-    <String, dynamic>{
-      'access_token': instance.accessToken,
-      'refresh_token': instance.refreshToken,
-      'expires_in': instance.expiresIn,
-      'session_id': instance.sessionId,
+      'status': instance.status,
+      'access_token': ?instance.accessToken,
+      'refresh_token': ?instance.refreshToken,
+      'expires_in': ?instance.expiresIn,
+      'session_id': ?instance.sessionId,
+      'link_token': ?instance.linkToken,
+      'link_expires_in': ?instance.linkExpiresIn,
+      'google_email': ?instance.googleEmail,
     };
 
 _AdvocateListing _$AdvocateListingFromJson(Map<String, dynamic> json) =>

@@ -25,6 +25,11 @@ class MoreScreen extends ConsumerWidget {
         tile(Icons.settings_outlined, l.settings, '/settings'),
         const Divider(),
         ListTile(
+          leading: const Icon(Icons.switch_account_outlined),
+          title: Text(l.switchGoogleAccount),
+          onTap: () => ref.read(sessionProvider.notifier).useDifferentAccount(),
+        ),
+        ListTile(
           leading: const Icon(Icons.logout),
           title: Text(l.logout),
           onTap: () => ref.read(sessionProvider.notifier).logout(),

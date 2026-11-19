@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:advocatemate/core/providers.dart';
+import 'package:advocatemate/features/authentication/google_auth_service.dart';
 import 'package:advocatemate/network/api_client.dart';
 import 'package:advocatemate/storage/cache_store.dart';
 import 'package:advocatemate/storage/preferences.dart';
@@ -61,32 +62,68 @@ FakeResponse apiError(int status, String code, String message) =>
 FakeBackend standardBackend() {
   final b = FakeBackend();
   var enrichmentPolls = 0;
-  b.on('POST', '/auth/register', (_) => {
-        'advocate_code': '12345',
-        'advocate_name': 'ADVOCATE ONE',
-        'source': 'aphc.gov.in (Lexika)',
-        'already_registered': false,
-        'registered_mobile_hint': null,
-        'otp_available': true,
-        'identity_note': 'Please confirm',
-      });
-  b.on('POST', '/auth/send-otp', (_) => {
-        'otp_id': 'x', 'expires_in': 300, 'sent_to': '+91******3210', 'advocate_name': 'ADVOCATE ONE', 'dev_otp': '123456'});
-  b.on('POST', '/auth/verify-otp', (r) {
-    final data = r.data as Map;
-    if (data['otp'] != '123456') return apiError(401, 'otp_invalid', 'Incorrect OTP');
-    return {'access_token': 'acc', 'refresh_token': 'ref-token-ref-token-ref', 'expires_in': 900, 'session_id': 's1', 'token_type': 'bearer'};
+  // ---- Google sign-in + automatic registry verification (mirrors backend services/google_auth.py)
+  // Fake Google ID tokens look like "google-token:<sub>:<email>"; the real backend verifies them with Google.
+  final registry = <String, ({String name, String? email, String status})>{
+    '12345': (name: 'ADVOCATE ONE', email: 'adv.one@example.com', status: 'active'),
+    '67890': (name: 'ADVOCATE TWO', email: 'adv.two@example.com', status: 'active'),
+    '11111': (name: 'INACTIVE ADVOCATE', email: 'inactive.adv@example.com', status: 'inactive'),
+    '22222': (name: 'NO EMAIL ADVOCATE', email: null, status: 'active'),
+  };
+  final linkedSubToCode = <String, String>{};
+  String? currentCode;
+  Map<String, Object?> signedIn(String code) {
+    currentCode = code;
+    return {'status': 'signed_in', 'access_token': 'acc-$code', 'refresh_token': 'ref-token-ref-token-$code',
+      'expires_in': 900, 'session_id': 's-$code', 'token_type': 'bearer'};
+  }
+
+  b.on('POST', '/auth/google', (r) {
+    final parts = ((r.data as Map)['id_token'] as String).split(':');
+    if (parts.length != 3 || parts[0] != 'google-token') return apiError(401, 'google_token_invalid', 'bad token');
+    final sub = parts[1], email = parts[2];
+    final code = linkedSubToCode[sub];
+    if (code != null) {
+      if (registry[code]?.status != 'active') return apiError(403, 'advocate_not_eligible', 'not active');
+      return signedIn(code); // Scenario B
+    }
+    return {'status': 'advocate_code_required', 'link_token': 'link:$sub:$email', 'link_expires_in': 600,
+      'google_email': email};
   });
-  b.on('GET', '/auth/me', (_) => {
-        'user_id': 'u1',
-        'role': 'advocate',
-        'preferred_language': 'en',
-        'advocate_code': '12345',
-        'advocate_name': 'ADVOCATE ONE',
-        'identity_verification': 'self_declared',
-        'mobile': '+91******3210',
-        'created_at': '2026-11-18T10:00:00Z',
-      });
+  b.on('POST', '/auth/google/link', (r) {
+    final data = r.data as Map;
+    final parts = (data['link_token'] as String).split(':');
+    final sub = parts[1], email = parts[2];
+    final code = data['advocate_code'] as String;
+    final entry = registry[code];
+    if (entry == null) return apiError(404, 'invalid_advocate_code', 'Invalid Advocate Code.');
+    if (linkedSubToCode.containsKey(sub) && linkedSubToCode[sub] != code) {
+      return apiError(409, 'google_account_linked_elsewhere', 'linked elsewhere');
+    }
+    if (entry.status != 'active') return apiError(403, 'advocate_not_eligible', 'not active');
+    if (entry.email == null) return apiError(403, 'registry_email_missing', 'no email');
+    if (entry.email != email) return apiError(403, 'email_mismatch', 'mismatch');
+    if (linkedSubToCode.entries.any((e) => e.value == code && e.key != sub)) {
+      return apiError(409, 'advocate_already_linked', 'already linked');
+    }
+    linkedSubToCode[sub] = code;
+    return signedIn(code);
+  });
+  b.on('GET', '/auth/me', (_) {
+    final code = currentCode ?? '12345';
+    final entry = registry[code]!;
+    return {
+      'user_id': 'u-$code',
+      'role': 'advocate',
+      'preferred_language': 'en',
+      'advocate_code': code,
+      'advocate_name': entry.name,
+      'google_email': entry.email,
+      'identity_verification': 'registry_verified',
+      'verification_method': 'registry_email_match',
+      'created_at': '2026-11-18T10:00:00Z',
+    };
+  });
   b.on('POST', '/auth/logout', (_) => FakeResponse(204, null));
   b.on('GET', '/cause-list/status', (_) => {
         'list_date': '2026-11-18',
@@ -246,15 +283,34 @@ FakeBackend standardBackend() {
   return b;
 }
 
+/// Stands in for the device's Google account picker.
+class FakeGoogleAuthService implements GoogleAuthService {
+  String sub = 'google-sub-1';
+  String email = 'adv.one@example.com';
+  GoogleSignInFailure? failWith;
+  int signOutCalls = 0;
+
+  @override
+  Future<String> signIn() async {
+    if (failWith != null) throw GoogleSignInError(failWith!);
+    return 'google-token:$sub:$email';
+  }
+
+  @override
+  Future<void> signOut() async => signOutCalls++;
+}
+
 class TestDeps {
   TestDeps(this.backend, this.tokens, this.cache, this.prefs);
   final FakeBackend backend;
+  final FakeGoogleAuthService google = FakeGoogleAuthService();
   final MemoryTokenStore tokens;
   final MemoryCacheStore cache;
   final AppPreferences prefs;
 
   List<Override> get overrides => [
         tokenStoreProvider.overrideWithValue(tokens),
+        googleAuthServiceProvider.overrideWithValue(google),
         cacheStoreProvider.overrideWithValue(cache),
         preferencesProvider.overrideWithValue(prefs),
         apiClientProvider.overrideWith((ref) {
