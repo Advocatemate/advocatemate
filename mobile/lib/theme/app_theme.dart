@@ -124,7 +124,9 @@ class AppTheme {
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          // A button textStyle replaces the inherited style entirely, so derive it from the
+          // text theme to keep the bundled font (a bare TextStyle falls back to the device font).
+          textStyle: text.labelLarge?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
       chipTheme: base.chipTheme.copyWith(
