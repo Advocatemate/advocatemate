@@ -381,6 +381,60 @@
         }
       }
     },
+    "/api/v1/cause-list/passed-over": {
+      "get": {
+        "tags": [
+          "cause lists"
+        ],
+        "summary": "Passed-over (kept back) items",
+        "description": "Items courts kept back, from \"Kept Back Cases\" on the APHC display board, with their cases.",
+        "operationId": "passed_over_list_api_v1_cause_list_passed_over_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/cause-list/dates": {
       "get": {
         "tags": [

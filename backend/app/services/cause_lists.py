@@ -188,9 +188,33 @@ def get_court_listing(db: Session, list_type: str, list_date: date, court_no: st
             cl = sync_court(db, lt, list_date, court_no)
         except AppError:
             if cl is None:
+                from app.services import cause_list_pdfs
+
+                fallback = cause_list_pdfs.fallback_listing(db, lt, list_date, court_no,
+                                                            reason="online_list_unavailable")
+                if fallback is not None:
+                    return fallback
                 raise
             stale = True
-    return serialize_cause_list(cl, stale=stale)
+    return with_pdf_check(db, cl, stale=stale)
+
+
+def with_pdf_check(db: Session, cl: CauseList, *, stale: bool = False) -> dict:
+    """Serialize an online list, checked against the official court PDF when one is available."""
+    from app.services import cause_list_pdfs
+
+    if cl.status == "empty" or not cl.items:
+        fallback = cause_list_pdfs.fallback_listing(db, cl.list_type, cl.list_date, cl.court_no,
+                                                    reason="online_list_empty")
+        if fallback is not None:
+            return fallback
+    out = serialize_cause_list(cl, stale=stale)
+    summary, per_item = cause_list_pdfs.verification(db, cl)
+    out["items_source"] = "online_list"
+    out["pdf_verification"] = summary
+    for item in out["items"]:
+        item["pdf_check"] = per_item.get(item["sequence"])
+    return out
 
 
 def serialize_item(it: CauseListItem) -> dict:

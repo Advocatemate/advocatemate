@@ -83,6 +83,7 @@ class DashboardScreen extends ConsumerWidget {
                   _Tile(Icons.today_outlined, l.dailyCauseList, () => context.push('/cause-list/daily')),
                   _Tile(Icons.date_range_outlined, l.weeklyCauseList, () => context.push('/cause-list/weekly')),
                   _Tile(Icons.playlist_add_outlined, l.supplementaryCauseList, () => context.push('/cause-list/supplementary')),
+                  _Tile(Icons.low_priority, l.passedOverList, () => context.push('/cause-list/passed-over')),
                   _Tile(Icons.live_tv_outlined, l.liveCourts, () => context.push('/live')),
                   _Tile(Icons.search, l.searchCases, () => context.go('/search')),
                   _Tile(Icons.people_outline, l.favouriteAdvocates, () => context.go('/saved')),

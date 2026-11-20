@@ -13,14 +13,16 @@ from app.db.base import utcnow
 from app.db.session import db_session
 from app.models import (
     AdvocateCaseLink,
+    CauseListPdfParse,
     FavouriteAdvocate,
     FavouriteCase,
     OtpRecord,
+    PassedOverItem,
     PdfDocument,
     RefreshToken,
     SourceCache,
 )
-from app.services import cause_lists, enrichment, live_board, notifications
+from app.services import cause_list_pdfs, cause_lists, enrichment, live_board, notifications
 from app.workers.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
@@ -72,6 +74,16 @@ def poll_publication_status() -> dict | str:
             return {"list_date": result["list_date"].isoformat(), "changes": len(result["changes"])}
     except AppError as e:
         logger.warning("publication poll failed: %s", e.code)
+        return e.code
+
+
+@celery_app.task(name="app.tasks.jobs.parse_cause_list_pdfs")
+def parse_cause_list_pdfs() -> dict | str:
+    """Read the court cause-list PDFs APHC has published, to check and back up the online lists."""
+    try:
+        return cause_list_pdfs.parse_published_pdfs(db_session)
+    except AppError as e:
+        logger.warning("cause-list PDF parsing failed: %s", e.code)
         return e.code
 
 
@@ -129,7 +141,8 @@ def notify_favourites() -> dict:
 @celery_app.task(name="app.tasks.jobs.housekeeping")
 def housekeeping() -> dict:
     """Retention: expired OTPs (1 day), refresh tokens (expired 7 days), source cache (2 days),
-    expired generated PDFs, advocate-case links older than 180 days."""
+    expired generated PDFs, advocate-case links older than 180 days, PDF reads older than 60 days,
+    passed-over records older than 180 days."""
     now = utcnow()
     with db_session() as db:
         r = {
@@ -149,4 +162,8 @@ def housekeeping() -> dict:
             Path(doc.storage_path).unlink(missing_ok=True)
             db.delete(doc)
         r["generated_pdfs"] = len(expired)
+        r["pdf_parses"] = db.execute(delete(CauseListPdfParse)
+                                     .where(CauseListPdfParse.parsed_at < now - timedelta(days=60))).rowcount
+        r["passed_over"] = db.execute(delete(PassedOverItem)
+                                      .where(PassedOverItem.last_seen_at < now - timedelta(days=180))).rowcount
     return r

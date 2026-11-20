@@ -81,7 +81,11 @@ class StatusChip extends StatelessWidget {
       decoration: BoxDecoration(color: c.withValues(alpha: .12), borderRadius: BorderRadius.circular(20)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         if (icon != null) ...[Icon(icon, size: 14, color: c), const SizedBox(width: 4)],
-        Text(label, style: TextStyle(color: c, fontSize: 12.5, fontWeight: FontWeight.w600)),
+        Flexible(
+          child: Text(label,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: c, fontSize: 12.5, fontWeight: FontWeight.w600)),
+        ),
       ]),
     );
   }

@@ -51,6 +51,11 @@ celery_app.conf.update(
             "task": "app.tasks.jobs.sync_latest_daily_lists",
             "schedule": crontab(minute=15, hour="6-9,17-22"),
         },
+        # Read published court PDFs after lists are published (evenings) and during court hours.
+        "parse-cause-list-pdfs": {
+            "task": "app.tasks.jobs.parse_cause_list_pdfs",
+            "schedule": crontab(minute="5,35", hour="6-22"),
+        },
         "notify-favourites": {"task": "app.tasks.jobs.notify_favourites", "schedule": crontab(minute=40, hour="7,19")},
         "housekeeping": {"task": "app.tasks.jobs.housekeeping", "schedule": crontab(minute=5, hour=3)},
     },

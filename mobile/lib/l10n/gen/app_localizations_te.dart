@@ -475,4 +475,102 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get accessEndedNotEligible =>
       'యాక్సెస్ ముగిసింది: ఈ న్యాయవాది కోడ్ ఇకపై క్రియాశీలంగా లేదు.';
+
+  @override
+  String get passedOverList => 'పాస్-ఓవర్ జాబితా';
+
+  @override
+  String get passedOverIntro =>
+      'కోర్టు వెనక్కి ఉంచిన (పాస్-ఓవర్) కేసులు, APHC డిస్‌ప్లే బోర్డు నుండి.';
+
+  @override
+  String passedOverRecordedSince(String time) {
+    return '$time నుండి నమోదు చేయబడింది';
+  }
+
+  @override
+  String passedOverSummary(int total, int pending) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total అంశాలు',
+      one: '1 అంశం',
+    );
+    return '$_temp0 · $pending పెండింగ్';
+  }
+
+  @override
+  String get passedOverNone => 'ఈ తేదీకి పాస్-ఓవర్ అంశాలు ఏవీ నమోదు కాలేదు.';
+
+  @override
+  String get passedOverPending => 'పెండింగ్';
+
+  @override
+  String get passedOverNoLongerPending => 'ఇక పెండింగ్‌లో లేదు';
+
+  @override
+  String get passedOverOffBoard => 'బోర్డులో లేదు';
+
+  @override
+  String passedOverKeptAt(String time) {
+    return '$timeకి వెనక్కి ఉంచబడింది';
+  }
+
+  @override
+  String passedOverNowAt(String item) {
+    return 'ప్రస్తుతం $item';
+  }
+
+  @override
+  String passedOverItemNotFound(String item) {
+    return 'అంశం $item (కోర్టు జాబితాలో కనబడలేదు)';
+  }
+
+  @override
+  String get passedOverNote =>
+      'AdvocateMate బోర్డును తనిఖీ చేసినప్పుడు చూసినవి మాత్రమే. ఎల్లప్పుడూ కోర్టులో నిర్ధారించుకోండి.';
+
+  @override
+  String get passedOverBoardStale =>
+      'డిస్‌ప్లే బోర్డు ఇటీవల నవీకరించబడలేదు. స్థితులు పాతవి కావచ్చు.';
+
+  @override
+  String pdfVerified(int count) {
+    return 'అధికారిక PDFతో సరిపోలింది ($count అంశాలు తనిఖీ చేయబడ్డాయి)';
+  }
+
+  @override
+  String pdfDifferences(int differs, int missing, int extra) {
+    return 'అధికారిక PDFతో తనిఖీ: $differs తేడాలు, $missing PDFలో లేవు, $extra PDFలో మాత్రమే ఉన్నాయి';
+  }
+
+  @override
+  String get pdfShowDifferences => 'తేడాలు చూపించు';
+
+  @override
+  String get pdfShowAll => 'అన్నీ చూపించు';
+
+  @override
+  String get pdfUnreadable => 'తనిఖీ కోసం అధికారిక PDFని చదవలేకపోయాం.';
+
+  @override
+  String get pdfNotAvailable =>
+      'తనిఖీ చేయడానికి అధికారిక PDF ఇంకా అందుబాటులో లేదు.';
+
+  @override
+  String get pdfFallbackUnavailable =>
+      'ఆన్‌లైన్ జాబితా లోడ్ కాలేదు. ఈ అంశాలు అధికారిక PDF నుండి చదవబడ్డాయి.';
+
+  @override
+  String get pdfFallbackEmpty =>
+      'ఆన్‌లైన్ జాబితా ఖాళీగా ఉంది. ఈ అంశాలు అధికారిక PDF నుండి చదవబడ్డాయి.';
+
+  @override
+  String get pdfDiffersBadge => 'PDF నుండి తేడా';
+
+  @override
+  String get pdfNotInPdfBadge => 'PDFలో లేదు';
+
+  @override
+  String get pdfOnlyTitle => 'అధికారిక PDFలో మాత్రమే';
 }

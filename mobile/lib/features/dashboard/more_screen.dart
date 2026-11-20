@@ -20,6 +20,7 @@ class MoreScreen extends ConsumerWidget {
         tile(Icons.today_outlined, l.dailyCauseList, '/cause-list/daily'),
         tile(Icons.date_range_outlined, l.weeklyCauseList, '/cause-list/weekly'),
         tile(Icons.playlist_add_outlined, l.supplementaryCauseList, '/cause-list/supplementary'),
+        tile(Icons.low_priority, l.passedOverList, '/cause-list/passed-over'),
         tile(Icons.live_tv_outlined, l.liveCourts, '/live'),
         tile(Icons.notifications_outlined, l.notifications, '/notifications'),
         tile(Icons.settings_outlined, l.settings, '/settings'),

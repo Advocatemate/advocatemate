@@ -27,7 +27,8 @@ Google-linked and the advocate is still active in the registry (403 `advocate_no
 | GET | `/cause-list/dates?list_type=D\|W\|S` | dates APHC offers |
 | GET | `/cause-list?list_type=&date=` | overview (dates + courts) |
 | GET | `/cause-list/courts?list_type=&date=` | courts with case counts when synced |
-| GET | `/cause-list/court/{n}?list_type=&date=&refresh=` | items in source order, headings, bench |
+| GET | `/cause-list/court/{n}?list_type=&date=&refresh=` | items in source order, headings, bench. Daily lists also carry `items_source` (`online_list` / `official_pdf`), `fallback_reason`, `pdf_verification` {`status`: `verified` / `differences` / `failed` / `pdf_empty` / `not_available`, `matched`, `differs`, `not_in_pdf`, `pdf_only`, `pdf_only_items`, `source_url`, `checked_at`} and per item `pdf_check` {`status`: `match` / `differs` / `not_in_pdf`, `fields`} |
+| GET | `/cause-list/passed-over?date=` | items courts kept back (passed over), from "Kept Back Cases" on the APHC display board, grouped by court; `status` `pending` / `no_longer_pending` / `off_board`; `case` = the matching daily-list item; `available_dates`; default date = today (IST) |
 | GET | `/cause-list/status` | court-wise publication status |
 | GET | `/cause-list/weekly.pdf` | official PDF (proxied) |
 | GET | `/cause-list/court/{n}/pdf?date=` | official court PDF if APHC published one |

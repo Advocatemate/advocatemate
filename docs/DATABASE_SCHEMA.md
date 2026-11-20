@@ -1,4 +1,4 @@
-# Database schema (PostgreSQL 16, Alembic revision `0002`)
+# Database schema (PostgreSQL 16, Alembic revision `0003`)
 
 UUID primary keys unless noted; all timestamps `timestamptz` (UTC). JSON columns are `JSONB` on PostgreSQL.
 Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && alembic check && alembic downgrade base`.
@@ -22,6 +22,8 @@ Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && ale
 | `cause_lists` | UNIQUE(list_type, list_date, court_no); headings JSON, item_count, content_hash, status (`synced`/`empty`/`failed`), fetched_at |
 | `cause_list_items` | FK cause_list (CASCADE); UNIQUE(cause_list_id, sequence) — preserves source order; case_id FK; applications, advocates JSON; trigram indexes on petitioner/respondent when `pg_trgm` is available |
 | `publication_statuses` | UNIQUE(list_date, court_no); status, uploaded time, PDF path (no VC credentials) |
+| `cause_list_pdf_parses` | official court PDF read into items (migration 0003): UNIQUE(list_type, list_date, court_no); `sha256`, `source_url`, `parser_version`, `status` (`parsed`/`empty`/`failed`), `error_code`, `page_count`, `item_count`, `bench`, `headings`, `items` JSON (same shape as `cause_list_items` + pages); FK `pdf_document_id` (SET NULL). Never overwrites `cause_list_items` |
+| `passed_over_items` | kept-back items seen on the APHC display board (migration 0003): UNIQUE(list_date, court_no, list_prefix, item_no); `pending`, `first_seen_at`, `last_seen_at`, `last_pending_at`, `removed_at` |
 | `advocate_case_links` | association *asserted by Lexika* for a date; UNIQUE(advocate_code, case_id, list_date, court_no, item_no, application_key) |
 
 ## Lexika projections (handover entities)
@@ -48,7 +50,7 @@ Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && ale
 
 ## Retention (housekeeping task, daily 03:05 IST)
 OTP records > 1 day; refresh tokens expired > 7 days; source cache expired > 2 days; advocate-case links > 180
-days; generated summary PDFs after expiry. Raw upstream responses are never persisted.
+days; generated summary PDFs after expiry; PDF reads > 60 days; passed-over records > 180 days. Raw upstream responses are never persisted.
 
 ## Access control
 The application connects with a single least-privilege role that owns the schema (create it without SUPERUSER).

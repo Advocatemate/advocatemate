@@ -937,6 +937,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Access ended: this advocate code is no longer active.'**
   String get accessEndedNotEligible;
+
+  /// No description provided for @passedOverList.
+  ///
+  /// In en, this message translates to:
+  /// **'Passed-over list'**
+  String get passedOverList;
+
+  /// No description provided for @passedOverIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Cases the court kept back (passed over), from the APHC display board.'**
+  String get passedOverIntro;
+
+  /// No description provided for @passedOverRecordedSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded since {time}'**
+  String passedOverRecordedSince(String time);
+
+  /// No description provided for @passedOverSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, =1{1 item} other{{total} items}} · {pending} pending'**
+  String passedOverSummary(int total, int pending);
+
+  /// No description provided for @passedOverNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No passed-over items were recorded for this date.'**
+  String get passedOverNone;
+
+  /// No description provided for @passedOverPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get passedOverPending;
+
+  /// No description provided for @passedOverNoLongerPending.
+  ///
+  /// In en, this message translates to:
+  /// **'No longer pending'**
+  String get passedOverNoLongerPending;
+
+  /// No description provided for @passedOverOffBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Off the board'**
+  String get passedOverOffBoard;
+
+  /// No description provided for @passedOverKeptAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept back at {time}'**
+  String passedOverKeptAt(String time);
+
+  /// No description provided for @passedOverNowAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Now at {item}'**
+  String passedOverNowAt(String item);
+
+  /// No description provided for @passedOverItemNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Item {item} (not found in the court\'s list)'**
+  String passedOverItemNotFound(String item);
+
+  /// No description provided for @passedOverNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows only what AdvocateMate saw while checking the board. Always confirm in court.'**
+  String get passedOverNote;
+
+  /// No description provided for @passedOverBoardStale.
+  ///
+  /// In en, this message translates to:
+  /// **'The display board has not updated recently. Statuses may be out of date.'**
+  String get passedOverBoardStale;
+
+  /// No description provided for @pdfVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches the official PDF ({count} items checked)'**
+  String pdfVerified(int count);
+
+  /// No description provided for @pdfDifferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked against the official PDF: {differs} differ, {missing} not in the PDF, {extra} only in the PDF'**
+  String pdfDifferences(int differs, int missing, int extra);
+
+  /// No description provided for @pdfShowDifferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Show differences'**
+  String get pdfShowDifferences;
+
+  /// No description provided for @pdfShowAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all'**
+  String get pdfShowAll;
+
+  /// No description provided for @pdfUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'The official PDF could not be read for checking.'**
+  String get pdfUnreadable;
+
+  /// No description provided for @pdfNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No official PDF to check against yet.'**
+  String get pdfNotAvailable;
+
+  /// No description provided for @pdfFallbackUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The online list could not be loaded. These items were read from the official PDF.'**
+  String get pdfFallbackUnavailable;
+
+  /// No description provided for @pdfFallbackEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The online list is empty. These items were read from the official PDF.'**
+  String get pdfFallbackEmpty;
+
+  /// No description provided for @pdfDiffersBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Differs from PDF'**
+  String get pdfDiffersBadge;
+
+  /// No description provided for @pdfNotInPdfBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in PDF'**
+  String get pdfNotInPdfBadge;
+
+  /// No description provided for @pdfOnlyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Only in the official PDF'**
+  String get pdfOnlyTitle;
 }
 
 class _AppLocalizationsDelegate

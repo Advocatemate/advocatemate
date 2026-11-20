@@ -155,6 +155,8 @@ abstract class ListingItem with _$ListingItem {
     String? listSection,
     String? stage,
     String? remarks,
+    PdfCheck? pdfCheck, // result of checking this item against the official court PDF
+    List<int>? pdfPages, // set when the item was read from the official PDF
   }) = _ListingItem;
 
   factory ListingItem.fromJson(Map<String, dynamic> json) => _$ListingItemFromJson(json);
@@ -174,9 +176,89 @@ abstract class CourtListing with _$CourtListing {
     @Default(false) bool stale,
     String? source,
     @Default([]) List<ListingItem> items,
+    @Default('online_list') String itemsSource, // online_list | official_pdf
+    String? fallbackReason, // online_list_unavailable | online_list_empty
+    PdfVerification? pdfVerification,
   }) = _CourtListing;
 
   factory CourtListing.fromJson(Map<String, dynamic> json) => _$CourtListingFromJson(json);
+}
+
+@freezed
+abstract class PdfCheck with _$PdfCheck {
+  const factory PdfCheck({
+    required String status, // match | differs | not_in_pdf
+    @Default([]) List<String> fields,
+  }) = _PdfCheck;
+
+  factory PdfCheck.fromJson(Map<String, dynamic> json) => _$PdfCheckFromJson(json);
+}
+
+@freezed
+abstract class PdfVerification with _$PdfVerification {
+  const factory PdfVerification({
+    required String status, // verified | differences | failed | pdf_empty | not_available
+    String? source,
+    String? sourceUrl,
+    String? checkedAt,
+    @Default(0) int matched,
+    @Default(0) int differs,
+    @Default(0) int notInPdf,
+    @Default(0) int pdfOnly,
+    @Default([]) List<ListingItem> pdfOnlyItems,
+    String? errorCode,
+  }) = _PdfVerification;
+
+  factory PdfVerification.fromJson(Map<String, dynamic> json) => _$PdfVerificationFromJson(json);
+}
+
+// ------------------------------------------------------------------ passed-over list
+@freezed
+abstract class PassedOverEntry with _$PassedOverEntry {
+  const factory PassedOverEntry({
+    required String itemNo,
+    required String listPrefix,
+    String? listType,
+    required String status, // pending | no_longer_pending | off_board
+    required String firstSeenAt,
+    required String lastSeenAt,
+    String? removedAt,
+    @JsonKey(name: 'case') ListingItem? listing,
+  }) = _PassedOverEntry;
+
+  factory PassedOverEntry.fromJson(Map<String, dynamic> json) => _$PassedOverEntryFromJson(json);
+}
+
+@freezed
+abstract class PassedOverCourt with _$PassedOverCourt {
+  const factory PassedOverCourt({
+    required String courtNo,
+    String? coram,
+    String? currentItem,
+    @Default(0) int pending,
+    @Default([]) List<PassedOverEntry> items,
+  }) = _PassedOverCourt;
+
+  factory PassedOverCourt.fromJson(Map<String, dynamic> json) => _$PassedOverCourtFromJson(json);
+}
+
+@freezed
+abstract class PassedOverList with _$PassedOverList {
+  const factory PassedOverList({
+    required String listDate,
+    @Default(false) bool isToday,
+    String? source,
+    String? observedFrom,
+    String? boardFetchedAt,
+    bool? boardStale,
+    @Default([]) List<String> availableDates,
+    @Default(0) int total,
+    @Default(0) int pending,
+    @Default([]) List<PassedOverCourt> courts,
+    String? note,
+  }) = _PassedOverList;
+
+  factory PassedOverList.fromJson(Map<String, dynamic> json) => _$PassedOverListFromJson(json);
 }
 
 @freezed

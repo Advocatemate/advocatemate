@@ -12,7 +12,16 @@ from sqlalchemy.orm import Session
 from app.api.deps import CurrentUser, get_current_user
 from app.core.errors import AppError, NotFound
 from app.db.session import get_db
-from app.services import advocates, case_details, cause_lists, enrichment, live_board, pdfs, search
+from app.services import (
+    advocates,
+    case_details,
+    cause_lists,
+    enrichment,
+    live_board,
+    passed_over,
+    pdfs,
+    search,
+)
 from app.services.cases import get_case_or_404, get_or_create_case, parse_identity_or_400
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
@@ -43,6 +52,16 @@ def get_advocate_profile(advocate_code: str, db: Session = Depends(get_db)):
 def advocate_cause_list(advocate_code: str, list_date: date | None = Query(None, alias="date"),
                         refresh: bool = False, db: Session = Depends(get_db)):
     return advocates.advocate_cause_list(db, advocate_code, list_date or _today(), refresh=refresh)
+
+
+@router.get("/cause-list/passed-over", tags=["cause lists"], summary="Passed-over (kept back) items")
+def passed_over_list(list_date: date | None = Query(None, alias="date"), db: Session = Depends(get_db)):
+    """Items courts kept back, from "Kept Back Cases" on the APHC display board, with their cases."""
+    try:
+        board = live_board.live_board(db)
+    except AppError:
+        board = None
+    return passed_over.passed_over_list(db, list_date, board=board)
 
 
 @router.get("/cause-list/dates", tags=["cause lists"], summary="Dates APHC currently offers for a list type")

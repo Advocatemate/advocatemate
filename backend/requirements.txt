@@ -16,3 +16,8 @@ sentry-sdk[fastapi]==2.19.2
 python-multipart==0.0.19
 google-auth==2.38.0
 requests==2.34.2
+# Official cause-list PDF reading (all MIT/BSD/Apache licensed)
+pdfplumber==0.11.4
+pdfminer.six==20231228
+pypdfium2==4.30.0
+cryptography==44.0.0

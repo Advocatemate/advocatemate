@@ -69,8 +69,8 @@ Field meaning taken from the official `displayboard.jsp` renderer:
 |---|---|
 | 0 | Court number |
 | 2 | Item: `-` = not in session, `D-0` = session started, otherwise current item (e.g. `D-52`, `P23`) |
-| 4 | Kept-back cases (column "KEPT BACK CASES") |
-| 5 | Pending serials (tooltip), comma-separated |
+| 4 | Kept-back cases (column "KEPT BACK CASES") — item serial numbers |
+| 5 | Kept-back serials still pending (tooltip "Pending S.No"), comma-separated |
 | 6 | Coram |
 | 1, 3 | Not rendered by the official page; ignored |
 
@@ -78,6 +78,21 @@ Parser: `parse_display_text`. Polled by Celery beat every `LIVE_BOARD_POLL_SECON
 (Mon–Sat 09:30–18:00 IST). Snapshots older than `LIVE_BOARD_STALE_SECONDS` (180 s) are returned with
 `stale=true, is_current=false`. Fallback candidates listed in the API document (`displayboard.jsp`,
 `/displayboard`, …) are **not used**: `displayboard.jsp` is only the HTML page that calls `displaytext.jsp`.
+
+#### Passed-over (kept-back) list — VERIFIED 20-11-2026
+APHC has no separate "passed-over" list. Its own `displayboard.jsp` renders field 4 as **"KEPT BACK CASES"**
+and field 5 as that cell's tooltip **"Pending S.No"**; both hold item serial numbers of the court's list
+(observed: court 35 at `D-58`, kept back `51` and `52`; court 13 at `D-73`, kept back `15`). The cell and the
+tooltip can differ (e.g. cell `9`, tooltip `9,10,15`), so every number in either field is recorded as passed
+over, and those in field 5 as still pending. Court 35's PDF on the same day carried the note "ALL PASSOVER
+MATTERS WILL BE TAKEN UP AT 02:15 PM", confirming the court's own term.
+`app/services/passed_over.py` records each display-board poll (`passed_over_items`) and serves
+`GET /cause-list/passed-over`, joined with the court's daily list by item number. It covers only what was
+observed while polling; it cannot be rebuilt for earlier times. Numbers refer to the daily list unless the
+board's current item is a supplementary one (`S-…`).
+
+**APHC list type `P` is the "Date Wise Cause List"** (dates ahead, e.g. 23-11 to 04-12 on 20-11-2026), not a
+passed-over list. It is not integrated.
 
 ### 5. Weekly cause-list PDF — VERIFIED
 `GET /Hcdbs/upload/weeklylist.pdf` → `200 application/pdf` (~318 KB, `Last-Modified` present). Proxied and cached
@@ -87,6 +102,30 @@ for 1 h; served with `X-Document-Official: true` and `X-Source-Url`.
 `GET /Hcdbs/upload/court{n}_{yyyymmdd}.pdf` as linked from the online board → `application/pdf`.
 Download is restricted to paths under `/Hcdbs/upload/` ending in `.pdf`, checked for the `%PDF` signature and a
 40 MB cap.
+
+#### Reading the court PDFs (verification and fallback) — VERIFIED 20-11-2026
+Layout (iText, A4, Helvetica 8 pt): a bold section header (`COURT NO. n`, bench, "To be Heard on…", list title in
+brackets, column header `SNO | CASE | PARTY | PETITIONER ADV. | RESPONDENT ADV. | DISTRICT`) is printed only
+when a list section starts, not on every page; items continue across page breaks; bold lines inside the table
+are stage headings or "along with" notes; each page ends with a centred page number. Table positions shift by a
+few points between pages.
+
+Parser: `app/integrations/aphc/pdf_parser.py` (pdfplumber; `PARSER_VERSION`). Columns come from the header and
+from where cell text actually starts on each page; words one space apart stay in one cell. Handled from real
+PDFs: items continuing across pages, IA printed above the main case, case numbers and item numbers wrapped in
+narrow columns ("165.1" + "0" = "165.10"), case-type prefixes on their own line ("X" + "OBJ/18/2022"),
+unmapped glyphs (`(cid:9)`), and numbering that restarts in later sections. Advocate cells keep the PDF's
+printed lines (a name can wrap onto two lines).
+
+Use (`app/services/cause_list_pdfs.py`): the PDF **never overwrites** the online list. It is compared item by
+item (case number, parties, advocates, district; spacing, case and line wrapping ignored), the result is
+returned with the court list (`pdf_verification`, per-item `pdf_check`), and the PDF items are served as a
+labelled fallback (`items_source: "official_pdf"`) only when the online list cannot be read or is empty.
+Background job `parse_cause_list_pdfs` reads every published court PDF (05/35 past each hour, 06:00–22:00 IST).
+
+Live check, 20-11-2026, all 27 published court PDFs: read with 0 failures; 4,340 of 4,344 online items matched
+(99.9 %); 26 courts fully verified. The 4 differences (court 1) are real: the online list names an advocate
+that the PDF does not.
 
 ### 7. Complete case details (`caseDetails1.jsp`) — BLOCKED
 The official cause-list page calls `POST /Hcdbs/caseDetails1.jsp?casedet=WP/11111/2026` from the browser. From
@@ -106,7 +145,7 @@ Unblocking this needs APHC permission/whitelisting (see Approvals).
 | `POST /Hcdbs/searchtype.action` | VERIFIED |
 | `POST /Hcdbs/courtlist.jsp` (weekly) | Observed as **GET** `courtlist.jsp?listtype1=W&listdate1=…` in page JS; same parser |
 | `https://aphc.gov.in/displayboard`, `/displayboard.jsp`, `/Hcdbs/displayboard` | NOT USED |
-| "Date wise", "Advanced", "Advocate wise" lists (`P`, `A`, `F`) | Not integrated (not in scope; advocate-wise requires CAPTCHA) |
+| "Date wise", "Advanced", "Advocate wise" lists (`P`, `A`, `F`) | Not integrated (`P` is the Date Wise list, not passed-over; advocate-wise requires CAPTCHA — the Lexika advocate search is used instead) |
 
 ## Failure handling
 `upstream_timeout`, `upstream_unavailable` (5xx/transport), `upstream_blocked` (403/404/block page),

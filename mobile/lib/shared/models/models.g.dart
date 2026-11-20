@@ -255,6 +255,12 @@ _ListingItem _$ListingItemFromJson(Map<String, dynamic> json) => _ListingItem(
   listSection: json['list_section'] as String?,
   stage: json['stage'] as String?,
   remarks: json['remarks'] as String?,
+  pdfCheck: json['pdf_check'] == null
+      ? null
+      : PdfCheck.fromJson(json['pdf_check'] as Map<String, dynamic>),
+  pdfPages: (json['pdf_pages'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
+      .toList(),
 );
 
 Map<String, dynamic> _$ListingItemToJson(_ListingItem instance) =>
@@ -272,6 +278,8 @@ Map<String, dynamic> _$ListingItemToJson(_ListingItem instance) =>
       'list_section': ?instance.listSection,
       'stage': ?instance.stage,
       'remarks': ?instance.remarks,
+      'pdf_check': ?instance.pdfCheck?.toJson(),
+      'pdf_pages': ?instance.pdfPages,
     };
 
 _CourtListing _$CourtListingFromJson(Map<String, dynamic> json) =>
@@ -295,6 +303,13 @@ _CourtListing _$CourtListingFromJson(Map<String, dynamic> json) =>
               ?.map((e) => ListingItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      itemsSource: json['items_source'] as String? ?? 'online_list',
+      fallbackReason: json['fallback_reason'] as String?,
+      pdfVerification: json['pdf_verification'] == null
+          ? null
+          : PdfVerification.fromJson(
+              json['pdf_verification'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$CourtListingToJson(_CourtListing instance) =>
@@ -310,6 +325,139 @@ Map<String, dynamic> _$CourtListingToJson(_CourtListing instance) =>
       'stale': instance.stale,
       'source': ?instance.source,
       'items': instance.items.map((e) => e.toJson()).toList(),
+      'items_source': instance.itemsSource,
+      'fallback_reason': ?instance.fallbackReason,
+      'pdf_verification': ?instance.pdfVerification?.toJson(),
+    };
+
+_PdfCheck _$PdfCheckFromJson(Map<String, dynamic> json) => _PdfCheck(
+  status: json['status'] as String,
+  fields:
+      (json['fields'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
+);
+
+Map<String, dynamic> _$PdfCheckToJson(_PdfCheck instance) => <String, dynamic>{
+  'status': instance.status,
+  'fields': instance.fields,
+};
+
+_PdfVerification _$PdfVerificationFromJson(Map<String, dynamic> json) =>
+    _PdfVerification(
+      status: json['status'] as String,
+      source: json['source'] as String?,
+      sourceUrl: json['source_url'] as String?,
+      checkedAt: json['checked_at'] as String?,
+      matched: (json['matched'] as num?)?.toInt() ?? 0,
+      differs: (json['differs'] as num?)?.toInt() ?? 0,
+      notInPdf: (json['not_in_pdf'] as num?)?.toInt() ?? 0,
+      pdfOnly: (json['pdf_only'] as num?)?.toInt() ?? 0,
+      pdfOnlyItems:
+          (json['pdf_only_items'] as List<dynamic>?)
+              ?.map((e) => ListingItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      errorCode: json['error_code'] as String?,
+    );
+
+Map<String, dynamic> _$PdfVerificationToJson(_PdfVerification instance) =>
+    <String, dynamic>{
+      'status': instance.status,
+      'source': ?instance.source,
+      'source_url': ?instance.sourceUrl,
+      'checked_at': ?instance.checkedAt,
+      'matched': instance.matched,
+      'differs': instance.differs,
+      'not_in_pdf': instance.notInPdf,
+      'pdf_only': instance.pdfOnly,
+      'pdf_only_items': instance.pdfOnlyItems.map((e) => e.toJson()).toList(),
+      'error_code': ?instance.errorCode,
+    };
+
+_PassedOverEntry _$PassedOverEntryFromJson(Map<String, dynamic> json) =>
+    _PassedOverEntry(
+      itemNo: json['item_no'] as String,
+      listPrefix: json['list_prefix'] as String,
+      listType: json['list_type'] as String?,
+      status: json['status'] as String,
+      firstSeenAt: json['first_seen_at'] as String,
+      lastSeenAt: json['last_seen_at'] as String,
+      removedAt: json['removed_at'] as String?,
+      listing: json['case'] == null
+          ? null
+          : ListingItem.fromJson(json['case'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$PassedOverEntryToJson(_PassedOverEntry instance) =>
+    <String, dynamic>{
+      'item_no': instance.itemNo,
+      'list_prefix': instance.listPrefix,
+      'list_type': ?instance.listType,
+      'status': instance.status,
+      'first_seen_at': instance.firstSeenAt,
+      'last_seen_at': instance.lastSeenAt,
+      'removed_at': ?instance.removedAt,
+      'case': ?instance.listing?.toJson(),
+    };
+
+_PassedOverCourt _$PassedOverCourtFromJson(Map<String, dynamic> json) =>
+    _PassedOverCourt(
+      courtNo: json['court_no'] as String,
+      coram: json['coram'] as String?,
+      currentItem: json['current_item'] as String?,
+      pending: (json['pending'] as num?)?.toInt() ?? 0,
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((e) => PassedOverEntry.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+    );
+
+Map<String, dynamic> _$PassedOverCourtToJson(_PassedOverCourt instance) =>
+    <String, dynamic>{
+      'court_no': instance.courtNo,
+      'coram': ?instance.coram,
+      'current_item': ?instance.currentItem,
+      'pending': instance.pending,
+      'items': instance.items.map((e) => e.toJson()).toList(),
+    };
+
+_PassedOverList _$PassedOverListFromJson(Map<String, dynamic> json) =>
+    _PassedOverList(
+      listDate: json['list_date'] as String,
+      isToday: json['is_today'] as bool? ?? false,
+      source: json['source'] as String?,
+      observedFrom: json['observed_from'] as String?,
+      boardFetchedAt: json['board_fetched_at'] as String?,
+      boardStale: json['board_stale'] as bool?,
+      availableDates:
+          (json['available_dates'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      total: (json['total'] as num?)?.toInt() ?? 0,
+      pending: (json['pending'] as num?)?.toInt() ?? 0,
+      courts:
+          (json['courts'] as List<dynamic>?)
+              ?.map((e) => PassedOverCourt.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      note: json['note'] as String?,
+    );
+
+Map<String, dynamic> _$PassedOverListToJson(_PassedOverList instance) =>
+    <String, dynamic>{
+      'list_date': instance.listDate,
+      'is_today': instance.isToday,
+      'source': ?instance.source,
+      'observed_from': ?instance.observedFrom,
+      'board_fetched_at': ?instance.boardFetchedAt,
+      'board_stale': ?instance.boardStale,
+      'available_dates': instance.availableDates,
+      'total': instance.total,
+      'pending': instance.pending,
+      'courts': instance.courts.map((e) => e.toJson()).toList(),
+      'note': ?instance.note,
     };
 
 _PublicationCourt _$PublicationCourtFromJson(Map<String, dynamic> json) =>

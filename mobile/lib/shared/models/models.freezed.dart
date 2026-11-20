@@ -2650,7 +2650,7 @@ as String?,
 /// @nodoc
 mixin _$ListingItem {
 
- int get sequence; String get itemNo; String? get caseId; String get caseNumber; List<ApplicationRef> get applications; String? get petitioner; String? get respondent; List<String> get petitionerAdvocates; List<String> get respondentAdvocates; String? get district; String? get listSection; String? get stage; String? get remarks;
+ int get sequence; String get itemNo; String? get caseId; String get caseNumber; List<ApplicationRef> get applications; String? get petitioner; String? get respondent; List<String> get petitionerAdvocates; List<String> get respondentAdvocates; String? get district; String? get listSection; String? get stage; String? get remarks; PdfCheck? get pdfCheck; List<int>? get pdfPages;
 /// Create a copy of ListingItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2664,20 +2664,20 @@ $ListingItemCopyWith<ListingItem> get copyWith => _$ListingItemCopyWithImpl<List
 @override
 bool operator ==(Object other) {
   final _this = this as ListingItem;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListingItem&&(identical(other.sequence, _this.sequence) || other.sequence == _this.sequence)&&(identical(other.itemNo, _this.itemNo) || other.itemNo == _this.itemNo)&&(identical(other.caseId, _this.caseId) || other.caseId == _this.caseId)&&(identical(other.caseNumber, _this.caseNumber) || other.caseNumber == _this.caseNumber)&&const DeepCollectionEquality().equals(other.applications, _this.applications)&&(identical(other.petitioner, _this.petitioner) || other.petitioner == _this.petitioner)&&(identical(other.respondent, _this.respondent) || other.respondent == _this.respondent)&&const DeepCollectionEquality().equals(other.petitionerAdvocates, _this.petitionerAdvocates)&&const DeepCollectionEquality().equals(other.respondentAdvocates, _this.respondentAdvocates)&&(identical(other.district, _this.district) || other.district == _this.district)&&(identical(other.listSection, _this.listSection) || other.listSection == _this.listSection)&&(identical(other.stage, _this.stage) || other.stage == _this.stage)&&(identical(other.remarks, _this.remarks) || other.remarks == _this.remarks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListingItem&&(identical(other.sequence, _this.sequence) || other.sequence == _this.sequence)&&(identical(other.itemNo, _this.itemNo) || other.itemNo == _this.itemNo)&&(identical(other.caseId, _this.caseId) || other.caseId == _this.caseId)&&(identical(other.caseNumber, _this.caseNumber) || other.caseNumber == _this.caseNumber)&&const DeepCollectionEquality().equals(other.applications, _this.applications)&&(identical(other.petitioner, _this.petitioner) || other.petitioner == _this.petitioner)&&(identical(other.respondent, _this.respondent) || other.respondent == _this.respondent)&&const DeepCollectionEquality().equals(other.petitionerAdvocates, _this.petitionerAdvocates)&&const DeepCollectionEquality().equals(other.respondentAdvocates, _this.respondentAdvocates)&&(identical(other.district, _this.district) || other.district == _this.district)&&(identical(other.listSection, _this.listSection) || other.listSection == _this.listSection)&&(identical(other.stage, _this.stage) || other.stage == _this.stage)&&(identical(other.remarks, _this.remarks) || other.remarks == _this.remarks)&&(identical(other.pdfCheck, _this.pdfCheck) || other.pdfCheck == _this.pdfCheck)&&const DeepCollectionEquality().equals(other.pdfPages, _this.pdfPages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as ListingItem;
-  return Object.hash(runtimeType,_this.sequence,_this.itemNo,_this.caseId,_this.caseNumber,const DeepCollectionEquality().hash(_this.applications),_this.petitioner,_this.respondent,const DeepCollectionEquality().hash(_this.petitionerAdvocates),const DeepCollectionEquality().hash(_this.respondentAdvocates),_this.district,_this.listSection,_this.stage,_this.remarks);
+  return Object.hash(runtimeType,_this.sequence,_this.itemNo,_this.caseId,_this.caseNumber,const DeepCollectionEquality().hash(_this.applications),_this.petitioner,_this.respondent,const DeepCollectionEquality().hash(_this.petitionerAdvocates),const DeepCollectionEquality().hash(_this.respondentAdvocates),_this.district,_this.listSection,_this.stage,_this.remarks,_this.pdfCheck,const DeepCollectionEquality().hash(_this.pdfPages));
 }
 
 @override
 String toString() {
   final _this = this as ListingItem;
-  return 'ListingItem(sequence: ${_this.sequence}, itemNo: ${_this.itemNo}, caseId: ${_this.caseId}, caseNumber: ${_this.caseNumber}, applications: ${_this.applications}, petitioner: ${_this.petitioner}, respondent: ${_this.respondent}, petitionerAdvocates: ${_this.petitionerAdvocates}, respondentAdvocates: ${_this.respondentAdvocates}, district: ${_this.district}, listSection: ${_this.listSection}, stage: ${_this.stage}, remarks: ${_this.remarks})';
+  return 'ListingItem(sequence: ${_this.sequence}, itemNo: ${_this.itemNo}, caseId: ${_this.caseId}, caseNumber: ${_this.caseNumber}, applications: ${_this.applications}, petitioner: ${_this.petitioner}, respondent: ${_this.respondent}, petitionerAdvocates: ${_this.petitionerAdvocates}, respondentAdvocates: ${_this.respondentAdvocates}, district: ${_this.district}, listSection: ${_this.listSection}, stage: ${_this.stage}, remarks: ${_this.remarks}, pdfCheck: ${_this.pdfCheck}, pdfPages: ${_this.pdfPages})';
 }
 
 
@@ -2688,11 +2688,11 @@ abstract mixin class $ListingItemCopyWith<$Res>  {
   factory $ListingItemCopyWith(ListingItem value, $Res Function(ListingItem) _then) = _$ListingItemCopyWithImpl;
 @useResult
 $Res call({
- int sequence, String itemNo, String? caseId, String caseNumber, List<ApplicationRef> applications, String? petitioner, String? respondent, List<String> petitionerAdvocates, List<String> respondentAdvocates, String? district, String? listSection, String? stage, String? remarks
+ int sequence, String itemNo, String? caseId, String caseNumber, List<ApplicationRef> applications, String? petitioner, String? respondent, List<String> petitionerAdvocates, List<String> respondentAdvocates, String? district, String? listSection, String? stage, String? remarks, PdfCheck? pdfCheck, List<int>? pdfPages
 });
 
 
-
+$PdfCheckCopyWith<$Res>? get pdfCheck;
 
 }
 /// @nodoc
@@ -2705,7 +2705,7 @@ class _$ListingItemCopyWithImpl<$Res>
 
 /// Create a copy of ListingItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? sequence = null,Object? itemNo = null,Object? caseId = freezed,Object? caseNumber = null,Object? applications = null,Object? petitioner = freezed,Object? respondent = freezed,Object? petitionerAdvocates = null,Object? respondentAdvocates = null,Object? district = freezed,Object? listSection = freezed,Object? stage = freezed,Object? remarks = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? sequence = null,Object? itemNo = null,Object? caseId = freezed,Object? caseNumber = null,Object? applications = null,Object? petitioner = freezed,Object? respondent = freezed,Object? petitionerAdvocates = null,Object? respondentAdvocates = null,Object? district = freezed,Object? listSection = freezed,Object? stage = freezed,Object? remarks = freezed,Object? pdfCheck = freezed,Object? pdfPages = freezed,}) {
   return _then(ListingItem(
 sequence: null == sequence ? _self.sequence : sequence // ignore: cast_nullable_to_non_nullable
 as int,itemNo: null == itemNo ? _self.itemNo : itemNo // ignore: cast_nullable_to_non_nullable
@@ -2720,10 +2720,24 @@ as List<String>,district: freezed == district ? _self.district : district // ign
 as String?,listSection: freezed == listSection ? _self.listSection : listSection // ignore: cast_nullable_to_non_nullable
 as String?,stage: freezed == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
 as String?,remarks: freezed == remarks ? _self.remarks : remarks // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,pdfCheck: freezed == pdfCheck ? _self.pdfCheck : pdfCheck // ignore: cast_nullable_to_non_nullable
+as PdfCheck?,pdfPages: freezed == pdfPages ? _self.pdfPages : pdfPages // ignore: cast_nullable_to_non_nullable
+as List<int>?,
   ));
 }
+/// Create a copy of ListingItem
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PdfCheckCopyWith<$Res>? get pdfCheck {
+    if (_self.pdfCheck == null) {
+    return null;
+  }
 
+  return $PdfCheckCopyWith<$Res>(_self.pdfCheck!, (value) {
+    return _then(_self.copyWith(pdfCheck: value));
+  });
+}
 }
 
 
@@ -2805,10 +2819,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int sequence,  String itemNo,  String? caseId,  String caseNumber,  List<ApplicationRef> applications,  String? petitioner,  String? respondent,  List<String> petitionerAdvocates,  List<String> respondentAdvocates,  String? district,  String? listSection,  String? stage,  String? remarks)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int sequence,  String itemNo,  String? caseId,  String caseNumber,  List<ApplicationRef> applications,  String? petitioner,  String? respondent,  List<String> petitionerAdvocates,  List<String> respondentAdvocates,  String? district,  String? listSection,  String? stage,  String? remarks,  PdfCheck? pdfCheck,  List<int>? pdfPages)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ListingItem() when $default != null:
-return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.applications,_that.petitioner,_that.respondent,_that.petitionerAdvocates,_that.respondentAdvocates,_that.district,_that.listSection,_that.stage,_that.remarks);case _:
+return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.applications,_that.petitioner,_that.respondent,_that.petitionerAdvocates,_that.respondentAdvocates,_that.district,_that.listSection,_that.stage,_that.remarks,_that.pdfCheck,_that.pdfPages);case _:
   return orElse();
 
 }
@@ -2826,10 +2840,10 @@ return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int sequence,  String itemNo,  String? caseId,  String caseNumber,  List<ApplicationRef> applications,  String? petitioner,  String? respondent,  List<String> petitionerAdvocates,  List<String> respondentAdvocates,  String? district,  String? listSection,  String? stage,  String? remarks)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int sequence,  String itemNo,  String? caseId,  String caseNumber,  List<ApplicationRef> applications,  String? petitioner,  String? respondent,  List<String> petitionerAdvocates,  List<String> respondentAdvocates,  String? district,  String? listSection,  String? stage,  String? remarks,  PdfCheck? pdfCheck,  List<int>? pdfPages)  $default,) {final _that = this;
 switch (_that) {
 case _ListingItem():
-return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.applications,_that.petitioner,_that.respondent,_that.petitionerAdvocates,_that.respondentAdvocates,_that.district,_that.listSection,_that.stage,_that.remarks);case _:
+return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.applications,_that.petitioner,_that.respondent,_that.petitionerAdvocates,_that.respondentAdvocates,_that.district,_that.listSection,_that.stage,_that.remarks,_that.pdfCheck,_that.pdfPages);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -2846,10 +2860,10 @@ return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int sequence,  String itemNo,  String? caseId,  String caseNumber,  List<ApplicationRef> applications,  String? petitioner,  String? respondent,  List<String> petitionerAdvocates,  List<String> respondentAdvocates,  String? district,  String? listSection,  String? stage,  String? remarks)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int sequence,  String itemNo,  String? caseId,  String caseNumber,  List<ApplicationRef> applications,  String? petitioner,  String? respondent,  List<String> petitionerAdvocates,  List<String> respondentAdvocates,  String? district,  String? listSection,  String? stage,  String? remarks,  PdfCheck? pdfCheck,  List<int>? pdfPages)?  $default,) {final _that = this;
 switch (_that) {
 case _ListingItem() when $default != null:
-return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.applications,_that.petitioner,_that.respondent,_that.petitionerAdvocates,_that.respondentAdvocates,_that.district,_that.listSection,_that.stage,_that.remarks);case _:
+return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.applications,_that.petitioner,_that.respondent,_that.petitionerAdvocates,_that.respondentAdvocates,_that.district,_that.listSection,_that.stage,_that.remarks,_that.pdfCheck,_that.pdfPages);case _:
   return null;
 
 }
@@ -2861,7 +2875,7 @@ return $default(_that.sequence,_that.itemNo,_that.caseId,_that.caseNumber,_that.
 @JsonSerializable()
 
 class _ListingItem implements ListingItem {
-  const _ListingItem({required this.sequence, required this.itemNo, this.caseId, required this.caseNumber,  List<ApplicationRef> applications = const [], this.petitioner, this.respondent,  List<String> petitionerAdvocates = const [],  List<String> respondentAdvocates = const [], this.district, this.listSection, this.stage, this.remarks}): _applications = applications,_petitionerAdvocates = petitionerAdvocates,_respondentAdvocates = respondentAdvocates;
+  const _ListingItem({required this.sequence, required this.itemNo, this.caseId, required this.caseNumber,  List<ApplicationRef> applications = const [], this.petitioner, this.respondent,  List<String> petitionerAdvocates = const [],  List<String> respondentAdvocates = const [], this.district, this.listSection, this.stage, this.remarks, this.pdfCheck,  List<int>? pdfPages}): _applications = applications,_petitionerAdvocates = petitionerAdvocates,_respondentAdvocates = respondentAdvocates,_pdfPages = pdfPages;
   factory _ListingItem.fromJson(Map<String, dynamic> json) => _$ListingItemFromJson(json);
 
 @override final  int sequence;
@@ -2895,6 +2909,16 @@ class _ListingItem implements ListingItem {
 @override final  String? listSection;
 @override final  String? stage;
 @override final  String? remarks;
+@override final  PdfCheck? pdfCheck;
+ final  List<int>? _pdfPages;
+@override List<int>? get pdfPages {
+  final value = _pdfPages;
+  if (value == null) return null;
+  if (_pdfPages is EqualUnmodifiableListView) return _pdfPages;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
 
 /// Create a copy of ListingItem
 /// with the given fields replaced by the non-null parameter values.
@@ -2909,18 +2933,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListingItem&&(identical(other.sequence, sequence) || other.sequence == sequence)&&(identical(other.itemNo, itemNo) || other.itemNo == itemNo)&&(identical(other.caseId, caseId) || other.caseId == caseId)&&(identical(other.caseNumber, caseNumber) || other.caseNumber == caseNumber)&&const DeepCollectionEquality().equals(other.applications, _applications)&&(identical(other.petitioner, petitioner) || other.petitioner == petitioner)&&(identical(other.respondent, respondent) || other.respondent == respondent)&&const DeepCollectionEquality().equals(other.petitionerAdvocates, _petitionerAdvocates)&&const DeepCollectionEquality().equals(other.respondentAdvocates, _respondentAdvocates)&&(identical(other.district, district) || other.district == district)&&(identical(other.listSection, listSection) || other.listSection == listSection)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.remarks, remarks) || other.remarks == remarks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListingItem&&(identical(other.sequence, sequence) || other.sequence == sequence)&&(identical(other.itemNo, itemNo) || other.itemNo == itemNo)&&(identical(other.caseId, caseId) || other.caseId == caseId)&&(identical(other.caseNumber, caseNumber) || other.caseNumber == caseNumber)&&const DeepCollectionEquality().equals(other.applications, _applications)&&(identical(other.petitioner, petitioner) || other.petitioner == petitioner)&&(identical(other.respondent, respondent) || other.respondent == respondent)&&const DeepCollectionEquality().equals(other.petitionerAdvocates, _petitionerAdvocates)&&const DeepCollectionEquality().equals(other.respondentAdvocates, _respondentAdvocates)&&(identical(other.district, district) || other.district == district)&&(identical(other.listSection, listSection) || other.listSection == listSection)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.remarks, remarks) || other.remarks == remarks)&&(identical(other.pdfCheck, pdfCheck) || other.pdfCheck == pdfCheck)&&const DeepCollectionEquality().equals(other.pdfPages, _pdfPages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,sequence,itemNo,caseId,caseNumber,const DeepCollectionEquality().hash(_applications),petitioner,respondent,const DeepCollectionEquality().hash(_petitionerAdvocates),const DeepCollectionEquality().hash(_respondentAdvocates),district,listSection,stage,remarks);
+    return Object.hash(runtimeType,sequence,itemNo,caseId,caseNumber,const DeepCollectionEquality().hash(_applications),petitioner,respondent,const DeepCollectionEquality().hash(_petitionerAdvocates),const DeepCollectionEquality().hash(_respondentAdvocates),district,listSection,stage,remarks,pdfCheck,const DeepCollectionEquality().hash(_pdfPages));
 }
 
 @override
 String toString() {
-    return 'ListingItem(sequence: $sequence, itemNo: $itemNo, caseId: $caseId, caseNumber: $caseNumber, applications: $applications, petitioner: $petitioner, respondent: $respondent, petitionerAdvocates: $petitionerAdvocates, respondentAdvocates: $respondentAdvocates, district: $district, listSection: $listSection, stage: $stage, remarks: $remarks)';
+    return 'ListingItem(sequence: $sequence, itemNo: $itemNo, caseId: $caseId, caseNumber: $caseNumber, applications: $applications, petitioner: $petitioner, respondent: $respondent, petitionerAdvocates: $petitionerAdvocates, respondentAdvocates: $respondentAdvocates, district: $district, listSection: $listSection, stage: $stage, remarks: $remarks, pdfCheck: $pdfCheck, pdfPages: $pdfPages)';
 }
 
 
@@ -2931,11 +2955,11 @@ abstract mixin class _$ListingItemCopyWith<$Res> implements $ListingItemCopyWith
   factory _$ListingItemCopyWith(_ListingItem value, $Res Function(_ListingItem) _then) = __$ListingItemCopyWithImpl;
 @override @useResult
 $Res call({
- int sequence, String itemNo, String? caseId, String caseNumber, List<ApplicationRef> applications, String? petitioner, String? respondent, List<String> petitionerAdvocates, List<String> respondentAdvocates, String? district, String? listSection, String? stage, String? remarks
+ int sequence, String itemNo, String? caseId, String caseNumber, List<ApplicationRef> applications, String? petitioner, String? respondent, List<String> petitionerAdvocates, List<String> respondentAdvocates, String? district, String? listSection, String? stage, String? remarks, PdfCheck? pdfCheck, List<int>? pdfPages
 });
 
 
-
+@override $PdfCheckCopyWith<$Res>? get pdfCheck;
 
 }
 /// @nodoc
@@ -2948,7 +2972,7 @@ class __$ListingItemCopyWithImpl<$Res>
 
 /// Create a copy of ListingItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? sequence = null,Object? itemNo = null,Object? caseId = freezed,Object? caseNumber = null,Object? applications = null,Object? petitioner = freezed,Object? respondent = freezed,Object? petitionerAdvocates = null,Object? respondentAdvocates = null,Object? district = freezed,Object? listSection = freezed,Object? stage = freezed,Object? remarks = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? sequence = null,Object? itemNo = null,Object? caseId = freezed,Object? caseNumber = null,Object? applications = null,Object? petitioner = freezed,Object? respondent = freezed,Object? petitionerAdvocates = null,Object? respondentAdvocates = null,Object? district = freezed,Object? listSection = freezed,Object? stage = freezed,Object? remarks = freezed,Object? pdfCheck = freezed,Object? pdfPages = freezed,}) {
   return _then(_ListingItem(
 sequence: null == sequence ? _self.sequence : sequence // ignore: cast_nullable_to_non_nullable
 as int,itemNo: null == itemNo ? _self.itemNo : itemNo // ignore: cast_nullable_to_non_nullable
@@ -2963,18 +2987,32 @@ as List<String>,district: freezed == district ? _self.district : district // ign
 as String?,listSection: freezed == listSection ? _self.listSection : listSection // ignore: cast_nullable_to_non_nullable
 as String?,stage: freezed == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
 as String?,remarks: freezed == remarks ? _self.remarks : remarks // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,pdfCheck: freezed == pdfCheck ? _self.pdfCheck : pdfCheck // ignore: cast_nullable_to_non_nullable
+as PdfCheck?,pdfPages: freezed == pdfPages ? _self._pdfPages : pdfPages // ignore: cast_nullable_to_non_nullable
+as List<int>?,
   ));
 }
 
+/// Create a copy of ListingItem
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PdfCheckCopyWith<$Res>? get pdfCheck {
+    if (_self.pdfCheck == null) {
+    return null;
+  }
 
+  return $PdfCheckCopyWith<$Res>(_self.pdfCheck!, (value) {
+    return _then(_self.copyWith(pdfCheck: value));
+  });
+}
 }
 
 
 /// @nodoc
 mixin _$CourtListing {
 
- String get listType; String get listDate; String get courtNo; String? get bench; List<String> get headings; String get status; int get totalCases; String? get fetchedAt; bool get stale; String? get source; List<ListingItem> get items;
+ String get listType; String get listDate; String get courtNo; String? get bench; List<String> get headings; String get status; int get totalCases; String? get fetchedAt; bool get stale; String? get source; List<ListingItem> get items; String get itemsSource; String? get fallbackReason; PdfVerification? get pdfVerification;
 /// Create a copy of CourtListing
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2988,20 +3026,20 @@ $CourtListingCopyWith<CourtListing> get copyWith => _$CourtListingCopyWithImpl<C
 @override
 bool operator ==(Object other) {
   final _this = this as CourtListing;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CourtListing&&(identical(other.listType, _this.listType) || other.listType == _this.listType)&&(identical(other.listDate, _this.listDate) || other.listDate == _this.listDate)&&(identical(other.courtNo, _this.courtNo) || other.courtNo == _this.courtNo)&&(identical(other.bench, _this.bench) || other.bench == _this.bench)&&const DeepCollectionEquality().equals(other.headings, _this.headings)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.totalCases, _this.totalCases) || other.totalCases == _this.totalCases)&&(identical(other.fetchedAt, _this.fetchedAt) || other.fetchedAt == _this.fetchedAt)&&(identical(other.stale, _this.stale) || other.stale == _this.stale)&&(identical(other.source, _this.source) || other.source == _this.source)&&const DeepCollectionEquality().equals(other.items, _this.items));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CourtListing&&(identical(other.listType, _this.listType) || other.listType == _this.listType)&&(identical(other.listDate, _this.listDate) || other.listDate == _this.listDate)&&(identical(other.courtNo, _this.courtNo) || other.courtNo == _this.courtNo)&&(identical(other.bench, _this.bench) || other.bench == _this.bench)&&const DeepCollectionEquality().equals(other.headings, _this.headings)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.totalCases, _this.totalCases) || other.totalCases == _this.totalCases)&&(identical(other.fetchedAt, _this.fetchedAt) || other.fetchedAt == _this.fetchedAt)&&(identical(other.stale, _this.stale) || other.stale == _this.stale)&&(identical(other.source, _this.source) || other.source == _this.source)&&const DeepCollectionEquality().equals(other.items, _this.items)&&(identical(other.itemsSource, _this.itemsSource) || other.itemsSource == _this.itemsSource)&&(identical(other.fallbackReason, _this.fallbackReason) || other.fallbackReason == _this.fallbackReason)&&(identical(other.pdfVerification, _this.pdfVerification) || other.pdfVerification == _this.pdfVerification));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as CourtListing;
-  return Object.hash(runtimeType,_this.listType,_this.listDate,_this.courtNo,_this.bench,const DeepCollectionEquality().hash(_this.headings),_this.status,_this.totalCases,_this.fetchedAt,_this.stale,_this.source,const DeepCollectionEquality().hash(_this.items));
+  return Object.hash(runtimeType,_this.listType,_this.listDate,_this.courtNo,_this.bench,const DeepCollectionEquality().hash(_this.headings),_this.status,_this.totalCases,_this.fetchedAt,_this.stale,_this.source,const DeepCollectionEquality().hash(_this.items),_this.itemsSource,_this.fallbackReason,_this.pdfVerification);
 }
 
 @override
 String toString() {
   final _this = this as CourtListing;
-  return 'CourtListing(listType: ${_this.listType}, listDate: ${_this.listDate}, courtNo: ${_this.courtNo}, bench: ${_this.bench}, headings: ${_this.headings}, status: ${_this.status}, totalCases: ${_this.totalCases}, fetchedAt: ${_this.fetchedAt}, stale: ${_this.stale}, source: ${_this.source}, items: ${_this.items})';
+  return 'CourtListing(listType: ${_this.listType}, listDate: ${_this.listDate}, courtNo: ${_this.courtNo}, bench: ${_this.bench}, headings: ${_this.headings}, status: ${_this.status}, totalCases: ${_this.totalCases}, fetchedAt: ${_this.fetchedAt}, stale: ${_this.stale}, source: ${_this.source}, items: ${_this.items}, itemsSource: ${_this.itemsSource}, fallbackReason: ${_this.fallbackReason}, pdfVerification: ${_this.pdfVerification})';
 }
 
 
@@ -3012,11 +3050,11 @@ abstract mixin class $CourtListingCopyWith<$Res>  {
   factory $CourtListingCopyWith(CourtListing value, $Res Function(CourtListing) _then) = _$CourtListingCopyWithImpl;
 @useResult
 $Res call({
- String listType, String listDate, String courtNo, String? bench, List<String> headings, String status, int totalCases, String? fetchedAt, bool stale, String? source, List<ListingItem> items
+ String listType, String listDate, String courtNo, String? bench, List<String> headings, String status, int totalCases, String? fetchedAt, bool stale, String? source, List<ListingItem> items, String itemsSource, String? fallbackReason, PdfVerification? pdfVerification
 });
 
 
-
+$PdfVerificationCopyWith<$Res>? get pdfVerification;
 
 }
 /// @nodoc
@@ -3029,7 +3067,7 @@ class _$CourtListingCopyWithImpl<$Res>
 
 /// Create a copy of CourtListing
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? listType = null,Object? listDate = null,Object? courtNo = null,Object? bench = freezed,Object? headings = null,Object? status = null,Object? totalCases = null,Object? fetchedAt = freezed,Object? stale = null,Object? source = freezed,Object? items = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? listType = null,Object? listDate = null,Object? courtNo = null,Object? bench = freezed,Object? headings = null,Object? status = null,Object? totalCases = null,Object? fetchedAt = freezed,Object? stale = null,Object? source = freezed,Object? items = null,Object? itemsSource = null,Object? fallbackReason = freezed,Object? pdfVerification = freezed,}) {
   return _then(CourtListing(
 listType: null == listType ? _self.listType : listType // ignore: cast_nullable_to_non_nullable
 as String,listDate: null == listDate ? _self.listDate : listDate // ignore: cast_nullable_to_non_nullable
@@ -3042,10 +3080,25 @@ as int,fetchedAt: freezed == fetchedAt ? _self.fetchedAt : fetchedAt // ignore: 
 as String?,stale: null == stale ? _self.stale : stale // ignore: cast_nullable_to_non_nullable
 as bool,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
 as String?,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
-as List<ListingItem>,
+as List<ListingItem>,itemsSource: null == itemsSource ? _self.itemsSource : itemsSource // ignore: cast_nullable_to_non_nullable
+as String,fallbackReason: freezed == fallbackReason ? _self.fallbackReason : fallbackReason // ignore: cast_nullable_to_non_nullable
+as String?,pdfVerification: freezed == pdfVerification ? _self.pdfVerification : pdfVerification // ignore: cast_nullable_to_non_nullable
+as PdfVerification?,
   ));
 }
+/// Create a copy of CourtListing
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PdfVerificationCopyWith<$Res>? get pdfVerification {
+    if (_self.pdfVerification == null) {
+    return null;
+  }
 
+  return $PdfVerificationCopyWith<$Res>(_self.pdfVerification!, (value) {
+    return _then(_self.copyWith(pdfVerification: value));
+  });
+}
 }
 
 
@@ -3127,10 +3180,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String listType,  String listDate,  String courtNo,  String? bench,  List<String> headings,  String status,  int totalCases,  String? fetchedAt,  bool stale,  String? source,  List<ListingItem> items)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String listType,  String listDate,  String courtNo,  String? bench,  List<String> headings,  String status,  int totalCases,  String? fetchedAt,  bool stale,  String? source,  List<ListingItem> items,  String itemsSource,  String? fallbackReason,  PdfVerification? pdfVerification)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CourtListing() when $default != null:
-return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.headings,_that.status,_that.totalCases,_that.fetchedAt,_that.stale,_that.source,_that.items);case _:
+return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.headings,_that.status,_that.totalCases,_that.fetchedAt,_that.stale,_that.source,_that.items,_that.itemsSource,_that.fallbackReason,_that.pdfVerification);case _:
   return orElse();
 
 }
@@ -3148,10 +3201,10 @@ return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.he
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String listType,  String listDate,  String courtNo,  String? bench,  List<String> headings,  String status,  int totalCases,  String? fetchedAt,  bool stale,  String? source,  List<ListingItem> items)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String listType,  String listDate,  String courtNo,  String? bench,  List<String> headings,  String status,  int totalCases,  String? fetchedAt,  bool stale,  String? source,  List<ListingItem> items,  String itemsSource,  String? fallbackReason,  PdfVerification? pdfVerification)  $default,) {final _that = this;
 switch (_that) {
 case _CourtListing():
-return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.headings,_that.status,_that.totalCases,_that.fetchedAt,_that.stale,_that.source,_that.items);case _:
+return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.headings,_that.status,_that.totalCases,_that.fetchedAt,_that.stale,_that.source,_that.items,_that.itemsSource,_that.fallbackReason,_that.pdfVerification);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -3168,10 +3221,10 @@ return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.he
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String listType,  String listDate,  String courtNo,  String? bench,  List<String> headings,  String status,  int totalCases,  String? fetchedAt,  bool stale,  String? source,  List<ListingItem> items)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String listType,  String listDate,  String courtNo,  String? bench,  List<String> headings,  String status,  int totalCases,  String? fetchedAt,  bool stale,  String? source,  List<ListingItem> items,  String itemsSource,  String? fallbackReason,  PdfVerification? pdfVerification)?  $default,) {final _that = this;
 switch (_that) {
 case _CourtListing() when $default != null:
-return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.headings,_that.status,_that.totalCases,_that.fetchedAt,_that.stale,_that.source,_that.items);case _:
+return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.headings,_that.status,_that.totalCases,_that.fetchedAt,_that.stale,_that.source,_that.items,_that.itemsSource,_that.fallbackReason,_that.pdfVerification);case _:
   return null;
 
 }
@@ -3183,7 +3236,7 @@ return $default(_that.listType,_that.listDate,_that.courtNo,_that.bench,_that.he
 @JsonSerializable()
 
 class _CourtListing implements CourtListing {
-  const _CourtListing({required this.listType, required this.listDate, required this.courtNo, this.bench,  List<String> headings = const [], required this.status, required this.totalCases, this.fetchedAt, this.stale = false, this.source,  List<ListingItem> items = const []}): _headings = headings,_items = items;
+  const _CourtListing({required this.listType, required this.listDate, required this.courtNo, this.bench,  List<String> headings = const [], required this.status, required this.totalCases, this.fetchedAt, this.stale = false, this.source,  List<ListingItem> items = const [], this.itemsSource = 'online_list', this.fallbackReason, this.pdfVerification}): _headings = headings,_items = items;
   factory _CourtListing.fromJson(Map<String, dynamic> json) => _$CourtListingFromJson(json);
 
 @override final  String listType;
@@ -3209,6 +3262,9 @@ class _CourtListing implements CourtListing {
   return EqualUnmodifiableListView(_items);
 }
 
+@override@JsonKey() final  String itemsSource;
+@override final  String? fallbackReason;
+@override final  PdfVerification? pdfVerification;
 
 /// Create a copy of CourtListing
 /// with the given fields replaced by the non-null parameter values.
@@ -3223,18 +3279,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CourtListing&&(identical(other.listType, listType) || other.listType == listType)&&(identical(other.listDate, listDate) || other.listDate == listDate)&&(identical(other.courtNo, courtNo) || other.courtNo == courtNo)&&(identical(other.bench, bench) || other.bench == bench)&&const DeepCollectionEquality().equals(other.headings, _headings)&&(identical(other.status, status) || other.status == status)&&(identical(other.totalCases, totalCases) || other.totalCases == totalCases)&&(identical(other.fetchedAt, fetchedAt) || other.fetchedAt == fetchedAt)&&(identical(other.stale, stale) || other.stale == stale)&&(identical(other.source, source) || other.source == source)&&const DeepCollectionEquality().equals(other.items, _items));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CourtListing&&(identical(other.listType, listType) || other.listType == listType)&&(identical(other.listDate, listDate) || other.listDate == listDate)&&(identical(other.courtNo, courtNo) || other.courtNo == courtNo)&&(identical(other.bench, bench) || other.bench == bench)&&const DeepCollectionEquality().equals(other.headings, _headings)&&(identical(other.status, status) || other.status == status)&&(identical(other.totalCases, totalCases) || other.totalCases == totalCases)&&(identical(other.fetchedAt, fetchedAt) || other.fetchedAt == fetchedAt)&&(identical(other.stale, stale) || other.stale == stale)&&(identical(other.source, source) || other.source == source)&&const DeepCollectionEquality().equals(other.items, _items)&&(identical(other.itemsSource, itemsSource) || other.itemsSource == itemsSource)&&(identical(other.fallbackReason, fallbackReason) || other.fallbackReason == fallbackReason)&&(identical(other.pdfVerification, pdfVerification) || other.pdfVerification == pdfVerification));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,listType,listDate,courtNo,bench,const DeepCollectionEquality().hash(_headings),status,totalCases,fetchedAt,stale,source,const DeepCollectionEquality().hash(_items));
+    return Object.hash(runtimeType,listType,listDate,courtNo,bench,const DeepCollectionEquality().hash(_headings),status,totalCases,fetchedAt,stale,source,const DeepCollectionEquality().hash(_items),itemsSource,fallbackReason,pdfVerification);
 }
 
 @override
 String toString() {
-    return 'CourtListing(listType: $listType, listDate: $listDate, courtNo: $courtNo, bench: $bench, headings: $headings, status: $status, totalCases: $totalCases, fetchedAt: $fetchedAt, stale: $stale, source: $source, items: $items)';
+    return 'CourtListing(listType: $listType, listDate: $listDate, courtNo: $courtNo, bench: $bench, headings: $headings, status: $status, totalCases: $totalCases, fetchedAt: $fetchedAt, stale: $stale, source: $source, items: $items, itemsSource: $itemsSource, fallbackReason: $fallbackReason, pdfVerification: $pdfVerification)';
 }
 
 
@@ -3245,11 +3301,11 @@ abstract mixin class _$CourtListingCopyWith<$Res> implements $CourtListingCopyWi
   factory _$CourtListingCopyWith(_CourtListing value, $Res Function(_CourtListing) _then) = __$CourtListingCopyWithImpl;
 @override @useResult
 $Res call({
- String listType, String listDate, String courtNo, String? bench, List<String> headings, String status, int totalCases, String? fetchedAt, bool stale, String? source, List<ListingItem> items
+ String listType, String listDate, String courtNo, String? bench, List<String> headings, String status, int totalCases, String? fetchedAt, bool stale, String? source, List<ListingItem> items, String itemsSource, String? fallbackReason, PdfVerification? pdfVerification
 });
 
 
-
+@override $PdfVerificationCopyWith<$Res>? get pdfVerification;
 
 }
 /// @nodoc
@@ -3262,7 +3318,7 @@ class __$CourtListingCopyWithImpl<$Res>
 
 /// Create a copy of CourtListing
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? listType = null,Object? listDate = null,Object? courtNo = null,Object? bench = freezed,Object? headings = null,Object? status = null,Object? totalCases = null,Object? fetchedAt = freezed,Object? stale = null,Object? source = freezed,Object? items = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? listType = null,Object? listDate = null,Object? courtNo = null,Object? bench = freezed,Object? headings = null,Object? status = null,Object? totalCases = null,Object? fetchedAt = freezed,Object? stale = null,Object? source = freezed,Object? items = null,Object? itemsSource = null,Object? fallbackReason = freezed,Object? pdfVerification = freezed,}) {
   return _then(_CourtListing(
 listType: null == listType ? _self.listType : listType // ignore: cast_nullable_to_non_nullable
 as String,listDate: null == listDate ? _self.listDate : listDate // ignore: cast_nullable_to_non_nullable
@@ -3275,7 +3331,1519 @@ as int,fetchedAt: freezed == fetchedAt ? _self.fetchedAt : fetchedAt // ignore: 
 as String?,stale: null == stale ? _self.stale : stale // ignore: cast_nullable_to_non_nullable
 as bool,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
 as String?,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
-as List<ListingItem>,
+as List<ListingItem>,itemsSource: null == itemsSource ? _self.itemsSource : itemsSource // ignore: cast_nullable_to_non_nullable
+as String,fallbackReason: freezed == fallbackReason ? _self.fallbackReason : fallbackReason // ignore: cast_nullable_to_non_nullable
+as String?,pdfVerification: freezed == pdfVerification ? _self.pdfVerification : pdfVerification // ignore: cast_nullable_to_non_nullable
+as PdfVerification?,
+  ));
+}
+
+/// Create a copy of CourtListing
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PdfVerificationCopyWith<$Res>? get pdfVerification {
+    if (_self.pdfVerification == null) {
+    return null;
+  }
+
+  return $PdfVerificationCopyWith<$Res>(_self.pdfVerification!, (value) {
+    return _then(_self.copyWith(pdfVerification: value));
+  });
+}
+}
+
+
+/// @nodoc
+mixin _$PdfCheck {
+
+ String get status; List<String> get fields;
+/// Create a copy of PdfCheck
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PdfCheckCopyWith<PdfCheck> get copyWith => _$PdfCheckCopyWithImpl<PdfCheck>(this as PdfCheck, _$identity);
+
+  /// Serializes this PdfCheck to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as PdfCheck;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PdfCheck&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.fields, _this.fields));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as PdfCheck;
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.fields));
+}
+
+@override
+String toString() {
+  final _this = this as PdfCheck;
+  return 'PdfCheck(status: ${_this.status}, fields: ${_this.fields})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PdfCheckCopyWith<$Res>  {
+  factory $PdfCheckCopyWith(PdfCheck value, $Res Function(PdfCheck) _then) = _$PdfCheckCopyWithImpl;
+@useResult
+$Res call({
+ String status, List<String> fields
+});
+
+
+
+
+}
+/// @nodoc
+class _$PdfCheckCopyWithImpl<$Res>
+    implements $PdfCheckCopyWith<$Res> {
+  _$PdfCheckCopyWithImpl(this._self, this._then);
+
+  final PdfCheck _self;
+  final $Res Function(PdfCheck) _then;
+
+/// Create a copy of PdfCheck
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? fields = null,}) {
+  return _then(PdfCheck(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,fields: null == fields ? _self.fields : fields // ignore: cast_nullable_to_non_nullable
+as List<String>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [PdfCheck].
+extension PdfCheckPatterns on PdfCheck {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PdfCheck value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PdfCheck() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PdfCheck value)  $default,){
+final _that = this;
+switch (_that) {
+case _PdfCheck():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PdfCheck value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PdfCheck() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String status,  List<String> fields)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PdfCheck() when $default != null:
+return $default(_that.status,_that.fields);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String status,  List<String> fields)  $default,) {final _that = this;
+switch (_that) {
+case _PdfCheck():
+return $default(_that.status,_that.fields);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String status,  List<String> fields)?  $default,) {final _that = this;
+switch (_that) {
+case _PdfCheck() when $default != null:
+return $default(_that.status,_that.fields);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PdfCheck implements PdfCheck {
+  const _PdfCheck({required this.status,  List<String> fields = const []}): _fields = fields;
+  factory _PdfCheck.fromJson(Map<String, dynamic> json) => _$PdfCheckFromJson(json);
+
+@override final  String status;
+ final  List<String> _fields;
+@override@JsonKey() List<String> get fields {
+  if (_fields is EqualUnmodifiableListView) return _fields;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_fields);
+}
+
+
+/// Create a copy of PdfCheck
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PdfCheckCopyWith<_PdfCheck> get copyWith => __$PdfCheckCopyWithImpl<_PdfCheck>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PdfCheckToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PdfCheck&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.fields, _fields));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_fields));
+}
+
+@override
+String toString() {
+    return 'PdfCheck(status: $status, fields: $fields)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PdfCheckCopyWith<$Res> implements $PdfCheckCopyWith<$Res> {
+  factory _$PdfCheckCopyWith(_PdfCheck value, $Res Function(_PdfCheck) _then) = __$PdfCheckCopyWithImpl;
+@override @useResult
+$Res call({
+ String status, List<String> fields
+});
+
+
+
+
+}
+/// @nodoc
+class __$PdfCheckCopyWithImpl<$Res>
+    implements _$PdfCheckCopyWith<$Res> {
+  __$PdfCheckCopyWithImpl(this._self, this._then);
+
+  final _PdfCheck _self;
+  final $Res Function(_PdfCheck) _then;
+
+/// Create a copy of PdfCheck
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? fields = null,}) {
+  return _then(_PdfCheck(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,fields: null == fields ? _self._fields : fields // ignore: cast_nullable_to_non_nullable
+as List<String>,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$PdfVerification {
+
+ String get status; String? get source; String? get sourceUrl; String? get checkedAt; int get matched; int get differs; int get notInPdf; int get pdfOnly; List<ListingItem> get pdfOnlyItems; String? get errorCode;
+/// Create a copy of PdfVerification
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PdfVerificationCopyWith<PdfVerification> get copyWith => _$PdfVerificationCopyWithImpl<PdfVerification>(this as PdfVerification, _$identity);
+
+  /// Serializes this PdfVerification to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as PdfVerification;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PdfVerification&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.sourceUrl, _this.sourceUrl) || other.sourceUrl == _this.sourceUrl)&&(identical(other.checkedAt, _this.checkedAt) || other.checkedAt == _this.checkedAt)&&(identical(other.matched, _this.matched) || other.matched == _this.matched)&&(identical(other.differs, _this.differs) || other.differs == _this.differs)&&(identical(other.notInPdf, _this.notInPdf) || other.notInPdf == _this.notInPdf)&&(identical(other.pdfOnly, _this.pdfOnly) || other.pdfOnly == _this.pdfOnly)&&const DeepCollectionEquality().equals(other.pdfOnlyItems, _this.pdfOnlyItems)&&(identical(other.errorCode, _this.errorCode) || other.errorCode == _this.errorCode));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as PdfVerification;
+  return Object.hash(runtimeType,_this.status,_this.source,_this.sourceUrl,_this.checkedAt,_this.matched,_this.differs,_this.notInPdf,_this.pdfOnly,const DeepCollectionEquality().hash(_this.pdfOnlyItems),_this.errorCode);
+}
+
+@override
+String toString() {
+  final _this = this as PdfVerification;
+  return 'PdfVerification(status: ${_this.status}, source: ${_this.source}, sourceUrl: ${_this.sourceUrl}, checkedAt: ${_this.checkedAt}, matched: ${_this.matched}, differs: ${_this.differs}, notInPdf: ${_this.notInPdf}, pdfOnly: ${_this.pdfOnly}, pdfOnlyItems: ${_this.pdfOnlyItems}, errorCode: ${_this.errorCode})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PdfVerificationCopyWith<$Res>  {
+  factory $PdfVerificationCopyWith(PdfVerification value, $Res Function(PdfVerification) _then) = _$PdfVerificationCopyWithImpl;
+@useResult
+$Res call({
+ String status, String? source, String? sourceUrl, String? checkedAt, int matched, int differs, int notInPdf, int pdfOnly, List<ListingItem> pdfOnlyItems, String? errorCode
+});
+
+
+
+
+}
+/// @nodoc
+class _$PdfVerificationCopyWithImpl<$Res>
+    implements $PdfVerificationCopyWith<$Res> {
+  _$PdfVerificationCopyWithImpl(this._self, this._then);
+
+  final PdfVerification _self;
+  final $Res Function(PdfVerification) _then;
+
+/// Create a copy of PdfVerification
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? source = freezed,Object? sourceUrl = freezed,Object? checkedAt = freezed,Object? matched = null,Object? differs = null,Object? notInPdf = null,Object? pdfOnly = null,Object? pdfOnlyItems = null,Object? errorCode = freezed,}) {
+  return _then(PdfVerification(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String?,sourceUrl: freezed == sourceUrl ? _self.sourceUrl : sourceUrl // ignore: cast_nullable_to_non_nullable
+as String?,checkedAt: freezed == checkedAt ? _self.checkedAt : checkedAt // ignore: cast_nullable_to_non_nullable
+as String?,matched: null == matched ? _self.matched : matched // ignore: cast_nullable_to_non_nullable
+as int,differs: null == differs ? _self.differs : differs // ignore: cast_nullable_to_non_nullable
+as int,notInPdf: null == notInPdf ? _self.notInPdf : notInPdf // ignore: cast_nullable_to_non_nullable
+as int,pdfOnly: null == pdfOnly ? _self.pdfOnly : pdfOnly // ignore: cast_nullable_to_non_nullable
+as int,pdfOnlyItems: null == pdfOnlyItems ? _self.pdfOnlyItems : pdfOnlyItems // ignore: cast_nullable_to_non_nullable
+as List<ListingItem>,errorCode: freezed == errorCode ? _self.errorCode : errorCode // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [PdfVerification].
+extension PdfVerificationPatterns on PdfVerification {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PdfVerification value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PdfVerification() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PdfVerification value)  $default,){
+final _that = this;
+switch (_that) {
+case _PdfVerification():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PdfVerification value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PdfVerification() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String status,  String? source,  String? sourceUrl,  String? checkedAt,  int matched,  int differs,  int notInPdf,  int pdfOnly,  List<ListingItem> pdfOnlyItems,  String? errorCode)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PdfVerification() when $default != null:
+return $default(_that.status,_that.source,_that.sourceUrl,_that.checkedAt,_that.matched,_that.differs,_that.notInPdf,_that.pdfOnly,_that.pdfOnlyItems,_that.errorCode);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String status,  String? source,  String? sourceUrl,  String? checkedAt,  int matched,  int differs,  int notInPdf,  int pdfOnly,  List<ListingItem> pdfOnlyItems,  String? errorCode)  $default,) {final _that = this;
+switch (_that) {
+case _PdfVerification():
+return $default(_that.status,_that.source,_that.sourceUrl,_that.checkedAt,_that.matched,_that.differs,_that.notInPdf,_that.pdfOnly,_that.pdfOnlyItems,_that.errorCode);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String status,  String? source,  String? sourceUrl,  String? checkedAt,  int matched,  int differs,  int notInPdf,  int pdfOnly,  List<ListingItem> pdfOnlyItems,  String? errorCode)?  $default,) {final _that = this;
+switch (_that) {
+case _PdfVerification() when $default != null:
+return $default(_that.status,_that.source,_that.sourceUrl,_that.checkedAt,_that.matched,_that.differs,_that.notInPdf,_that.pdfOnly,_that.pdfOnlyItems,_that.errorCode);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PdfVerification implements PdfVerification {
+  const _PdfVerification({required this.status, this.source, this.sourceUrl, this.checkedAt, this.matched = 0, this.differs = 0, this.notInPdf = 0, this.pdfOnly = 0,  List<ListingItem> pdfOnlyItems = const [], this.errorCode}): _pdfOnlyItems = pdfOnlyItems;
+  factory _PdfVerification.fromJson(Map<String, dynamic> json) => _$PdfVerificationFromJson(json);
+
+@override final  String status;
+@override final  String? source;
+@override final  String? sourceUrl;
+@override final  String? checkedAt;
+@override@JsonKey() final  int matched;
+@override@JsonKey() final  int differs;
+@override@JsonKey() final  int notInPdf;
+@override@JsonKey() final  int pdfOnly;
+ final  List<ListingItem> _pdfOnlyItems;
+@override@JsonKey() List<ListingItem> get pdfOnlyItems {
+  if (_pdfOnlyItems is EqualUnmodifiableListView) return _pdfOnlyItems;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_pdfOnlyItems);
+}
+
+@override final  String? errorCode;
+
+/// Create a copy of PdfVerification
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PdfVerificationCopyWith<_PdfVerification> get copyWith => __$PdfVerificationCopyWithImpl<_PdfVerification>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PdfVerificationToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PdfVerification&&(identical(other.status, status) || other.status == status)&&(identical(other.source, source) || other.source == source)&&(identical(other.sourceUrl, sourceUrl) || other.sourceUrl == sourceUrl)&&(identical(other.checkedAt, checkedAt) || other.checkedAt == checkedAt)&&(identical(other.matched, matched) || other.matched == matched)&&(identical(other.differs, differs) || other.differs == differs)&&(identical(other.notInPdf, notInPdf) || other.notInPdf == notInPdf)&&(identical(other.pdfOnly, pdfOnly) || other.pdfOnly == pdfOnly)&&const DeepCollectionEquality().equals(other.pdfOnlyItems, _pdfOnlyItems)&&(identical(other.errorCode, errorCode) || other.errorCode == errorCode));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,status,source,sourceUrl,checkedAt,matched,differs,notInPdf,pdfOnly,const DeepCollectionEquality().hash(_pdfOnlyItems),errorCode);
+}
+
+@override
+String toString() {
+    return 'PdfVerification(status: $status, source: $source, sourceUrl: $sourceUrl, checkedAt: $checkedAt, matched: $matched, differs: $differs, notInPdf: $notInPdf, pdfOnly: $pdfOnly, pdfOnlyItems: $pdfOnlyItems, errorCode: $errorCode)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PdfVerificationCopyWith<$Res> implements $PdfVerificationCopyWith<$Res> {
+  factory _$PdfVerificationCopyWith(_PdfVerification value, $Res Function(_PdfVerification) _then) = __$PdfVerificationCopyWithImpl;
+@override @useResult
+$Res call({
+ String status, String? source, String? sourceUrl, String? checkedAt, int matched, int differs, int notInPdf, int pdfOnly, List<ListingItem> pdfOnlyItems, String? errorCode
+});
+
+
+
+
+}
+/// @nodoc
+class __$PdfVerificationCopyWithImpl<$Res>
+    implements _$PdfVerificationCopyWith<$Res> {
+  __$PdfVerificationCopyWithImpl(this._self, this._then);
+
+  final _PdfVerification _self;
+  final $Res Function(_PdfVerification) _then;
+
+/// Create a copy of PdfVerification
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? source = freezed,Object? sourceUrl = freezed,Object? checkedAt = freezed,Object? matched = null,Object? differs = null,Object? notInPdf = null,Object? pdfOnly = null,Object? pdfOnlyItems = null,Object? errorCode = freezed,}) {
+  return _then(_PdfVerification(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String?,sourceUrl: freezed == sourceUrl ? _self.sourceUrl : sourceUrl // ignore: cast_nullable_to_non_nullable
+as String?,checkedAt: freezed == checkedAt ? _self.checkedAt : checkedAt // ignore: cast_nullable_to_non_nullable
+as String?,matched: null == matched ? _self.matched : matched // ignore: cast_nullable_to_non_nullable
+as int,differs: null == differs ? _self.differs : differs // ignore: cast_nullable_to_non_nullable
+as int,notInPdf: null == notInPdf ? _self.notInPdf : notInPdf // ignore: cast_nullable_to_non_nullable
+as int,pdfOnly: null == pdfOnly ? _self.pdfOnly : pdfOnly // ignore: cast_nullable_to_non_nullable
+as int,pdfOnlyItems: null == pdfOnlyItems ? _self._pdfOnlyItems : pdfOnlyItems // ignore: cast_nullable_to_non_nullable
+as List<ListingItem>,errorCode: freezed == errorCode ? _self.errorCode : errorCode // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$PassedOverEntry {
+
+ String get itemNo; String get listPrefix; String? get listType; String get status; String get firstSeenAt; String get lastSeenAt; String? get removedAt;@JsonKey(name: 'case') ListingItem? get listing;
+/// Create a copy of PassedOverEntry
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PassedOverEntryCopyWith<PassedOverEntry> get copyWith => _$PassedOverEntryCopyWithImpl<PassedOverEntry>(this as PassedOverEntry, _$identity);
+
+  /// Serializes this PassedOverEntry to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as PassedOverEntry;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PassedOverEntry&&(identical(other.itemNo, _this.itemNo) || other.itemNo == _this.itemNo)&&(identical(other.listPrefix, _this.listPrefix) || other.listPrefix == _this.listPrefix)&&(identical(other.listType, _this.listType) || other.listType == _this.listType)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.firstSeenAt, _this.firstSeenAt) || other.firstSeenAt == _this.firstSeenAt)&&(identical(other.lastSeenAt, _this.lastSeenAt) || other.lastSeenAt == _this.lastSeenAt)&&(identical(other.removedAt, _this.removedAt) || other.removedAt == _this.removedAt)&&(identical(other.listing, _this.listing) || other.listing == _this.listing));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as PassedOverEntry;
+  return Object.hash(runtimeType,_this.itemNo,_this.listPrefix,_this.listType,_this.status,_this.firstSeenAt,_this.lastSeenAt,_this.removedAt,_this.listing);
+}
+
+@override
+String toString() {
+  final _this = this as PassedOverEntry;
+  return 'PassedOverEntry(itemNo: ${_this.itemNo}, listPrefix: ${_this.listPrefix}, listType: ${_this.listType}, status: ${_this.status}, firstSeenAt: ${_this.firstSeenAt}, lastSeenAt: ${_this.lastSeenAt}, removedAt: ${_this.removedAt}, listing: ${_this.listing})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PassedOverEntryCopyWith<$Res>  {
+  factory $PassedOverEntryCopyWith(PassedOverEntry value, $Res Function(PassedOverEntry) _then) = _$PassedOverEntryCopyWithImpl;
+@useResult
+$Res call({
+ String itemNo, String listPrefix, String? listType, String status, String firstSeenAt, String lastSeenAt, String? removedAt,@JsonKey(name: 'case') ListingItem? listing
+});
+
+
+$ListingItemCopyWith<$Res>? get listing;
+
+}
+/// @nodoc
+class _$PassedOverEntryCopyWithImpl<$Res>
+    implements $PassedOverEntryCopyWith<$Res> {
+  _$PassedOverEntryCopyWithImpl(this._self, this._then);
+
+  final PassedOverEntry _self;
+  final $Res Function(PassedOverEntry) _then;
+
+/// Create a copy of PassedOverEntry
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? itemNo = null,Object? listPrefix = null,Object? listType = freezed,Object? status = null,Object? firstSeenAt = null,Object? lastSeenAt = null,Object? removedAt = freezed,Object? listing = freezed,}) {
+  return _then(PassedOverEntry(
+itemNo: null == itemNo ? _self.itemNo : itemNo // ignore: cast_nullable_to_non_nullable
+as String,listPrefix: null == listPrefix ? _self.listPrefix : listPrefix // ignore: cast_nullable_to_non_nullable
+as String,listType: freezed == listType ? _self.listType : listType // ignore: cast_nullable_to_non_nullable
+as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,firstSeenAt: null == firstSeenAt ? _self.firstSeenAt : firstSeenAt // ignore: cast_nullable_to_non_nullable
+as String,lastSeenAt: null == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
+as String,removedAt: freezed == removedAt ? _self.removedAt : removedAt // ignore: cast_nullable_to_non_nullable
+as String?,listing: freezed == listing ? _self.listing : listing // ignore: cast_nullable_to_non_nullable
+as ListingItem?,
+  ));
+}
+/// Create a copy of PassedOverEntry
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ListingItemCopyWith<$Res>? get listing {
+    if (_self.listing == null) {
+    return null;
+  }
+
+  return $ListingItemCopyWith<$Res>(_self.listing!, (value) {
+    return _then(_self.copyWith(listing: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [PassedOverEntry].
+extension PassedOverEntryPatterns on PassedOverEntry {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PassedOverEntry value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PassedOverEntry() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PassedOverEntry value)  $default,){
+final _that = this;
+switch (_that) {
+case _PassedOverEntry():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PassedOverEntry value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PassedOverEntry() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String itemNo,  String listPrefix,  String? listType,  String status,  String firstSeenAt,  String lastSeenAt,  String? removedAt, @JsonKey(name: 'case')  ListingItem? listing)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PassedOverEntry() when $default != null:
+return $default(_that.itemNo,_that.listPrefix,_that.listType,_that.status,_that.firstSeenAt,_that.lastSeenAt,_that.removedAt,_that.listing);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String itemNo,  String listPrefix,  String? listType,  String status,  String firstSeenAt,  String lastSeenAt,  String? removedAt, @JsonKey(name: 'case')  ListingItem? listing)  $default,) {final _that = this;
+switch (_that) {
+case _PassedOverEntry():
+return $default(_that.itemNo,_that.listPrefix,_that.listType,_that.status,_that.firstSeenAt,_that.lastSeenAt,_that.removedAt,_that.listing);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String itemNo,  String listPrefix,  String? listType,  String status,  String firstSeenAt,  String lastSeenAt,  String? removedAt, @JsonKey(name: 'case')  ListingItem? listing)?  $default,) {final _that = this;
+switch (_that) {
+case _PassedOverEntry() when $default != null:
+return $default(_that.itemNo,_that.listPrefix,_that.listType,_that.status,_that.firstSeenAt,_that.lastSeenAt,_that.removedAt,_that.listing);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PassedOverEntry implements PassedOverEntry {
+  const _PassedOverEntry({required this.itemNo, required this.listPrefix, this.listType, required this.status, required this.firstSeenAt, required this.lastSeenAt, this.removedAt, @JsonKey(name: 'case') this.listing});
+  factory _PassedOverEntry.fromJson(Map<String, dynamic> json) => _$PassedOverEntryFromJson(json);
+
+@override final  String itemNo;
+@override final  String listPrefix;
+@override final  String? listType;
+@override final  String status;
+@override final  String firstSeenAt;
+@override final  String lastSeenAt;
+@override final  String? removedAt;
+@override@JsonKey(name: 'case') final  ListingItem? listing;
+
+/// Create a copy of PassedOverEntry
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PassedOverEntryCopyWith<_PassedOverEntry> get copyWith => __$PassedOverEntryCopyWithImpl<_PassedOverEntry>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PassedOverEntryToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PassedOverEntry&&(identical(other.itemNo, itemNo) || other.itemNo == itemNo)&&(identical(other.listPrefix, listPrefix) || other.listPrefix == listPrefix)&&(identical(other.listType, listType) || other.listType == listType)&&(identical(other.status, status) || other.status == status)&&(identical(other.firstSeenAt, firstSeenAt) || other.firstSeenAt == firstSeenAt)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt)&&(identical(other.removedAt, removedAt) || other.removedAt == removedAt)&&(identical(other.listing, listing) || other.listing == listing));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,itemNo,listPrefix,listType,status,firstSeenAt,lastSeenAt,removedAt,listing);
+}
+
+@override
+String toString() {
+    return 'PassedOverEntry(itemNo: $itemNo, listPrefix: $listPrefix, listType: $listType, status: $status, firstSeenAt: $firstSeenAt, lastSeenAt: $lastSeenAt, removedAt: $removedAt, listing: $listing)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PassedOverEntryCopyWith<$Res> implements $PassedOverEntryCopyWith<$Res> {
+  factory _$PassedOverEntryCopyWith(_PassedOverEntry value, $Res Function(_PassedOverEntry) _then) = __$PassedOverEntryCopyWithImpl;
+@override @useResult
+$Res call({
+ String itemNo, String listPrefix, String? listType, String status, String firstSeenAt, String lastSeenAt, String? removedAt,@JsonKey(name: 'case') ListingItem? listing
+});
+
+
+@override $ListingItemCopyWith<$Res>? get listing;
+
+}
+/// @nodoc
+class __$PassedOverEntryCopyWithImpl<$Res>
+    implements _$PassedOverEntryCopyWith<$Res> {
+  __$PassedOverEntryCopyWithImpl(this._self, this._then);
+
+  final _PassedOverEntry _self;
+  final $Res Function(_PassedOverEntry) _then;
+
+/// Create a copy of PassedOverEntry
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? itemNo = null,Object? listPrefix = null,Object? listType = freezed,Object? status = null,Object? firstSeenAt = null,Object? lastSeenAt = null,Object? removedAt = freezed,Object? listing = freezed,}) {
+  return _then(_PassedOverEntry(
+itemNo: null == itemNo ? _self.itemNo : itemNo // ignore: cast_nullable_to_non_nullable
+as String,listPrefix: null == listPrefix ? _self.listPrefix : listPrefix // ignore: cast_nullable_to_non_nullable
+as String,listType: freezed == listType ? _self.listType : listType // ignore: cast_nullable_to_non_nullable
+as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,firstSeenAt: null == firstSeenAt ? _self.firstSeenAt : firstSeenAt // ignore: cast_nullable_to_non_nullable
+as String,lastSeenAt: null == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
+as String,removedAt: freezed == removedAt ? _self.removedAt : removedAt // ignore: cast_nullable_to_non_nullable
+as String?,listing: freezed == listing ? _self.listing : listing // ignore: cast_nullable_to_non_nullable
+as ListingItem?,
+  ));
+}
+
+/// Create a copy of PassedOverEntry
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ListingItemCopyWith<$Res>? get listing {
+    if (_self.listing == null) {
+    return null;
+  }
+
+  return $ListingItemCopyWith<$Res>(_self.listing!, (value) {
+    return _then(_self.copyWith(listing: value));
+  });
+}
+}
+
+
+/// @nodoc
+mixin _$PassedOverCourt {
+
+ String get courtNo; String? get coram; String? get currentItem; int get pending; List<PassedOverEntry> get items;
+/// Create a copy of PassedOverCourt
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PassedOverCourtCopyWith<PassedOverCourt> get copyWith => _$PassedOverCourtCopyWithImpl<PassedOverCourt>(this as PassedOverCourt, _$identity);
+
+  /// Serializes this PassedOverCourt to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as PassedOverCourt;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PassedOverCourt&&(identical(other.courtNo, _this.courtNo) || other.courtNo == _this.courtNo)&&(identical(other.coram, _this.coram) || other.coram == _this.coram)&&(identical(other.currentItem, _this.currentItem) || other.currentItem == _this.currentItem)&&(identical(other.pending, _this.pending) || other.pending == _this.pending)&&const DeepCollectionEquality().equals(other.items, _this.items));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as PassedOverCourt;
+  return Object.hash(runtimeType,_this.courtNo,_this.coram,_this.currentItem,_this.pending,const DeepCollectionEquality().hash(_this.items));
+}
+
+@override
+String toString() {
+  final _this = this as PassedOverCourt;
+  return 'PassedOverCourt(courtNo: ${_this.courtNo}, coram: ${_this.coram}, currentItem: ${_this.currentItem}, pending: ${_this.pending}, items: ${_this.items})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PassedOverCourtCopyWith<$Res>  {
+  factory $PassedOverCourtCopyWith(PassedOverCourt value, $Res Function(PassedOverCourt) _then) = _$PassedOverCourtCopyWithImpl;
+@useResult
+$Res call({
+ String courtNo, String? coram, String? currentItem, int pending, List<PassedOverEntry> items
+});
+
+
+
+
+}
+/// @nodoc
+class _$PassedOverCourtCopyWithImpl<$Res>
+    implements $PassedOverCourtCopyWith<$Res> {
+  _$PassedOverCourtCopyWithImpl(this._self, this._then);
+
+  final PassedOverCourt _self;
+  final $Res Function(PassedOverCourt) _then;
+
+/// Create a copy of PassedOverCourt
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? courtNo = null,Object? coram = freezed,Object? currentItem = freezed,Object? pending = null,Object? items = null,}) {
+  return _then(PassedOverCourt(
+courtNo: null == courtNo ? _self.courtNo : courtNo // ignore: cast_nullable_to_non_nullable
+as String,coram: freezed == coram ? _self.coram : coram // ignore: cast_nullable_to_non_nullable
+as String?,currentItem: freezed == currentItem ? _self.currentItem : currentItem // ignore: cast_nullable_to_non_nullable
+as String?,pending: null == pending ? _self.pending : pending // ignore: cast_nullable_to_non_nullable
+as int,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<PassedOverEntry>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [PassedOverCourt].
+extension PassedOverCourtPatterns on PassedOverCourt {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PassedOverCourt value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PassedOverCourt() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PassedOverCourt value)  $default,){
+final _that = this;
+switch (_that) {
+case _PassedOverCourt():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PassedOverCourt value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PassedOverCourt() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String courtNo,  String? coram,  String? currentItem,  int pending,  List<PassedOverEntry> items)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PassedOverCourt() when $default != null:
+return $default(_that.courtNo,_that.coram,_that.currentItem,_that.pending,_that.items);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String courtNo,  String? coram,  String? currentItem,  int pending,  List<PassedOverEntry> items)  $default,) {final _that = this;
+switch (_that) {
+case _PassedOverCourt():
+return $default(_that.courtNo,_that.coram,_that.currentItem,_that.pending,_that.items);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String courtNo,  String? coram,  String? currentItem,  int pending,  List<PassedOverEntry> items)?  $default,) {final _that = this;
+switch (_that) {
+case _PassedOverCourt() when $default != null:
+return $default(_that.courtNo,_that.coram,_that.currentItem,_that.pending,_that.items);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PassedOverCourt implements PassedOverCourt {
+  const _PassedOverCourt({required this.courtNo, this.coram, this.currentItem, this.pending = 0,  List<PassedOverEntry> items = const []}): _items = items;
+  factory _PassedOverCourt.fromJson(Map<String, dynamic> json) => _$PassedOverCourtFromJson(json);
+
+@override final  String courtNo;
+@override final  String? coram;
+@override final  String? currentItem;
+@override@JsonKey() final  int pending;
+ final  List<PassedOverEntry> _items;
+@override@JsonKey() List<PassedOverEntry> get items {
+  if (_items is EqualUnmodifiableListView) return _items;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_items);
+}
+
+
+/// Create a copy of PassedOverCourt
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PassedOverCourtCopyWith<_PassedOverCourt> get copyWith => __$PassedOverCourtCopyWithImpl<_PassedOverCourt>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PassedOverCourtToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PassedOverCourt&&(identical(other.courtNo, courtNo) || other.courtNo == courtNo)&&(identical(other.coram, coram) || other.coram == coram)&&(identical(other.currentItem, currentItem) || other.currentItem == currentItem)&&(identical(other.pending, pending) || other.pending == pending)&&const DeepCollectionEquality().equals(other.items, _items));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,courtNo,coram,currentItem,pending,const DeepCollectionEquality().hash(_items));
+}
+
+@override
+String toString() {
+    return 'PassedOverCourt(courtNo: $courtNo, coram: $coram, currentItem: $currentItem, pending: $pending, items: $items)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PassedOverCourtCopyWith<$Res> implements $PassedOverCourtCopyWith<$Res> {
+  factory _$PassedOverCourtCopyWith(_PassedOverCourt value, $Res Function(_PassedOverCourt) _then) = __$PassedOverCourtCopyWithImpl;
+@override @useResult
+$Res call({
+ String courtNo, String? coram, String? currentItem, int pending, List<PassedOverEntry> items
+});
+
+
+
+
+}
+/// @nodoc
+class __$PassedOverCourtCopyWithImpl<$Res>
+    implements _$PassedOverCourtCopyWith<$Res> {
+  __$PassedOverCourtCopyWithImpl(this._self, this._then);
+
+  final _PassedOverCourt _self;
+  final $Res Function(_PassedOverCourt) _then;
+
+/// Create a copy of PassedOverCourt
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? courtNo = null,Object? coram = freezed,Object? currentItem = freezed,Object? pending = null,Object? items = null,}) {
+  return _then(_PassedOverCourt(
+courtNo: null == courtNo ? _self.courtNo : courtNo // ignore: cast_nullable_to_non_nullable
+as String,coram: freezed == coram ? _self.coram : coram // ignore: cast_nullable_to_non_nullable
+as String?,currentItem: freezed == currentItem ? _self.currentItem : currentItem // ignore: cast_nullable_to_non_nullable
+as String?,pending: null == pending ? _self.pending : pending // ignore: cast_nullable_to_non_nullable
+as int,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<PassedOverEntry>,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$PassedOverList {
+
+ String get listDate; bool get isToday; String? get source; String? get observedFrom; String? get boardFetchedAt; bool? get boardStale; List<String> get availableDates; int get total; int get pending; List<PassedOverCourt> get courts; String? get note;
+/// Create a copy of PassedOverList
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PassedOverListCopyWith<PassedOverList> get copyWith => _$PassedOverListCopyWithImpl<PassedOverList>(this as PassedOverList, _$identity);
+
+  /// Serializes this PassedOverList to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as PassedOverList;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PassedOverList&&(identical(other.listDate, _this.listDate) || other.listDate == _this.listDate)&&(identical(other.isToday, _this.isToday) || other.isToday == _this.isToday)&&(identical(other.source, _this.source) || other.source == _this.source)&&(identical(other.observedFrom, _this.observedFrom) || other.observedFrom == _this.observedFrom)&&(identical(other.boardFetchedAt, _this.boardFetchedAt) || other.boardFetchedAt == _this.boardFetchedAt)&&(identical(other.boardStale, _this.boardStale) || other.boardStale == _this.boardStale)&&const DeepCollectionEquality().equals(other.availableDates, _this.availableDates)&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.pending, _this.pending) || other.pending == _this.pending)&&const DeepCollectionEquality().equals(other.courts, _this.courts)&&(identical(other.note, _this.note) || other.note == _this.note));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as PassedOverList;
+  return Object.hash(runtimeType,_this.listDate,_this.isToday,_this.source,_this.observedFrom,_this.boardFetchedAt,_this.boardStale,const DeepCollectionEquality().hash(_this.availableDates),_this.total,_this.pending,const DeepCollectionEquality().hash(_this.courts),_this.note);
+}
+
+@override
+String toString() {
+  final _this = this as PassedOverList;
+  return 'PassedOverList(listDate: ${_this.listDate}, isToday: ${_this.isToday}, source: ${_this.source}, observedFrom: ${_this.observedFrom}, boardFetchedAt: ${_this.boardFetchedAt}, boardStale: ${_this.boardStale}, availableDates: ${_this.availableDates}, total: ${_this.total}, pending: ${_this.pending}, courts: ${_this.courts}, note: ${_this.note})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PassedOverListCopyWith<$Res>  {
+  factory $PassedOverListCopyWith(PassedOverList value, $Res Function(PassedOverList) _then) = _$PassedOverListCopyWithImpl;
+@useResult
+$Res call({
+ String listDate, bool isToday, String? source, String? observedFrom, String? boardFetchedAt, bool? boardStale, List<String> availableDates, int total, int pending, List<PassedOverCourt> courts, String? note
+});
+
+
+
+
+}
+/// @nodoc
+class _$PassedOverListCopyWithImpl<$Res>
+    implements $PassedOverListCopyWith<$Res> {
+  _$PassedOverListCopyWithImpl(this._self, this._then);
+
+  final PassedOverList _self;
+  final $Res Function(PassedOverList) _then;
+
+/// Create a copy of PassedOverList
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? listDate = null,Object? isToday = null,Object? source = freezed,Object? observedFrom = freezed,Object? boardFetchedAt = freezed,Object? boardStale = freezed,Object? availableDates = null,Object? total = null,Object? pending = null,Object? courts = null,Object? note = freezed,}) {
+  return _then(PassedOverList(
+listDate: null == listDate ? _self.listDate : listDate // ignore: cast_nullable_to_non_nullable
+as String,isToday: null == isToday ? _self.isToday : isToday // ignore: cast_nullable_to_non_nullable
+as bool,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String?,observedFrom: freezed == observedFrom ? _self.observedFrom : observedFrom // ignore: cast_nullable_to_non_nullable
+as String?,boardFetchedAt: freezed == boardFetchedAt ? _self.boardFetchedAt : boardFetchedAt // ignore: cast_nullable_to_non_nullable
+as String?,boardStale: freezed == boardStale ? _self.boardStale : boardStale // ignore: cast_nullable_to_non_nullable
+as bool?,availableDates: null == availableDates ? _self.availableDates : availableDates // ignore: cast_nullable_to_non_nullable
+as List<String>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,pending: null == pending ? _self.pending : pending // ignore: cast_nullable_to_non_nullable
+as int,courts: null == courts ? _self.courts : courts // ignore: cast_nullable_to_non_nullable
+as List<PassedOverCourt>,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [PassedOverList].
+extension PassedOverListPatterns on PassedOverList {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PassedOverList value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PassedOverList() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PassedOverList value)  $default,){
+final _that = this;
+switch (_that) {
+case _PassedOverList():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PassedOverList value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PassedOverList() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String listDate,  bool isToday,  String? source,  String? observedFrom,  String? boardFetchedAt,  bool? boardStale,  List<String> availableDates,  int total,  int pending,  List<PassedOverCourt> courts,  String? note)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PassedOverList() when $default != null:
+return $default(_that.listDate,_that.isToday,_that.source,_that.observedFrom,_that.boardFetchedAt,_that.boardStale,_that.availableDates,_that.total,_that.pending,_that.courts,_that.note);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String listDate,  bool isToday,  String? source,  String? observedFrom,  String? boardFetchedAt,  bool? boardStale,  List<String> availableDates,  int total,  int pending,  List<PassedOverCourt> courts,  String? note)  $default,) {final _that = this;
+switch (_that) {
+case _PassedOverList():
+return $default(_that.listDate,_that.isToday,_that.source,_that.observedFrom,_that.boardFetchedAt,_that.boardStale,_that.availableDates,_that.total,_that.pending,_that.courts,_that.note);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String listDate,  bool isToday,  String? source,  String? observedFrom,  String? boardFetchedAt,  bool? boardStale,  List<String> availableDates,  int total,  int pending,  List<PassedOverCourt> courts,  String? note)?  $default,) {final _that = this;
+switch (_that) {
+case _PassedOverList() when $default != null:
+return $default(_that.listDate,_that.isToday,_that.source,_that.observedFrom,_that.boardFetchedAt,_that.boardStale,_that.availableDates,_that.total,_that.pending,_that.courts,_that.note);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PassedOverList implements PassedOverList {
+  const _PassedOverList({required this.listDate, this.isToday = false, this.source, this.observedFrom, this.boardFetchedAt, this.boardStale,  List<String> availableDates = const [], this.total = 0, this.pending = 0,  List<PassedOverCourt> courts = const [], this.note}): _availableDates = availableDates,_courts = courts;
+  factory _PassedOverList.fromJson(Map<String, dynamic> json) => _$PassedOverListFromJson(json);
+
+@override final  String listDate;
+@override@JsonKey() final  bool isToday;
+@override final  String? source;
+@override final  String? observedFrom;
+@override final  String? boardFetchedAt;
+@override final  bool? boardStale;
+ final  List<String> _availableDates;
+@override@JsonKey() List<String> get availableDates {
+  if (_availableDates is EqualUnmodifiableListView) return _availableDates;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_availableDates);
+}
+
+@override@JsonKey() final  int total;
+@override@JsonKey() final  int pending;
+ final  List<PassedOverCourt> _courts;
+@override@JsonKey() List<PassedOverCourt> get courts {
+  if (_courts is EqualUnmodifiableListView) return _courts;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_courts);
+}
+
+@override final  String? note;
+
+/// Create a copy of PassedOverList
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PassedOverListCopyWith<_PassedOverList> get copyWith => __$PassedOverListCopyWithImpl<_PassedOverList>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PassedOverListToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PassedOverList&&(identical(other.listDate, listDate) || other.listDate == listDate)&&(identical(other.isToday, isToday) || other.isToday == isToday)&&(identical(other.source, source) || other.source == source)&&(identical(other.observedFrom, observedFrom) || other.observedFrom == observedFrom)&&(identical(other.boardFetchedAt, boardFetchedAt) || other.boardFetchedAt == boardFetchedAt)&&(identical(other.boardStale, boardStale) || other.boardStale == boardStale)&&const DeepCollectionEquality().equals(other.availableDates, _availableDates)&&(identical(other.total, total) || other.total == total)&&(identical(other.pending, pending) || other.pending == pending)&&const DeepCollectionEquality().equals(other.courts, _courts)&&(identical(other.note, note) || other.note == note));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,listDate,isToday,source,observedFrom,boardFetchedAt,boardStale,const DeepCollectionEquality().hash(_availableDates),total,pending,const DeepCollectionEquality().hash(_courts),note);
+}
+
+@override
+String toString() {
+    return 'PassedOverList(listDate: $listDate, isToday: $isToday, source: $source, observedFrom: $observedFrom, boardFetchedAt: $boardFetchedAt, boardStale: $boardStale, availableDates: $availableDates, total: $total, pending: $pending, courts: $courts, note: $note)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PassedOverListCopyWith<$Res> implements $PassedOverListCopyWith<$Res> {
+  factory _$PassedOverListCopyWith(_PassedOverList value, $Res Function(_PassedOverList) _then) = __$PassedOverListCopyWithImpl;
+@override @useResult
+$Res call({
+ String listDate, bool isToday, String? source, String? observedFrom, String? boardFetchedAt, bool? boardStale, List<String> availableDates, int total, int pending, List<PassedOverCourt> courts, String? note
+});
+
+
+
+
+}
+/// @nodoc
+class __$PassedOverListCopyWithImpl<$Res>
+    implements _$PassedOverListCopyWith<$Res> {
+  __$PassedOverListCopyWithImpl(this._self, this._then);
+
+  final _PassedOverList _self;
+  final $Res Function(_PassedOverList) _then;
+
+/// Create a copy of PassedOverList
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? listDate = null,Object? isToday = null,Object? source = freezed,Object? observedFrom = freezed,Object? boardFetchedAt = freezed,Object? boardStale = freezed,Object? availableDates = null,Object? total = null,Object? pending = null,Object? courts = null,Object? note = freezed,}) {
+  return _then(_PassedOverList(
+listDate: null == listDate ? _self.listDate : listDate // ignore: cast_nullable_to_non_nullable
+as String,isToday: null == isToday ? _self.isToday : isToday // ignore: cast_nullable_to_non_nullable
+as bool,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String?,observedFrom: freezed == observedFrom ? _self.observedFrom : observedFrom // ignore: cast_nullable_to_non_nullable
+as String?,boardFetchedAt: freezed == boardFetchedAt ? _self.boardFetchedAt : boardFetchedAt // ignore: cast_nullable_to_non_nullable
+as String?,boardStale: freezed == boardStale ? _self.boardStale : boardStale // ignore: cast_nullable_to_non_nullable
+as bool?,availableDates: null == availableDates ? _self._availableDates : availableDates // ignore: cast_nullable_to_non_nullable
+as List<String>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,pending: null == pending ? _self.pending : pending // ignore: cast_nullable_to_non_nullable
+as int,courts: null == courts ? _self._courts : courts // ignore: cast_nullable_to_non_nullable
+as List<PassedOverCourt>,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

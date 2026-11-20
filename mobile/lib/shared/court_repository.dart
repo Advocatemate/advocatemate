@@ -58,6 +58,14 @@ class CourtRepository {
               query: {'list_type': listType, 'date': isoDate, if (refresh) 'refresh': 'true'}),
           CourtListing.fromJson);
 
+  /// Items courts kept back (passed over), from the APHC display board. [date] defaults to today.
+  Future<Loaded<PassedOverList>> passedOver({DateTime? date}) {
+    final d = date == null ? null : Fmt.isoDate(date);
+    return _cached('passed-over:${d ?? 'today'}',
+        () => _api.get('/cause-list/passed-over', query: {'date': ?d}), PassedOverList.fromJson,
+        serverStale: (json) => json['board_stale'] == true);
+  }
+
   Future<Loaded<PublicationStatus>> publicationStatus() =>
       _cached('publication', () => _api.get('/cause-list/status'), PublicationStatus.fromJson);
 

@@ -205,5 +205,87 @@
         "type": "String"
       }
     }
-  }
+  },
+  "passedOverList": "Passed-over list",
+  "passedOverIntro": "Cases the court kept back (passed over), from the APHC display board.",
+  "passedOverRecordedSince": "Recorded since {time}",
+  "@passedOverRecordedSince": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "passedOverSummary": "{total, plural, =1{1 item} other{{total} items}} · {pending} pending",
+  "@passedOverSummary": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "pending": {
+        "type": "int"
+      }
+    }
+  },
+  "passedOverNone": "No passed-over items were recorded for this date.",
+  "passedOverPending": "Pending",
+  "passedOverNoLongerPending": "No longer pending",
+  "passedOverOffBoard": "Off the board",
+  "passedOverKeptAt": "Kept back at {time}",
+  "@passedOverKeptAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "passedOverNowAt": "Now at {item}",
+  "@passedOverNowAt": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "passedOverItemNotFound": "Item {item} (not found in the court's list)",
+  "@passedOverItemNotFound": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "passedOverNote": "Shows only what AdvocateMate saw while checking the board. Always confirm in court.",
+  "passedOverBoardStale": "The display board has not updated recently. Statuses may be out of date.",
+  "pdfVerified": "Matches the official PDF ({count} items checked)",
+  "@pdfVerified": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pdfDifferences": "Checked against the official PDF: {differs} differ, {missing} not in the PDF, {extra} only in the PDF",
+  "@pdfDifferences": {
+    "placeholders": {
+      "differs": {
+        "type": "int"
+      },
+      "missing": {
+        "type": "int"
+      },
+      "extra": {
+        "type": "int"
+      }
+    }
+  },
+  "pdfShowDifferences": "Show differences",
+  "pdfShowAll": "Show all",
+  "pdfUnreadable": "The official PDF could not be read for checking.",
+  "pdfNotAvailable": "No official PDF to check against yet.",
+  "pdfFallbackUnavailable": "The online list could not be loaded. These items were read from the official PDF.",
+  "pdfFallbackEmpty": "The online list is empty. These items were read from the official PDF.",
+  "pdfDiffersBadge": "Differs from PDF",
+  "pdfNotInPdfBadge": "Not in PDF",
+  "pdfOnlyTitle": "Only in the official PDF"
 }

@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import date, datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, JsonType, Timestamps, UUIDPk, utcnow
@@ -80,3 +80,54 @@ class PublicationStatus(UUIDPk, Base):
     uploaded_at_text: Mapped[str | None] = mapped_column(String(32))
     pdf_path: Mapped[str | None] = mapped_column(String(255))
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+
+class CauseListPdfParse(UUIDPk, Base):
+    """The official court cause-list PDF for one court and date, read into items.
+
+    Kept separate from ``cause_lists`` (the online list): the PDF is used to check the online list and as a
+    labelled fallback, never to overwrite it. One row per list/date/court; replaced when the PDF changes.
+    """
+
+    __tablename__ = "cause_list_pdf_parses"
+    __table_args__ = (UniqueConstraint("list_type", "list_date", "court_no"),)
+
+    list_type: Mapped[str] = mapped_column(String(1), nullable=False)  # D (court PDFs are daily lists)
+    list_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    court_no: Mapped[str] = mapped_column(String(16), nullable=False)
+    source_url: Mapped[str | None] = mapped_column(String(512))
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    pdf_document_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("pdf_documents.id", ondelete="SET NULL")
+    )
+    parser_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False)  # parsed | empty | failed
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    page_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    item_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    bench: Mapped[str | None] = mapped_column(String(255))
+    headings: Mapped[list] = mapped_column(JsonType, default=list)
+    items: Mapped[list] = mapped_column(JsonType, default=list)  # same shape as the online items + pages
+    parsed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+
+class PassedOverItem(UUIDPk, Base):
+    """An item the court kept back (passed over), as shown in "Kept Back Cases" on the APHC display board.
+
+    Recorded from each display-board poll: AdvocateMate can only show what it observed while polling.
+    ``pending`` follows the board's "Pending S.No" list; ``removed_at`` is set when the item is no longer
+    listed as kept back.
+    """
+
+    __tablename__ = "passed_over_items"
+    __table_args__ = (UniqueConstraint("list_date", "court_no", "list_prefix", "item_no"),)
+
+    list_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    court_no: Mapped[str] = mapped_column(String(16), nullable=False)
+    list_prefix: Mapped[str] = mapped_column(String(4), nullable=False)  # board item prefix: D (daily), S ...
+    item_no: Mapped[str] = mapped_column(String(16), nullable=False)
+    pending: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    last_pending_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    removed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

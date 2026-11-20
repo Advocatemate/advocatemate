@@ -16,7 +16,7 @@ from app.core.config import get_settings
 from app.core.errors import AppError, ServiceUnavailable
 from app.db.base import as_utc, utcnow
 from app.models import Court, PublicationStatus
-from app.services import circuit, sources
+from app.services import circuit, passed_over, sources
 from app.services.upstream_errors import translate_upstream
 
 logger = logging.getLogger(__name__)
@@ -33,6 +33,11 @@ def poll_display_board(db: Session) -> int:
     payload = {"rows": [asdict(r) for r in rows]}
     # Keep the snapshot long enough to show as stale, never as current.
     sources.cache_put(db, BOARD_KEY, payload, 24 * 3600)
+    try:
+        with db.begin_nested():
+            passed_over.record_board(db, rows)
+    except Exception:  # noqa: BLE001 - never lose the board snapshot because of the passed-over record
+        logger.exception("could not record kept-back items from the display board")
     return len(rows)
 
 

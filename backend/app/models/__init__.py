@@ -1,5 +1,12 @@
 from app.models.cases import AdvocateCaseLink, Case
-from app.models.cause_lists import CauseList, CauseListItem, Court, PublicationStatus
+from app.models.cause_lists import (
+    CauseList,
+    CauseListItem,
+    CauseListPdfParse,
+    Court,
+    PassedOverItem,
+    PublicationStatus,
+)
 from app.models.engagement import (
     AuditRecord,
     DeviceToken,
@@ -39,6 +46,7 @@ __all__ = [
     "Case",
     "CauseList",
     "CauseListItem",
+    "CauseListPdfParse",
     "Court",
     "DeviceToken",
     "FavouriteAdvocate",
@@ -52,6 +60,7 @@ __all__ = [
     "NotificationPreference",
     "OtpRecord",
     "PdfDocument",
+    "PassedOverItem",
     "PublicationStatus",
     "RefreshToken",
     "SearchHistory",

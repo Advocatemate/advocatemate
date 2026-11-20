@@ -20,6 +20,7 @@ import '../features/my_cause_list/my_cause_list_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/pdf_viewer/pdf_viewer_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/passed_over_list/passed_over_screen.dart';
 import '../features/supplementary_cause_list/supplementary_cause_list_screen.dart';
 import '../features/weekly_cause_list/weekly_cause_list_screen.dart';
 
@@ -85,6 +86,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           path: '/cause-list/supplementary',
           builder: (_, s) =>
               SupplementaryCauseListScreen(initialDate: DateTime.tryParse(s.uri.queryParameters['date'] ?? ''))),
+      GoRoute(
+          path: '/cause-list/passed-over',
+          builder: (_, s) => PassedOverScreen(initialDate: DateTime.tryParse(s.uri.queryParameters['date'] ?? ''))),
       GoRoute(
         path: '/court/:type/:court',
         builder: (_, s) => CourtWiseScreen(

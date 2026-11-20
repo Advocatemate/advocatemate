@@ -26,6 +26,12 @@ class Fmt {
     return DateFormat('d MMM yyyy, h:mm a', locale).format(d);
   }
 
+  static String time(Object? value, {String locale = 'en'}) {
+    final d = value is DateTime ? value.toLocal() : parse(value?.toString());
+    if (d == null) return '';
+    return DateFormat('h:mm a', locale).format(d);
+  }
+
   /// "5 min ago"-style age for freshness labels.
   static String age(DateTime? at, {DateTime? now}) {
     if (at == null) return '';

@@ -474,4 +474,103 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accessEndedNotEligible =>
       'Access ended: this advocate code is no longer active.';
+
+  @override
+  String get passedOverList => 'Passed-over list';
+
+  @override
+  String get passedOverIntro =>
+      'Cases the court kept back (passed over), from the APHC display board.';
+
+  @override
+  String passedOverRecordedSince(String time) {
+    return 'Recorded since $time';
+  }
+
+  @override
+  String passedOverSummary(int total, int pending) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total items',
+      one: '1 item',
+    );
+    return '$_temp0 · $pending pending';
+  }
+
+  @override
+  String get passedOverNone =>
+      'No passed-over items were recorded for this date.';
+
+  @override
+  String get passedOverPending => 'Pending';
+
+  @override
+  String get passedOverNoLongerPending => 'No longer pending';
+
+  @override
+  String get passedOverOffBoard => 'Off the board';
+
+  @override
+  String passedOverKeptAt(String time) {
+    return 'Kept back at $time';
+  }
+
+  @override
+  String passedOverNowAt(String item) {
+    return 'Now at $item';
+  }
+
+  @override
+  String passedOverItemNotFound(String item) {
+    return 'Item $item (not found in the court\'s list)';
+  }
+
+  @override
+  String get passedOverNote =>
+      'Shows only what AdvocateMate saw while checking the board. Always confirm in court.';
+
+  @override
+  String get passedOverBoardStale =>
+      'The display board has not updated recently. Statuses may be out of date.';
+
+  @override
+  String pdfVerified(int count) {
+    return 'Matches the official PDF ($count items checked)';
+  }
+
+  @override
+  String pdfDifferences(int differs, int missing, int extra) {
+    return 'Checked against the official PDF: $differs differ, $missing not in the PDF, $extra only in the PDF';
+  }
+
+  @override
+  String get pdfShowDifferences => 'Show differences';
+
+  @override
+  String get pdfShowAll => 'Show all';
+
+  @override
+  String get pdfUnreadable =>
+      'The official PDF could not be read for checking.';
+
+  @override
+  String get pdfNotAvailable => 'No official PDF to check against yet.';
+
+  @override
+  String get pdfFallbackUnavailable =>
+      'The online list could not be loaded. These items were read from the official PDF.';
+
+  @override
+  String get pdfFallbackEmpty =>
+      'The online list is empty. These items were read from the official PDF.';
+
+  @override
+  String get pdfDiffersBadge => 'Differs from PDF';
+
+  @override
+  String get pdfNotInPdfBadge => 'Not in PDF';
+
+  @override
+  String get pdfOnlyTitle => 'Only in the official PDF';
 }
