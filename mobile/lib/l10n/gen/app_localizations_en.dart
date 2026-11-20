@@ -573,4 +573,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pdfOnlyTitle => 'Only in the official PDF';
+
+  @override
+  String get courtWise => 'Court-wise';
+
+  @override
+  String get advocateCodeWise => 'Advocate code';
+
+  @override
+  String get advocateLookupHint => 'Enter an advocate code';
+
+  @override
+  String get advocateLookupView => 'View';
+
+  @override
+  String get advocateLookupIntro =>
+      'Enter any advocate\'s code to see their cases in the cause list.';
+
+  @override
+  String get advocateLookupSource =>
+      'From the High Court\'s Lexika service. Its dates can be a day behind the Daily list.';
+
+  @override
+  String get advocateLookupRecent => 'Recent';
+
+  @override
+  String get advocateLookupInvalid => 'Enter digits only (up to 8).';
+
+  @override
+  String get errAdvocateNotFound =>
+      'No advocate was found for this code. Check the code and try again.';
+
+  @override
+  String get errTooManyLookups =>
+      'Too many advocate lookups. Please wait a few minutes and try again.';
 }

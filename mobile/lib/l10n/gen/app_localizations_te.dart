@@ -573,4 +573,38 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get pdfOnlyTitle => 'అధికారిక PDFలో మాత్రమే';
+
+  @override
+  String get courtWise => 'కోర్టు వారీగా';
+
+  @override
+  String get advocateCodeWise => 'న్యాయవాది కోడ్';
+
+  @override
+  String get advocateLookupHint => 'న్యాయవాది కోడ్ నమోదు చేయండి';
+
+  @override
+  String get advocateLookupView => 'చూడండి';
+
+  @override
+  String get advocateLookupIntro =>
+      'ఏ న్యాయవాది కోడ్‌నైనా నమోదు చేసి, కాజ్ లిస్ట్‌లో వారి కేసులు చూడండి.';
+
+  @override
+  String get advocateLookupSource =>
+      'హైకోర్టు Lexika సేవ నుండి. దాని తేదీలు డైలీ జాబితా కంటే ఒక రోజు వెనుక ఉండవచ్చు.';
+
+  @override
+  String get advocateLookupRecent => 'ఇటీవలివి';
+
+  @override
+  String get advocateLookupInvalid => 'అంకెలు మాత్రమే నమోదు చేయండి (8 వరకు).';
+
+  @override
+  String get errAdvocateNotFound =>
+      'ఈ కోడ్‌కు న్యాయవాది కనబడలేదు. కోడ్ సరిచూసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get errTooManyLookups =>
+      'చాలా ఎక్కువ న్యాయవాది శోధనలు. కొన్ని నిమిషాలు ఆగి మళ్లీ ప్రయత్నించండి.';
 }

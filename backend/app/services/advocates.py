@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from datetime import date, timedelta
 
 from sqlalchemy import select
@@ -17,6 +18,19 @@ from app.services.cases import get_or_create_case
 from app.services.upstream_errors import translate_upstream
 
 SOURCE = "aphc_lexika_chatbot"
+ADVOCATE_NOT_FOUND = "No advocate was found for this advocate code. Check the code and try again."
+
+
+@contextmanager
+def _lexika_advocate():
+    """Upstream errors for advocate requests; Lexika's "no advocate linked to that code" gets its own code."""
+    try:
+        with translate_upstream():
+            yield
+    except NotFound as e:
+        if e.code == "not_found":
+            raise NotFound(ADVOCATE_NOT_FOUND, code="advocate_not_found") from e
+        raise
 
 
 def validate_code(code: str) -> str:
@@ -35,7 +49,7 @@ def lookup(db: Session, code: str, *, force: bool = False) -> tuple[Advocate, li
     ttl = timedelta(hours=get_settings().advocate_lookup_cache_hours)
     if adv and cached and fresh and not force and utcnow() - as_utc(adv.fetched_at) < ttl:
         return adv, [date.fromisoformat(d) for d in cached["dates"]]
-    with translate_upstream():
+    with _lexika_advocate():
         result = circuit.call(circuit.LEXIKA, lambda: sources.lexika_client().advocate_lookup(code))
     adv = upsert_advocate(db, code, result.name)
     sources.cache_put(db, key, {"dates": [d.isoformat() for d in result.available_dates]}, 30 * 60)
@@ -75,7 +89,7 @@ def advocate_cause_list(db: Session, code: str, list_date: date, *, refresh: boo
 
 
 def _fetch_and_store(db: Session, code: str, list_date: date):
-    with translate_upstream():
+    with _lexika_advocate():
         lookup_result, rows = circuit.call(
             circuit.LEXIKA, lambda: sources.lexika_client().advocate_cause_list(code, list_date)
         )

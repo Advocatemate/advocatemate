@@ -20,11 +20,13 @@ final courtsProvider = FutureProvider.autoDispose.family<Loaded<CourtsResponse>,
 /// Shared court picker used by the separate Daily / Weekly / Supplementary screens.
 /// Each list type has its own route, title, provider keys and cache - they never mix.
 class CauseListBrowser extends ConsumerStatefulWidget {
-  const CauseListBrowser({super.key, required this.listType, required this.title, this.initialDate, this.actions = const []});
+  const CauseListBrowser(
+      {super.key, required this.listType, required this.title, this.initialDate, this.actions = const [], this.header});
   final String listType; // D | W | S
   final String title;
   final DateTime? initialDate;
   final List<Widget> actions;
+  final Widget? header; // shown above the date chips (e.g. the Daily list's view switch)
 
   @override
   ConsumerState<CauseListBrowser> createState() => _CauseListBrowserState();
@@ -68,10 +70,16 @@ class _CauseListBrowserState extends ConsumerState<CauseListBrowser> {
             }),
       ]),
       body: dates.isLoading && !dates.hasValue
-          ? const SkeletonList()
+          ? Column(children: [?widget.header, const Expanded(child: SkeletonList())])
           : dates.hasError && !dates.hasValue
-              ? ErrorState(error: dates.error!, onRetry: () => ref.invalidate(listDatesProvider(widget.listType)))
+              ? Column(children: [
+                  ?widget.header,
+                  Expanded(
+                      child: ErrorState(
+                          error: dates.error!, onRetry: () => ref.invalidate(listDatesProvider(widget.listType)))),
+                ])
               : Column(children: [
+                  ?widget.header,
                   DateSelector(selected: selected, offered: offered, onChanged: (d) => setState(() => _date = d)),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),

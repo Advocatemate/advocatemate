@@ -287,5 +287,15 @@
   "pdfFallbackEmpty": "The online list is empty. These items were read from the official PDF.",
   "pdfDiffersBadge": "Differs from PDF",
   "pdfNotInPdfBadge": "Not in PDF",
-  "pdfOnlyTitle": "Only in the official PDF"
+  "pdfOnlyTitle": "Only in the official PDF",
+  "courtWise": "Court-wise",
+  "advocateCodeWise": "Advocate code",
+  "advocateLookupHint": "Enter an advocate code",
+  "advocateLookupView": "View",
+  "advocateLookupIntro": "Enter any advocate's code to see their cases in the cause list.",
+  "advocateLookupSource": "From the High Court's Lexika service. Its dates can be a day behind the Daily list.",
+  "advocateLookupRecent": "Recent",
+  "advocateLookupInvalid": "Enter digits only (up to 8).",
+  "errAdvocateNotFound": "No advocate was found for this code. Check the code and try again.",
+  "errTooManyLookups": "Too many advocate lookups. Please wait a few minutes and try again."
 }

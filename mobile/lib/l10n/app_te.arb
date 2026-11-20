@@ -163,5 +163,15 @@
   "pdfFallbackEmpty": "ఆన్‌లైన్ జాబితా ఖాళీగా ఉంది. ఈ అంశాలు అధికారిక PDF నుండి చదవబడ్డాయి.",
   "pdfDiffersBadge": "PDF నుండి తేడా",
   "pdfNotInPdfBadge": "PDFలో లేదు",
-  "pdfOnlyTitle": "అధికారిక PDFలో మాత్రమే"
+  "pdfOnlyTitle": "అధికారిక PDFలో మాత్రమే",
+  "courtWise": "కోర్టు వారీగా",
+  "advocateCodeWise": "న్యాయవాది కోడ్",
+  "advocateLookupHint": "న్యాయవాది కోడ్ నమోదు చేయండి",
+  "advocateLookupView": "చూడండి",
+  "advocateLookupIntro": "ఏ న్యాయవాది కోడ్‌నైనా నమోదు చేసి, కాజ్ లిస్ట్‌లో వారి కేసులు చూడండి.",
+  "advocateLookupSource": "హైకోర్టు Lexika సేవ నుండి. దాని తేదీలు డైలీ జాబితా కంటే ఒక రోజు వెనుక ఉండవచ్చు.",
+  "advocateLookupRecent": "ఇటీవలివి",
+  "advocateLookupInvalid": "అంకెలు మాత్రమే నమోదు చేయండి (8 వరకు).",
+  "errAdvocateNotFound": "ఈ కోడ్‌కు న్యాయవాది కనబడలేదు. కోడ్ సరిచూసి మళ్లీ ప్రయత్నించండి.",
+  "errTooManyLookups": "చాలా ఎక్కువ న్యాయవాది శోధనలు. కొన్ని నిమిషాలు ఆగి మళ్లీ ప్రయత్నించండి."
 }

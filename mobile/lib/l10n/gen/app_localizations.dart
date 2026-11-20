@@ -1081,6 +1081,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only in the official PDF'**
   String get pdfOnlyTitle;
+
+  /// No description provided for @courtWise.
+  ///
+  /// In en, this message translates to:
+  /// **'Court-wise'**
+  String get courtWise;
+
+  /// No description provided for @advocateCodeWise.
+  ///
+  /// In en, this message translates to:
+  /// **'Advocate code'**
+  String get advocateCodeWise;
+
+  /// No description provided for @advocateLookupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an advocate code'**
+  String get advocateLookupHint;
+
+  /// No description provided for @advocateLookupView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get advocateLookupView;
+
+  /// No description provided for @advocateLookupIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter any advocate\'s code to see their cases in the cause list.'**
+  String get advocateLookupIntro;
+
+  /// No description provided for @advocateLookupSource.
+  ///
+  /// In en, this message translates to:
+  /// **'From the High Court\'s Lexika service. Its dates can be a day behind the Daily list.'**
+  String get advocateLookupSource;
+
+  /// No description provided for @advocateLookupRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get advocateLookupRecent;
+
+  /// No description provided for @advocateLookupInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter digits only (up to 8).'**
+  String get advocateLookupInvalid;
+
+  /// No description provided for @errAdvocateNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No advocate was found for this code. Check the code and try again.'**
+  String get errAdvocateNotFound;
+
+  /// No description provided for @errTooManyLookups.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many advocate lookups. Please wait a few minutes and try again.'**
+  String get errTooManyLookups;
 }
 
 class _AppLocalizationsDelegate

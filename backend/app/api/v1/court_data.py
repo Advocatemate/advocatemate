@@ -10,7 +10,8 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, get_current_user
-from app.core.errors import AppError, NotFound
+from app.core import rate_limit
+from app.core.errors import AppError, NotFound, RateLimited
 from app.db.session import get_db
 from app.services import (
     advocates,
@@ -25,6 +26,7 @@ from app.services import (
 from app.services.cases import get_case_or_404, get_or_create_case, parse_identity_or_400
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
+OTHER_ADVOCATE_LOOKUPS_PER_10_MIN = 60  # date changes count too; the user's own code is not limited
 
 
 def _today() -> date:
@@ -35,8 +37,20 @@ def _today() -> date:
 
 
 # ------------------------------------------------------------------ advocates
+def _limit_other_advocate_lookups(current: CurrentUser, advocate_code: str) -> None:
+    """Looking up other advocates' codes goes to the High Court's Lexika service: cap it per user."""
+    own = current.profile.advocate_code if current.profile else None
+    if advocate_code.strip() != own:
+        try:
+            rate_limit.hit(f"advocate-lookup:{current.id}", OTHER_ADVOCATE_LOOKUPS_PER_10_MIN, 600)
+        except RateLimited as e:
+            raise RateLimited("Too many advocate lookups. Please wait a few minutes and try again.",
+                              code="advocate_lookup_limited") from e
+
+
 @router.get("/advocates/{advocate_code}", tags=["advocates"])
-def get_advocate(advocate_code: str, db: Session = Depends(get_db)):
+def get_advocate(advocate_code: str, db: Session = Depends(get_db), current: CurrentUser = Depends(get_current_user)):
+    _limit_other_advocate_lookups(current, advocate_code)
     adv, dates = advocates.lookup(db, advocate_code)
     return {"advocate_code": adv.advocate_code, "name": adv.name, "available_cause_list_dates": dates,
             "source": "aphc.gov.in Lexika"}
@@ -50,7 +64,9 @@ def get_advocate_profile(advocate_code: str, db: Session = Depends(get_db)):
 # ------------------------------------------------------------------ cause lists
 @router.get("/cause-list/advocate/{advocate_code}", tags=["cause lists"], summary="My / advocate cause list")
 def advocate_cause_list(advocate_code: str, list_date: date | None = Query(None, alias="date"),
-                        refresh: bool = False, db: Session = Depends(get_db)):
+                        refresh: bool = False, db: Session = Depends(get_db),
+                        current: CurrentUser = Depends(get_current_user)):
+    _limit_other_advocate_lookups(current, advocate_code)
     return advocates.advocate_cause_list(db, advocate_code, list_date or _today(), refresh=refresh)
 
 
@@ -146,8 +162,6 @@ def case_enrichment_status(case_id: uuid.UUID, db: Session = Depends(get_db)):
 
 @router.post("/cases/{case_id}/refresh", tags=["cases"], status_code=202, summary="Request fresh enrichment")
 def case_refresh(case_id: uuid.UUID, current: CurrentUser = Depends(get_current_user), db: Session = Depends(get_db)):
-    from app.core import rate_limit
-
     rate_limit.hit(f"case-refresh:{current.id}", 20, 3600)
     case = get_case_or_404(db, case_id)
     enrichment.request_enrichment(db, case, user_id=current.id, force=True)

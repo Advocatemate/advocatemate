@@ -20,6 +20,13 @@ class AppPreferences {
   bool get liveAutoRefresh => _prefs.getBool('live_auto_refresh') ?? true;
   Future<void> setLiveAutoRefresh(bool v) => _prefs.setBool('live_auto_refresh', v);
 
+  /// Advocate codes looked up in the Daily cause list, most recent first (codes only, no names).
+  List<String> get recentAdvocateCodes => _prefs.getStringList('recent_advocate_codes') ?? const [];
+  Future<void> addRecentAdvocateCode(String code) {
+    final next = [code, ...recentAdvocateCodes.where((c) => c != code)].take(6).toList();
+    return _prefs.setStringList('recent_advocate_codes', next);
+  }
+
   String? get lastAdvocateCode => _prefs.getString('last_advocate_code');
   Future<void> setLastAdvocateCode(String code) => _prefs.setString('last_advocate_code', code);
 }

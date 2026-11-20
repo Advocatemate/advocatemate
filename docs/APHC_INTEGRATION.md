@@ -91,6 +91,10 @@ MATTERS WILL BE TAKEN UP AT 02:15 PM", confirming the court's own term.
 observed while polling; it cannot be rebuilt for earlier times. Numbers refer to the daily list unless the
 board's current item is a supplementary one (`S-…`).
 
+**Advocate code-wise view of the Daily cause list:** uses the Lexika "Advocate Code Wise Search" (no CAPTCHA,
+re-checked live 20-11-2026), not the Hcdbs advocate search (`caset=advcdsearch`), which requires a CAPTCHA.
+Lookups of other advocates' codes are rate-limited per user to protect the upstream service.
+
 **APHC list type `P` is the "Date Wise Cause List"** (dates ahead, e.g. 23-11 to 04-12 on 20-11-2026), not a
 passed-over list. It is not integrated.
 

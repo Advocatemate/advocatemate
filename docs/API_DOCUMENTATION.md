@@ -23,7 +23,7 @@ Google-linked and the advocate is still active in the registry (403 `advocate_no
 |---|---|---|
 | GET | `/advocates/{code}` | name + dates offered by Lexika |
 | GET | `/advocates/{code}/profile` | directory record |
-| GET | `/cause-list/advocate/{code}?date=&refresh=` | grouped by court; `association_note`, `date_offered_by_source`, `stale` |
+| GET | `/cause-list/advocate/{code}?date=&refresh=` | any advocate's list by code (Daily cause list → "Advocate code" view, My Cause List, favourites); grouped by court; `association_note`, `date_offered_by_source`, `available_dates`, `stale`. Unknown code → 404 `advocate_not_found`; codes other than the signed-in advocate's own are limited to 60 requests per 10 minutes per user → 429 `advocate_lookup_limited` |
 | GET | `/cause-list/dates?list_type=D\|W\|S` | dates APHC offers |
 | GET | `/cause-list?list_type=&date=` | overview (dates + courts) |
 | GET | `/cause-list/courts?list_type=&date=` | courts with case counts when synced |

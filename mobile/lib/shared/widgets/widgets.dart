@@ -258,7 +258,7 @@ class ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final e = unwrapError(error);
-    final message = e is ApiException ? (e.isNetwork ? l.errorNetwork : e.message) : l.errorGeneric;
+    final message = apiErrorText(context, e);
     return EmptyState(
       icon: e is ApiException && e.isNetwork ? Icons.wifi_off_rounded : Icons.error_outline_rounded,
       message: message,
@@ -415,7 +415,7 @@ Object unwrapError(Object e) {
 
 void showError(BuildContext context, Object error) {
   final e = unwrapError(error);
-  final msg = e is ApiException ? (e.isNetwork ? context.l10n.errorNetwork : e.message) : context.l10n.errorGeneric;
+  final msg = apiErrorText(context, e);
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 }
 
@@ -425,4 +425,18 @@ Future<void> refreshProvider(WidgetRef ref, dynamic provider) async {
   try {
     await ref.read(provider.future);
   } catch (_) {}
+}
+
+
+/// User-facing text for an error: localised for known codes, otherwise the server's message.
+String apiErrorText(BuildContext context, Object e) {
+  final l = context.l10n;
+  if (e is! ApiException) return l.errorGeneric;
+  if (e.isNetwork) return l.errorNetwork;
+  return switch (e.code) {
+    'advocate_not_found' => l.errAdvocateNotFound,
+    'advocate_lookup_limited' => l.errTooManyLookups,
+    'invalid_advocate_code' => l.advocateLookupInvalid,
+    _ => e.message,
+  };
 }

@@ -78,7 +78,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
           path: '/cause-list/daily',
-          builder: (_, s) => DailyCauseListScreen(initialDate: DateTime.tryParse(s.uri.queryParameters['date'] ?? ''))),
+          builder: (_, s) => DailyCauseListScreen(
+                initialDate: DateTime.tryParse(s.uri.queryParameters['date'] ?? ''),
+                initialView: s.uri.queryParameters['view'] == 'advocate' ? DailyView.advocateCode : DailyView.courtWise,
+                advocateCode: s.uri.queryParameters['code'],
+              )),
       GoRoute(
           path: '/cause-list/weekly',
           builder: (_, s) => WeeklyCauseListScreen(initialDate: DateTime.tryParse(s.uri.queryParameters['date'] ?? ''))),

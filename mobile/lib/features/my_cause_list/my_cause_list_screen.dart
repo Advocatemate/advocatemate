@@ -23,11 +23,14 @@ void openCase(BuildContext context, {String? caseId, String? caseNumber}) {
   }
 }
 
-/// "My Cause List" (signed-in advocate) and any advocate's list (favourites / deep links).
+/// "My Cause List" (signed-in advocate) and any advocate's list (favourites / deep links / the Daily
+/// cause list's advocate-code view). [embedded] drops the screen's own app bar so the list can sit inside
+/// another screen, and moves to the latest date the source offers when today is not offered yet.
 class MyCauseListScreen extends ConsumerStatefulWidget {
-  const MyCauseListScreen({super.key, this.advocateCode, this.initialDate});
+  const MyCauseListScreen({super.key, this.advocateCode, this.initialDate, this.embedded = false});
   final String? advocateCode;
   final DateTime? initialDate;
+  final bool embedded;
 
   @override
   ConsumerState<MyCauseListScreen> createState() => _MyCauseListScreenState();
@@ -35,6 +38,7 @@ class MyCauseListScreen extends ConsumerStatefulWidget {
 
 class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
   late DateTime _date = widget.initialDate ?? DateTime.now();
+  bool _datePicked = false;
   final _search = TextEditingController();
   String _query = '';
   String? _court;
@@ -54,25 +58,14 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
     final value = ref.watch(advocateCauseListProvider(key));
     final title = widget.advocateCode == null ? l.myCauseList : '${l.advocateCode} $code';
 
-    return Scaffold(
-      appBar: AppBar(title: Text(title), actions: [
-        IconButton(
-          tooltip: l.refresh,
-          icon: const Icon(Icons.refresh),
-          onPressed: () async {
-            try {
-              await ref.read(courtRepositoryProvider).advocateCauseList(code, _date, refresh: true);
-            } catch (_) {}
-            ref.invalidate(advocateCauseListProvider(key));
-          },
-        ),
-      ]),
-      body: Column(children: [
+    if (widget.embedded) _jumpToOfferedDate(value.value?.data);
+    final body = Column(children: [
         DateSelector(
           selected: _date,
           offered: value.value?.data.availableDates ?? const [],
           onChanged: (d) => setState(() {
             _date = d;
+            _datePicked = true;
             _court = null;
           }),
         ),
@@ -86,8 +79,37 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
             ),
           ),
         ),
+      ]);
+    if (widget.embedded) return body;
+    return Scaffold(
+      appBar: AppBar(title: Text(title), actions: [
+        IconButton(
+          tooltip: l.refresh,
+          icon: const Icon(Icons.refresh),
+          onPressed: () async {
+            try {
+              await ref.read(courtRepositoryProvider).advocateCauseList(code, _date, refresh: true);
+            } catch (_) {}
+            ref.invalidate(advocateCauseListProvider(key));
+          },
+        ),
       ]),
+      body: body,
     );
+  }
+
+  /// The High Court's advocate service can lag the Daily list by a day: when the chosen date is not
+  /// offered and the user has not picked one, show the latest offered date (never a future one first).
+  void _jumpToOfferedDate(AdvocateCauseList? data) {
+    if (_datePicked || data == null || data.dateOfferedBySource || data.availableDates.isEmpty) return;
+    final today = Fmt.isoDate(DateTime.now());
+    final offered = [...data.availableDates]..sort((a, b) => b.compareTo(a));
+    final target = offered.firstWhere((d) => d.compareTo(today) <= 0, orElse: () => offered.last);
+    if (target == Fmt.isoDate(_date)) return;
+    _datePicked = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _date = DateTime.parse(target));
+    });
   }
 
   Widget _content(BuildContext context, Loaded<AdvocateCauseList> loaded) {
