@@ -14,9 +14,19 @@ config.set_main_option("sqlalchemy.url", get_settings().database_url.replace("%"
 target_metadata = Base.metadata
 
 
+# Trigram search indexes are created by migration 0001 only where the pg_trgm extension is available, so
+# they are deliberately not part of the models; leave them out of autogenerate / `alembic check`.
+OPTIONAL_INDEXES = {"ix_cli_petitioner_trgm", "ix_cli_respondent_trgm", "ix_lcsc_petitioner_trgm",
+                    "ix_lcsc_respondent_trgm"}
+
+
+def include_object(obj, name, type_, reflected, compare_to) -> bool:
+    return not (type_ == "index" and name in OPTIONAL_INDEXES)
+
+
 def run_migrations_offline() -> None:
     context.configure(url=config.get_main_option("sqlalchemy.url"), target_metadata=target_metadata,
-                      literal_binds=True, compare_type=True)
+                      literal_binds=True, compare_type=True, include_object=include_object)
     with context.begin_transaction():
         context.run_migrations()
 
@@ -25,7 +35,8 @@ def run_migrations_online() -> None:
     connectable = engine_from_config(config.get_section(config.config_ini_section, {}), prefix="sqlalchemy.",
                                      poolclass=pool.NullPool)
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+        context.configure(connection=connection, target_metadata=target_metadata, compare_type=True,
+                          include_object=include_object)
         with context.begin_transaction():
             context.run_migrations()
 
