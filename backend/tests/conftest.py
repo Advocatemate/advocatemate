@@ -88,20 +88,22 @@ def sample_registry(clean_db):
     load_sample_registry()
 
 
-def fake_google_token(sub: str, email: str, *, verified: bool = True) -> str:
+def fake_google_token(sub: str, email: str, *, verified: bool = True, nonce: str | None = None) -> str:
     """Stands in for a Google ID token in API tests (the real verifier has its own tests)."""
-    return f"fake-google-id-token:{sub}:{email}:{'1' if verified else '0'}"
+    token = f"fake-google-id-token:{sub}:{email}:{'1' if verified else '0'}"
+    return f"{token}:{nonce}" if nonce else token
 
 
 @pytest.fixture(autouse=True)
 def fake_google(monkeypatch):
     def verify(token: str, *, transport=None) -> GoogleIdentity:
         parts = (token or "").split(":")
-        if len(parts) != 4 or parts[0] != "fake-google-id-token":
+        if len(parts) not in (4, 5) or parts[0] != "fake-google-id-token":
             raise Unauthorized("Google sign-in failed. Please try again.", code="google_token_invalid")
         if parts[3] != "1":
             raise Unauthorized("Your Google account email is not verified.", code="google_email_unverified")
-        return GoogleIdentity(sub=parts[1], email=parts[2].lower(), email_verified=True)
+        return GoogleIdentity(sub=parts[1], email=parts[2].lower(), email_verified=True,
+                              nonce=parts[4] if len(parts) == 5 else None)
 
     monkeypatch.setattr(google_identity, "verify_id_token", verify)
 

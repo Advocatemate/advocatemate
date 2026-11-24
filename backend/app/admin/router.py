@@ -260,6 +260,7 @@ def install(app: FastAPI) -> None:
     @app.middleware("http")
     async def admin_headers(request: Request, call_next):
         response = await call_next(request)
-        if request.url.path.startswith("/admin"):
+        path = request.url.path
+        if path == "/admin" or path.startswith("/admin/"):  # not /admin-api (the Admin App API sets its own)
             _security_headers(response, request.url.path)
         return response

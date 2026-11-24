@@ -49,6 +49,15 @@ class Settings(BaseSettings):
     admin_reauth_minutes: int = 10
     admin_allowed_ips: str = ""  # comma-separated IPs/CIDRs; empty = rely on the reverse proxy
 
+    # Admin App JSON API (/admin-api/v1) for the separate AdvocateMate Admin web app, reached only through that
+    # app's reverse proxy. None = on in development/test, off in staging/production unless set to true.
+    admin_api_enabled: bool | None = None
+    # Browser origins of the Admin App (e.g. https://admin.advocatemate.com); state-changing requests from any
+    # other Origin are refused. Development/test default: the Vite dev server.
+    admin_app_origins: str = ""
+    # Shared secret the Admin App's reverse proxy sends as X-Admin-Proxy-Key; required in staging/production.
+    admin_proxy_secret: str = ""
+
     # Retired mobile-OTP login (kept only so existing configuration still loads).
     otp_hash_secret: str = _DEV_SECRET
     otp_ttl_seconds: int = 300
@@ -107,6 +116,17 @@ class Settings(BaseSettings):
         return [c.strip() for c in self.admin_allowed_ips.split(",") if c.strip()]
 
     @property
+    def admin_api_on(self) -> bool:
+        return self.is_dev_like if self.admin_api_enabled is None else self.admin_api_enabled
+
+    @property
+    def admin_app_origin_list(self) -> list[str]:
+        origins = [o.strip().rstrip("/") for o in self.admin_app_origins.split(",") if o.strip()]
+        if not origins and self.is_dev_like:
+            return ["http://localhost:5173", "http://127.0.0.1:5173"]
+        return origins
+
+    @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
@@ -122,6 +142,12 @@ class Settings(BaseSettings):
                 problems.append("OTP_PROVIDER=dev_echo is forbidden outside development/test")
             if not self.google_client_id_list:
                 problems.append("GOOGLE_CLIENT_IDS must list the OAuth client ID(s) used for Google sign-in")
+            if self.admin_api_enabled:
+                if len(self.admin_proxy_secret) < 32:
+                    problems.append("ADMIN_PROXY_SECRET (32+ characters) is required when ADMIN_API_ENABLED=true")
+                if not self.admin_app_origin_list or any(not o.startswith("https://")
+                                                         for o in self.admin_app_origin_list):
+                    problems.append("ADMIN_APP_ORIGINS must list the Admin App's https:// origin(s)")
             if problems:
                 raise ValueError("; ".join(problems))
         return self

@@ -15,6 +15,11 @@ Without Docker: PostgreSQL 16 + Redis 7 locally, then in `backend/`:
 * Container host running four processes from the same image: `api` (2+ replicas behind HTTPS load balancer),
   `worker-enrichment` (concurrency 2), `worker-sync` (concurrency 1), `beat` (**exactly one** instance).
 * TLS terminated at the load balancer; HSTS; restrict `/api/v1/admin/*` and `/docs` by IP/VPN.
+* Set `FORWARDED_ALLOW_IPS` to the load balancer / reverse proxy address(es): uvicorn trusts `X-Forwarded-For`
+  only from them (the client IP feeds rate limits and `ADMIN_ALLOWED_IPS`). Never `*`.
+* Admin App (`advocatemate-admin`, separate deployment): do not route `/admin-api` on the public API host; the
+  Admin App's own reverse proxy forwards `/api/*` to `/admin-api/v1/*` with `X-Admin-Proxy-Key`. Set
+  `ADMIN_API_ENABLED=true`, `ADMIN_APP_ORIGINS`, `ADMIN_PROXY_SECRET` — see [ADMIN_APP_API.md](ADMIN_APP_API.md).
 * Persistent volume or object storage for `STORAGE_DIR` (cached PDFs).
 * Secrets (JWT/OTP secrets, DB URL, FCM service account, SMS provider keys) from the platform secret manager.
 * Separate databases, Redis, Firebase projects and secrets per environment.

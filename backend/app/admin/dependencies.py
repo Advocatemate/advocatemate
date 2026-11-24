@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import hmac
-import ipaddress
 from collections.abc import Callable
 from dataclasses import dataclass
 from urllib.parse import quote
@@ -11,9 +9,7 @@ from urllib.parse import quote
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session
 
-from app.admin import permissions
-from app.core import rate_limit
-from app.core.config import get_settings
+from app.admin import guards, permissions
 from app.core.errors import RateLimited
 from app.db.session import get_db
 from app.models import AdminAccount, AdminSession
@@ -23,7 +19,7 @@ COOKIE_NAME = "am_admin"
 COOKIE_PATH = "/admin"
 CSRF_HEADER = "x-csrf-token"
 CSRF_FIELD = "csrf_token"
-UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+UNSAFE_METHODS = guards.UNSAFE_METHODS
 
 
 class AdminRedirect(Exception):
@@ -67,16 +63,8 @@ def is_htmx(request: Request) -> bool:
 
 def check_ip_allowed(request: Request) -> None:
     """Defence in depth behind the reverse-proxy rule: optional in-app allow-list (ADMIN_ALLOWED_IPS)."""
-    networks = get_settings().admin_allowed_networks
-    if not networks:
+    if guards.ip_allowed(client_ip(request)):
         return
-    ip = client_ip(request)
-    try:
-        addr = ipaddress.ip_address(ip or "")
-        if any(addr in ipaddress.ip_network(n, strict=False) for n in networks):
-            return
-    except ValueError:
-        pass
     raise AdminDenied(404, "Not found", "The page you asked for does not exist.")
 
 
@@ -108,7 +96,7 @@ async def current_admin(request: Request, db: Session = Depends(get_db)) -> Admi
             form_token = value if isinstance(value, str) else None
         verify_csrf(request, sess, form_token)
         try:
-            rate_limit.hit(f"admin-action:{acct.id}", 120, 60)
+            guards.hit_action_limit(acct.id)
         except RateLimited as e:
             raise AdminDenied(429, "Too many requests", "Please wait a minute and try again.") from e
     return ctx
@@ -116,7 +104,7 @@ async def current_admin(request: Request, db: Session = Depends(get_db)) -> Admi
 
 def verify_csrf(request: Request, sess: AdminSession, form_value: str | None = None) -> None:
     sent = request.headers.get(CSRF_HEADER) or form_value
-    if not sent or not hmac.compare_digest(sent, sess.csrf_token):
+    if not guards.csrf_valid(sess, sent):
         raise AdminDenied(403, "Request blocked", "This request could not be verified. Reload the page and try again.")
 
 
@@ -124,10 +112,10 @@ def require(permission: str) -> Callable[..., AdminContext]:
     """Dependency: the signed-in admin must hold ``permission`` (and a fresh sign-in where required)."""
 
     def dep(ctx: AdminContext = Depends(current_admin)) -> AdminContext:
-        if not ctx.can(permission):
+        refusal = guards.check_permission(ctx.role, permission, ctx.session, ctx.request.method)
+        if refusal == "forbidden":
             raise AdminDenied(403, "Not allowed", "Your admin role does not allow this.")
-        if permission in permissions.REAUTH_REQUIRED and ctx.request.method in UNSAFE_METHODS \
-                and not admin_access.reauth_fresh(ctx.session):
+        if refusal == "reauth_required":
             referer_path = _referer_path(ctx.request)
             raise AdminRedirect(f"/admin/reauth?next={quote(safe_next(referer_path), safe='/')}")
         return ctx

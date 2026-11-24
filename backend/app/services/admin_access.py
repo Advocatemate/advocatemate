@@ -8,6 +8,7 @@ on the server by the same verifier the app uses (signature, issuer, expiry, audi
 from __future__ import annotations
 
 import hashlib
+import hmac
 import secrets
 import uuid
 from dataclasses import dataclass
@@ -112,8 +113,19 @@ class NewSession:
     account: AdminAccount
 
 
-def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | None) -> NewSession:
-    """Verify the Google ID token on the server and open a session for an authorised, active admin."""
+def _nonce_matches(identity: google_identity.GoogleIdentity, expected: str | None) -> bool:
+    """``expected`` is None for the server-rendered portal (Google's double-submit cookie protects it)."""
+    if expected is None:
+        return True
+    return bool(identity.nonce) and hmac.compare_digest(identity.nonce, expected)
+
+
+def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | None,
+            expected_nonce: str | None = None) -> NewSession:
+    """Verify the Google ID token on the server and open a session for an authorised, active admin.
+
+    ``expected_nonce``: the admin web app passes the nonce it issued to this browser; the token must carry it.
+    """
     try:
         identity = google_identity.verify_id_token(id_token)
     except Exception as e:  # noqa: BLE001 - every verifier failure is a refusal
@@ -121,6 +133,10 @@ def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | Non
         db.commit()
         raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.") \
             from e
+    if not _nonce_matches(identity, expected_nonce):
+        audit.record(db, "admin_login_denied", ip=ip, reason="nonce_mismatch")
+        db.commit()
+        raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.")
     acct = db.scalar(select(AdminAccount).where(AdminAccount.google_sub == identity.sub)) \
         or get_by_email(db, identity.email)
     if acct is None or not acct.is_active or (acct.google_sub and acct.google_sub != identity.sub) \
@@ -147,13 +163,17 @@ def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | Non
     return NewSession(token=token, session=sess, account=acct)
 
 
-def reauthenticate(db: Session, sess: AdminSession, acct: AdminAccount, id_token: str, *, ip: str | None) -> None:
+def reauthenticate(db: Session, sess: AdminSession, acct: AdminAccount, id_token: str, *, ip: str | None,
+                   expected_nonce: str | None = None) -> None:
     """Fresh Google sign-in by the same admin, required before sensitive actions."""
     try:
         identity = google_identity.verify_id_token(id_token)
     except Exception as e:  # noqa: BLE001
         raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.") \
             from e
+    if not _nonce_matches(identity, expected_nonce):
+        audit.record(db, "admin_reauth_denied", actor_admin=acct.id, ip=ip, reason="nonce_mismatch")
+        raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.")
     if identity.sub != acct.google_sub:
         audit.record(db, "admin_reauth_denied", actor_admin=acct.id, ip=ip, reason="different_account")
         raise AdminAccessError("different_account", "Please confirm with the same Google account you signed in with.")
@@ -198,6 +218,24 @@ def _revoke(sess: AdminSession, reason: str) -> None:
 def sign_out(db: Session, sess: AdminSession, acct: AdminAccount, *, ip: str | None) -> None:
     _revoke(sess, "signed_out")
     audit.record(db, "admin_logout", actor_admin=acct.id, ip=ip)
+
+
+def list_live_sessions(db: Session, admin_id: uuid.UUID) -> list[AdminSession]:
+    """Sessions of one admin that are neither revoked nor past their absolute expiry, newest first."""
+    rows = db.scalars(select(AdminSession).where(AdminSession.admin_account_id == admin_id,
+                                                 AdminSession.revoked_at.is_(None))
+                      .order_by(AdminSession.created_at.desc()))
+    now = utcnow()
+    return [r for r in rows if as_utc(r.expires_at) > now]
+
+
+def revoke_session(db: Session, target: AdminSession, acct: AdminAccount, *, ip: str | None) -> None:
+    """An admin ends one of their own sessions (for example a forgotten browser)."""
+    if target.admin_account_id != acct.id:
+        raise AdminAccessError("not_found", "That session does not exist.")
+    _revoke(target, "revoked_by_admin")
+    audit.record(db, "admin_session_revoked", actor_admin=acct.id, target_type="admin_session",
+                 target_id=str(target.id), ip=ip)
 
 
 def revoke_all(db: Session, admin_id: uuid.UUID, reason: str) -> None:

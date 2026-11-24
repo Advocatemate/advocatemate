@@ -25,6 +25,7 @@ class GoogleIdentity:
     email: str  # lower-cased
     email_verified: bool
     name: str | None = None
+    nonce: str | None = None  # echoed from the sign-in request; the admin web app binds it to its browser
 
 
 _session = requests.Session()
@@ -58,4 +59,6 @@ def verify_id_token(token: str, *, transport=None) -> GoogleIdentity:
         raise Unauthorized("Google sign-in did not provide an account email.", code="google_token_invalid")
     if not verified:
         raise Unauthorized("Your Google account email is not verified.", code="google_email_unverified")
-    return GoogleIdentity(sub=sub, email=email, email_verified=verified, name=info.get("name"))
+    nonce = info.get("nonce")
+    return GoogleIdentity(sub=sub, email=email, email_verified=verified, name=info.get("name"),
+                          nonce=str(nonce) if nonce else None)
