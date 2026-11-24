@@ -1,3 +1,4 @@
+from app.models.admin import ADMIN_ROLES, AdminAccount, AdminSession, SyncEvent, UserDailyActivity
 from app.models.cases import AdvocateCaseLink, Case
 from app.models.cause_lists import (
     CauseList,
@@ -37,6 +38,11 @@ from app.models.users import (
 )
 
 __all__ = [
+    "ADMIN_ROLES",
+    "AdminAccount",
+    "AdminSession",
+    "SyncEvent",
+    "UserDailyActivity",
     "Advocate",
     "AdvocateCaseLink",
     "AdvocateProfile",

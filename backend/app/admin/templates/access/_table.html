@@ -1,0 +1,39 @@
+<section class="card" id="access-table">
+  <div class="card-head"><h2>Authorised accounts</h2><span class="muted num">{{ accounts | length }} account{{ "" if accounts | length == 1 else "s" }}</span></div>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Account</th><th>Role</th><th>Status</th><th>Last sign-in</th><th>Added</th><th><span class="sr-only">Actions</span></th></tr></thead>
+      <tbody>
+      {% for a in accounts %}
+        <tr>
+          <td><strong>{{ a.display_name or "—" }}</strong><br><span class="muted">{{ a.email }}</span>{% if a.id == admin.account.id %} <span class="badge b-info">You</span>{% endif %}</td>
+          <td>
+            <form hx-post="/admin/access/{{ a.id }}/role" hx-target="#access-table" hx-swap="outerHTML" hx-trigger="change"
+                  hx-confirm="Change the role of {{ a.email }}?" data-confirm-title="Change role">
+              <label class="sr-only" for="role-{{ a.id }}">Role for {{ a.email }}</label>
+              <select class="input input-sm" id="role-{{ a.id }}" name="role">
+                {% for r in roles %}<option value="{{ r }}" {% if r == a.role %}selected{% endif %}>{{ role_labels[r] }}</option>{% endfor %}
+              </select>
+            </form>
+          </td>
+          <td>{% if a.is_active %}<span class="badge b-active">Active</span>{% else %}<span class="badge b-inactive">Inactive</span>{% endif %}</td>
+          <td class="num">{{ a.last_login_at | dt }}</td>
+          <td><span class="num">{{ a.created_at | dt("%d %b %Y") }}</span><br><span class="muted">{{ "command line" if a.added_via == "cli" else (by_id[a.added_by_admin_id].email if a.added_by_admin_id in by_id else "portal") }}</span></td>
+          <td>
+            <div class="row-actions">
+            {% if a.is_active %}
+              <button class="btn btn-danger btn-sm" hx-post="/admin/access/{{ a.id }}/active" hx-vals='{"active": "false"}'
+                      hx-target="#access-table" hx-swap="outerHTML" hx-confirm="Deactivate {{ a.email }}? They will be signed out and cannot sign in until reactivated."
+                      data-confirm-title="Deactivate admin" data-confirm-ok="Deactivate" data-confirm-tone="danger" {% if a.id == admin.account.id %}disabled title="You cannot deactivate yourself"{% endif %}>Deactivate</button>
+            {% else %}
+              <button class="btn btn-secondary btn-sm" hx-post="/admin/access/{{ a.id }}/active" hx-vals='{"active": "true"}'
+                      hx-target="#access-table" hx-swap="outerHTML" hx-confirm="Reactivate {{ a.email }}?" data-confirm-title="Reactivate admin" data-confirm-ok="Reactivate">Reactivate</button>
+            {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>

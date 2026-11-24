@@ -62,6 +62,10 @@ def create_app() -> FastAPI:
     api.include_router(admin.router)
     app.include_router(api)
 
+    from app.admin.router import install as install_admin_portal
+
+    install_admin_portal(app)
+
     @app.get("/health/live", tags=["health"])
     def live():
         return {"status": "ok"}

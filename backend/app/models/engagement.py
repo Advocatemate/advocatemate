@@ -125,6 +125,9 @@ class AuditRecord(UUIDPk, Base):
     __table_args__ = (Index("ix_audit_records_created", "created_at"),)
 
     actor_user_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, ForeignKey("users.id", ondelete="SET NULL"))
+    # Admin-portal actions are made by admin accounts, which are not advocate users (migration 0004).
+    actor_admin_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("admin_accounts.id", ondelete="SET NULL"), index=True)
     action: Mapped[str] = mapped_column(String(64), nullable=False)
     target_type: Mapped[str | None] = mapped_column(String(32))
     target_id: Mapped[str | None] = mapped_column(String(64))

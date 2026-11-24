@@ -16,7 +16,7 @@
 | Data minimisation | VC meeting IDs/pass-codes not stored; raw upstream HTML not stored; IPs stored only as keyed hashes; retention jobs | Done |
 | Mobile storage | Tokens in Keystore/Keychain; cache in app-private storage; backups disabled | Done |
 | CORS | Off unless `CORS_ORIGINS` set (mobile apps don't need it) | Done |
-| Admin exposure | OpenAPI docs disabled in production; admin endpoints return aggregates only. **Additionally restrict `/api/v1/admin/*` at the reverse proxy (IP allow-list/VPN).** | Proxy rule pending |
+| Admin exposure | Admin portal at `/admin` (ADMIN_PORTAL.md): separate admin accounts, Google sign-in verified server-side, server-side sessions (HttpOnly, SameSite=Strict, 30 min idle / 8 h), CSRF on every change, role checks on the server, re-auth for sensitive actions, strict CSP, audit trail append-only, optional `ADMIN_ALLOWED_IPS`; not in API docs. **Additionally restrict `/admin` and `/api/v1/admin/*` at the reverse proxy (IP allow-list/VPN).** | Portal phase 1 done; proxy rule pending |
 | Dependency scanning | Not yet configured — add Dependabot + `pip-audit` / `flutter pub outdated` review | Pending |
 | Penetration test | Not performed | Pending |
 

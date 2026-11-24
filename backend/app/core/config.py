@@ -41,6 +41,14 @@ class Settings(BaseSettings):
     google_client_ids: str = ""
     google_link_token_minutes: int = 10
 
+    # Admin portal (/admin): Google Web client used by the sign-in button (defaults to the first
+    # GOOGLE_CLIENT_IDS entry), session limits, re-authentication window, optional IP allow-list.
+    admin_google_client_id: str = ""
+    admin_session_idle_minutes: int = 30
+    admin_session_max_hours: int = 8
+    admin_reauth_minutes: int = 10
+    admin_allowed_ips: str = ""  # comma-separated IPs/CIDRs; empty = rely on the reverse proxy
+
     # Retired mobile-OTP login (kept only so existing configuration still loads).
     otp_hash_secret: str = _DEV_SECRET
     otp_ttl_seconds: int = 300
@@ -89,6 +97,14 @@ class Settings(BaseSettings):
     @property
     def google_client_id_list(self) -> list[str]:
         return [c.strip() for c in self.google_client_ids.split(",") if c.strip()]
+
+    @property
+    def admin_client_id(self) -> str:
+        return self.admin_google_client_id or (self.google_client_id_list[0] if self.google_client_id_list else "")
+
+    @property
+    def admin_allowed_networks(self) -> list[str]:
+        return [c.strip() for c in self.admin_allowed_ips.split(",") if c.strip()]
 
     @property
     def cors_origin_list(self) -> list[str]:

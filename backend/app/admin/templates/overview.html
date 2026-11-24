@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h2>Welcome, {{ admin.account.display_name or admin.account.email }}</h2>
+    <p>The overview dashboard with live statistics arrives in Phase 2. The foundation (sign-in, roles, sessions and the activity trail) is in place.</p>
+  </div>
+</div>
+<div class="grid grid-2">
+  <section class="card">
+    <div class="card-head"><h2>Your access</h2><span class="badge b-{{ admin.role }}">{{ role_labels[admin.role] }}</span></div>
+    <div class="card-body">
+      <dl class="kv">
+        <dt>Google account</dt><dd>{{ admin.account.email }}</dd>
+        <dt>Signed in</dt><dd>{{ admin.session.created_at | dt }}</dd>
+        <dt>Session ends</dt><dd>{{ session_expires | dt }} (or after 30 minutes without activity)</dd>
+        <dt>Last sign-in</dt><dd>{{ admin.account.last_login_at | dt }}</dd>
+      </dl>
+    </div>
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>What your role can do</h2></div>
+    <div class="card-body">
+      <dl class="kv">
+        <dt>View all monitoring pages</dt><dd>{{ "Yes" if admin.can(perm.VIEW) else "No" }}</dd>
+        <dt>Re-sync courts, retry jobs</dt><dd>{{ "Yes" if admin.can(perm.RETRY_JOB) else "No" }}</dd>
+        <dt>Manage users and devices</dt><dd>{{ "Yes" if admin.can(perm.MANAGE_USERS) else "No" }}</dd>
+        <dt>Import the advocate registry</dt><dd>{{ "Yes" if admin.can(perm.IMPORT_REGISTRY) else "No" }}</dd>
+        <dt>Manage admins and roles</dt><dd>{{ "Yes" if admin.can(perm.MANAGE_ADMINS) else "No" }}</dd>
+      </dl>
+    </div>
+  </section>
+</div>
+{% endblock %}

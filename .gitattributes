@@ -5,3 +5,5 @@
 *.png binary
 *.jpg binary
 *.ttf binary
+# Vendored third-party files must keep their exact bytes (checksums in VENDOR.md)
+backend/app/admin/static/vendor/*.js -text

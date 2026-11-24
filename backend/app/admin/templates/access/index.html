@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h2>Admin accounts</h2>
+    <p>Only these Google accounts can sign in to the portal. There is no self-registration. Changes need a fresh Google sign-in and are recorded in the activity log.</p>
+  </div>
+</div>
+
+<section class="card">
+  <div class="card-head"><h2>Add an admin</h2></div>
+  <div class="card-body">
+    <form class="form-row" data-reset-on-success hx-post="/admin/access" hx-target="#access-table" hx-swap="outerHTML"
+          hx-confirm="Give this Google account access to the admin portal?" data-confirm-title="Add admin" data-confirm-ok="Add admin">
+      <div class="field"><label for="new-email">Google account email</label>
+        <input class="input" id="new-email" name="email" type="email" required maxlength="320" autocomplete="off" placeholder="name@example.com"></div>
+      <div class="field field-narrow"><label for="new-role">Role</label>
+        <select class="input" id="new-role" name="role">
+          {% for r in roles %}<option value="{{ r }}" {% if r == "support" %}selected{% endif %}>{{ role_labels[r] }}</option>{% endfor %}
+        </select></div>
+      <button class="btn btn-primary" type="submit">{{ icon("plus") }} Add admin <span class="spinner htmx-indicator"></span></button>
+    </form>
+  </div>
+</section>
+
+{% include "access/_table.html" %}
+
+<section class="card">
+  <div class="card-head"><h2>Roles</h2></div>
+  <div class="card-body table-wrap">
+    <table class="data">
+      <thead><tr><th>Role</th><th>Can do</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-owner">Owner</span></td><td>Everything, including adding and removing admins and changing roles.</td></tr>
+        <tr><td><span class="badge b-admin">Admin</span></td><td>All monitoring and support actions: users, devices, notifications, registry import, court re-sync, job retry. Not admin management.</td></tr>
+        <tr><td><span class="badge b-support">Support</span></td><td>Read-only, plus re-sync courts, re-read court PDFs and retry failed jobs.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

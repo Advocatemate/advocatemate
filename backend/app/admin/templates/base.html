@@ -1,0 +1,76 @@
+{% from "_icons.html" import icon %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="htmx-config" content='{"allowEval": false, "includeIndicatorStyles": false, "selfRequestsOnly": true}'>
+  <title>{{ page_title }} · AdvocateMate Admin</title>
+  <script src="/admin/static/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/admin/static/css/admin.css">
+  <script src="/admin/static/vendor/htmx.min.js" defer></script>
+  <script src="/admin/static/js/admin.js" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<a class="sr-only" href="#main">Skip to content</a>
+<div class="shell">
+  <aside class="sidebar" aria-label="Admin navigation">
+    <a class="brand" href="/admin">
+      <span class="brand-mark">{{ icon("scale") }}</span>
+      <span class="brand-text"><strong>AdvocateMate</strong><span>Admin portal</span></span>
+    </a>
+    <nav class="nav">
+      {% for item in nav %}
+      <a href="{{ item.href }}" {% if item.key == active %}aria-current="page"{% endif %} title="{{ item.label }}">
+        {{ icon(item.icon) }}<span class="nav-label">{{ item.label }}</span>
+        {% if item.phase %}<span class="soon">Phase {{ item.phase }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="side-foot">AP High Court assistant</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" id="sidebar-toggle" type="button" aria-label="Collapse or expand the sidebar" aria-expanded="true">{{ icon("menu") }}</button>
+      <h1>{{ page_title }}</h1>
+      <span class="env env-{{ env_tone }}" title="Environment">{{ env_label }}</span>
+      <a class="icon-btn" href="/admin/notifications" aria-label="Notifications">{{ icon("bell") }}</a>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Change theme">{{ icon("sun") }}</button>
+      {% if admin %}
+      <div class="profile">
+        <button class="profile-btn" id="profile-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="profile-menu">
+          <span class="avatar" aria-hidden="true">{{ (admin.account.display_name or admin.account.email)[:1] | upper }}</span>
+          <span class="who-text">{{ admin.account.display_name or admin.account.email }} <small>· {{ role_labels[admin.role] }}</small></span>
+        </button>
+        <div class="menu" id="profile-menu">
+          <div class="who"><strong>{{ admin.account.display_name or "Admin" }}</strong><span>{{ admin.account.email }}</span>
+            <span>{{ role_labels[admin.role] }} · session ends {{ admin.session.expires_at | dt("%I:%M %p") }}</span></div>
+          <form method="post" action="/admin/logout">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit">{{ icon("logout") }} Sign out</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </header>
+    <main class="content" id="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<dialog class="confirm" id="confirm-dialog">
+  <form method="dialog">
+    <div class="body"><h2 data-confirm-title>Please confirm</h2><p class="muted" data-confirm-text></p></div>
+    <div class="actions">
+      <button class="btn btn-secondary" value="cancel">Cancel</button>
+      <button class="btn btn-primary" value="ok" data-confirm-ok>Confirm</button>
+    </div>
+  </form>
+</dialog>
+</body>
+</html>

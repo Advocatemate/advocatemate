@@ -1,4 +1,4 @@
-# Database schema (PostgreSQL 16, Alembic revision `0003`)
+# Database schema (PostgreSQL 16, Alembic revision `0004`)
 
 UUID primary keys unless noted; all timestamps `timestamptz` (UTC). JSON columns are `JSONB` on PostgreSQL.
 Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && alembic check && alembic downgrade base`.
@@ -12,6 +12,8 @@ Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && ale
 | `advocate_profiles` | the Google ↔ user ↔ advocate link: UNIQUE `user_id`, UNIQUE `advocate_code` (FK), UNIQUE `google_sub`; `google_email`, `linked_at`, `verification_method` (`registry_email_match`); `identity_verification` (`registry_verified` / `legacy_unverified`); editable `display_name`/`email` |
 | `verified_mobiles`, `otp_records` | from the retired mobile-OTP login; kept (no data deleted), unused |
 | `auth_sessions` | per device; revoked_at + reason |
+| `admin_accounts` | admin portal (migration 0004): UNIQUE `email`, UNIQUE `google_sub` (bound at first sign-in), `role` owner/admin/support, `is_active`, `added_by_admin_id`, `added_via` cli/portal. Independent of advocates |
+| `admin_sessions` | server-side admin sessions: UNIQUE `token_hash` (SHA-256 of the cookie token), `csrf_token`, `last_seen_at` (30 min idle), `expires_at` (8 h), `reauth_at`, hashed IP, `revoked_at` + reason |
 | `refresh_tokens` | `token_hash` UNIQUE (HMAC), used_at (rotation), revoked_at |
 
 ## Court data
@@ -45,7 +47,9 @@ Migrations: `backend/migrations/versions/`. CI runs `alembic upgrade head && ale
 | `notifications` | UNIQUE(user_id, dedupe_key) — idempotent events; read_at; delivery_status (`pending`/`sent`/`failed`/`skipped`) |
 | `pdf_documents` | UNIQUE(kind, cache_key); `is_official`; sha256, size, storage path, source URL, expires_at |
 | `source_cache` | PK key; **parsed** payloads only (never raw HTML); expires_at |
-| `audit_records` | action, actor, target, hashed IP, redacted details |
+| `audit_records` | action, actor (`actor_user_id` advocate or `actor_admin_id` admin), target, hashed IP, redacted details. **Append-only** on PostgreSQL (trigger from migration 0004 refuses UPDATE/DELETE; only ON DELETE SET NULL of an actor is allowed) |
+| `user_daily_activity` | PK(activity_date, user_id): one row per advocate per IST day of use, for daily-active charts (migration 0004) |
+| `sync_events` | each court cause-list sync attempt: list type/date, court, trigger (scheduled/app/admin), result, error, items, duration, admin (migration 0004) |
 | `search_history` | per user |
 
 ## Retention (housekeeping task, daily 03:05 IST)

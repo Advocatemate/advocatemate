@@ -1,0 +1,34 @@
+{% from "_icons.html" import icon %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{ page_title }} · AdvocateMate Admin</title>
+  <script src="/admin/static/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/admin/static/css/admin.css">
+  {% if client_id %}<script src="https://accounts.google.com/gsi/client" async></script>{% endif %}
+</head>
+<body>
+<div class="auth">
+  <section class="auth-brand">
+    <div>
+      <span class="brand-mark">{{ icon("scale") }}</span>
+      <h1>AdvocateMate administration</h1>
+      <p>Monitor the service, support advocates and keep court data healthy for the AP High Court assistant.</p>
+      <ul>
+        <li>{{ icon("lock") }}<span>Only authorised administrators can sign in.</span></li>
+        <li>{{ icon("activity") }}<span>Every action in the portal is recorded in the activity log.</span></li>
+        <li>{{ icon("access") }}<span>Advocates are verified only by Google sign-in and the official registry, never by hand.</span></li>
+      </ul>
+    </div>
+    <span class="env env-{{ env_tone }} auth-env">{{ env_label }}</span>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-card">
+      {% block card %}{% endblock %}
+    </div>
+  </section>
+</div>
+</body>
+</html>

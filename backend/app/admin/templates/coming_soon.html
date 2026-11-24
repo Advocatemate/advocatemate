@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<section class="card">
+  <div class="empty">
+    {{ icon(item.icon) }}
+    <h3>{{ item.label }} arrives in Phase {{ item.phase }}</h3>
+    <p>This page will show real data from the AdvocateMate backend once Phase {{ item.phase }} is built and reviewed.</p>
+  </div>
+</section>
+{% endblock %}
