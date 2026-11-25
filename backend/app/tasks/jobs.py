@@ -166,4 +166,7 @@ def housekeeping() -> dict:
                                      .where(CauseListPdfParse.parsed_at < now - timedelta(days=60))).rowcount
         r["passed_over"] = db.execute(delete(PassedOverItem)
                                       .where(PassedOverItem.last_seen_at < now - timedelta(days=180))).rowcount
+        from app.services import admin_mobile_auth
+
+        r["admin_mobile_auth"] = admin_mobile_auth.purge_expired(db)  # old sign-in challenges, ended sessions' tokens
     return r

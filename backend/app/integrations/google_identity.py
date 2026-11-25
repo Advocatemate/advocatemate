@@ -37,8 +37,10 @@ def _transport() -> google_requests.Request:
     return google_requests.Request(session=_session)
 
 
-def verify_id_token(token: str, *, transport=None) -> GoogleIdentity:
-    audiences = get_settings().google_client_id_list
+def verify_id_token(token: str, *, transport=None, audiences: list[str] | None = None) -> GoogleIdentity:
+    """``audiences``: OAuth client IDs the token may be issued for (default: GOOGLE_CLIENT_IDS)."""
+    if audiences is None:
+        audiences = get_settings().google_client_id_list
     if not audiences:
         raise ServiceUnavailable("Google sign-in is not configured on this server.", code="google_signin_not_configured")
     if not token or len(token) > 8192:

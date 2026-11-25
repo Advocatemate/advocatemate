@@ -70,6 +70,10 @@ def create_app() -> FastAPI:
 
     install_admin_api(app)
 
+    from app.admin_mobile.router import install as install_admin_mobile_api
+
+    install_admin_mobile_api(app)
+
     @app.get("/health/live", tags=["health"])
     def live():
         return {"status": "ok"}

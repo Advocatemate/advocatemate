@@ -113,30 +113,45 @@ class NewSession:
     account: AdminAccount
 
 
-def _nonce_matches(identity: google_identity.GoogleIdentity, expected: str | None) -> bool:
-    """``expected`` is None for the server-rendered portal (Google's double-submit cookie protects it)."""
-    if expected is None:
-        return True
-    return bool(identity.nonce) and hmac.compare_digest(identity.nonce, expected)
+NOT_VERIFIED = "Google sign-in could not be verified. Please try again."
 
 
-def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | None,
-            expected_nonce: str | None = None) -> NewSession:
-    """Verify the Google ID token on the server and open a session for an authorised, active admin.
+def _nonce_matches(identity: google_identity.GoogleIdentity, expected: str | None = None,
+                   expected_sha256: str | None = None) -> bool:
+    """No expectation: the server-rendered portal (Google's double-submit cookie protects it).
 
-    ``expected_nonce``: the admin web app passes the nonce it issued to this browser; the token must carry it.
+    ``expected`` is the raw nonce (web Admin App cookie); ``expected_sha256`` the stored hash of a one-time
+    challenge (phone app).
     """
+    if expected is None and expected_sha256 is None:
+        return True
+    if not identity.nonce:
+        return False
+    if expected is not None:
+        return hmac.compare_digest(identity.nonce, expected)
+    return hmac.compare_digest(_hash_token(identity.nonce), expected_sha256 or "")
+
+
+def verify_google_sign_in(db: Session, id_token: str, *, ip: str | None, audiences: list[str] | None = None,
+                          expected_nonce: str | None = None,
+                          expected_nonce_sha256: str | None = None) -> google_identity.GoogleIdentity:
+    """Step 1 of every admin sign-in: Google's checks (signature, issuer, expiry, audience, verified email) and the
+    nonce. Refusals are audited and committed before the error is raised."""
     try:
-        identity = google_identity.verify_id_token(id_token)
+        identity = google_identity.verify_id_token(id_token, audiences=audiences)
     except Exception as e:  # noqa: BLE001 - every verifier failure is a refusal
         audit.record(db, "admin_login_denied", ip=ip, reason=getattr(e, "code", "google_token_invalid"))
         db.commit()
-        raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.") \
-            from e
-    if not _nonce_matches(identity, expected_nonce):
+        raise AdminAccessError("google_token_invalid", NOT_VERIFIED) from e
+    if not _nonce_matches(identity, expected_nonce, expected_nonce_sha256):
         audit.record(db, "admin_login_denied", ip=ip, reason="nonce_mismatch")
         db.commit()
-        raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.")
+        raise AdminAccessError("google_token_invalid", NOT_VERIFIED)
+    return identity
+
+
+def authorise_identity(db: Session, identity: google_identity.GoogleIdentity, *, ip: str | None) -> AdminAccount:
+    """Step 2: the verified Google account must be an active admin (bound to this Google account after first use)."""
     acct = db.scalar(select(AdminAccount).where(AdminAccount.google_sub == identity.sub)) \
         or get_by_email(db, identity.email)
     if acct is None or not acct.is_active or (acct.google_sub and acct.google_sub != identity.sub) \
@@ -149,14 +164,25 @@ def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | Non
         acct.google_sub = identity.sub  # bind the Google account at first sign-in
     if identity.name and not acct.display_name:
         acct.display_name = identity.name
+    acct.last_login_at = utcnow()
+    return acct
+
+
+def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | None,
+            expected_nonce: str | None = None) -> NewSession:
+    """Verify the Google ID token on the server and open a browser session for an authorised, active admin.
+
+    ``expected_nonce``: the admin web app passes the nonce it issued to this browser; the token must carry it.
+    """
+    identity = verify_google_sign_in(db, id_token, ip=ip, expected_nonce=expected_nonce)
+    acct = authorise_identity(db, identity, ip=ip)
     now = utcnow()
-    acct.last_login_at = now
     token = secrets.token_urlsafe(32)
     s = get_settings()
     sess = AdminSession(admin_account_id=acct.id, token_hash=_hash_token(token), csrf_token=secrets.token_urlsafe(32),
                         created_at=now, last_seen_at=now, reauth_at=now,
                         expires_at=now + timedelta(hours=s.admin_session_max_hours),
-                        ip_hash=hash_ip(ip), user_agent=(user_agent or "")[:255] or None)
+                        ip_hash=hash_ip(ip), user_agent=(user_agent or "")[:255] or None, client="browser")
     db.add(sess)
     db.flush()
     audit.record(db, "admin_login", actor_admin=acct.id, target_type="admin_account", target_id=str(acct.id), ip=ip)
@@ -164,16 +190,16 @@ def sign_in(db: Session, id_token: str, *, ip: str | None, user_agent: str | Non
 
 
 def reauthenticate(db: Session, sess: AdminSession, acct: AdminAccount, id_token: str, *, ip: str | None,
-                   expected_nonce: str | None = None) -> None:
+                   expected_nonce: str | None = None, expected_nonce_sha256: str | None = None,
+                   audiences: list[str] | None = None) -> None:
     """Fresh Google sign-in by the same admin, required before sensitive actions."""
     try:
-        identity = google_identity.verify_id_token(id_token)
+        identity = google_identity.verify_id_token(id_token, audiences=audiences)
     except Exception as e:  # noqa: BLE001
-        raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.") \
-            from e
-    if not _nonce_matches(identity, expected_nonce):
+        raise AdminAccessError("google_token_invalid", NOT_VERIFIED) from e
+    if not _nonce_matches(identity, expected_nonce, expected_nonce_sha256):
         audit.record(db, "admin_reauth_denied", actor_admin=acct.id, ip=ip, reason="nonce_mismatch")
-        raise AdminAccessError("google_token_invalid", "Google sign-in could not be verified. Please try again.")
+        raise AdminAccessError("google_token_invalid", NOT_VERIFIED)
     if identity.sub != acct.google_sub:
         audit.record(db, "admin_reauth_denied", actor_admin=acct.id, ip=ip, reason="different_account")
         raise AdminAccessError("different_account", "Please confirm with the same Google account you signed in with.")
@@ -181,12 +207,10 @@ def reauthenticate(db: Session, sess: AdminSession, acct: AdminAccount, id_token
     audit.record(db, "admin_reauth", actor_admin=acct.id, ip=ip)
 
 
-def load_session(db: Session, token: str | None) -> tuple[AdminSession, AdminAccount] | None:
-    """Return the live session for a cookie token, enforcing idle (30 min) and absolute (8 h) expiry."""
-    if not token or len(token) > 128:
-        return None
-    sess = db.scalar(select(AdminSession).where(AdminSession.token_hash == _hash_token(token)))
-    if sess is None or sess.revoked_at is not None:
+def check_live(db: Session, sess: AdminSession) -> AdminAccount | None:
+    """The session's admin when the session may still be used (idle and absolute limits, active account);
+    otherwise None, after recording why it ended. Counts this request as activity."""
+    if sess.revoked_at is not None:
         return None
     now = utcnow()
     s = get_settings()
@@ -201,12 +225,32 @@ def load_session(db: Session, token: str | None) -> tuple[AdminSession, AdminAcc
         _revoke(sess, "account_inactive")
         return None
     sess.last_seen_at = now
-    return sess, acct
+    return acct
+
+
+def load_session(db: Session, token: str | None) -> tuple[AdminSession, AdminAccount] | None:
+    """Return the live browser session for a cookie token, enforcing idle (30 min) and absolute (8 h) expiry.
+
+    Phone-app sessions are never accepted here (their tokens only work as bearer tokens on /admin-mobile).
+    """
+    if not token or len(token) > 128:
+        return None
+    sess = db.scalar(select(AdminSession).where(AdminSession.token_hash == _hash_token(token),
+                                                AdminSession.client != "mobile"))
+    if sess is None:
+        return None
+    acct = check_live(db, sess)
+    return (sess, acct) if acct is not None else None
 
 
 def reauth_fresh(sess: AdminSession, now: datetime | None = None) -> bool:
     window = timedelta(minutes=get_settings().admin_reauth_minutes)
     return (now or utcnow()) - as_utc(sess.reauth_at) <= window
+
+
+def revoke(sess: AdminSession, reason: str) -> None:
+    """End one session (any client); its refresh tokens stop working with it."""
+    _revoke(sess, reason)
 
 
 def _revoke(sess: AdminSession, reason: str) -> None:

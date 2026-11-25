@@ -94,9 +94,14 @@ def fake_google_token(sub: str, email: str, *, verified: bool = True, nonce: str
     return f"{token}:{nonce}" if nonce else token
 
 
+fake_google_audiences: list = []  # audiences each fake verification was asked for (None = default)
+
+
 @pytest.fixture(autouse=True)
 def fake_google(monkeypatch):
-    def verify(token: str, *, transport=None) -> GoogleIdentity:
+    fake_google_audiences.clear()
+    def verify(token: str, *, transport=None, audiences=None) -> GoogleIdentity:
+        fake_google_audiences.append(audiences)
         parts = (token or "").split(":")
         if len(parts) not in (4, 5) or parts[0] != "fake-google-id-token":
             raise Unauthorized("Google sign-in failed. Please try again.", code="google_token_invalid")

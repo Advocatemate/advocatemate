@@ -7,6 +7,9 @@ It is never listed in the public API documentation.
 > The separate **AdvocateMate Admin** web app (own repository and deployment) uses the same accounts,
 > sessions, permissions and audit trail through the JSON API at `/admin-api/v1` — see
 > [ADMIN_APP_API.md](ADMIN_APP_API.md). Both share the rules in `app/admin/guards.py`.
+>
+> The **AdvocateMate Admin phone app** (Android/iOS, Flutter, separate repository) uses the same accounts
+> through `/admin-mobile/v1` with bearer tokens — see [ADMIN_MOBILE_API.md](ADMIN_MOBILE_API.md).
 
 **Status:** Phase 1 (foundation) complete — sign-in, sessions, roles, Admin Access, layout and theme, audit
 trail. Monitoring and support modules arrive in phases 2–7 (see "Build phases").

@@ -58,6 +58,15 @@ class Settings(BaseSettings):
     # Shared secret the Admin App's reverse proxy sends as X-Admin-Proxy-Key; required in staging/production.
     admin_proxy_secret: str = ""
 
+    # Admin mobile API (/admin-mobile/v1) for the AdvocateMate Admin Android/iOS app. None = on in
+    # development/test, off in staging/production unless set to true.
+    admin_mobile_api_enabled: bool | None = None
+    # Google OAuth client IDs the admin app's ID tokens are issued for (its own server/Web client and iOS client).
+    # Kept apart from GOOGLE_CLIENT_IDS so a token from the advocate app can never sign in to the admin app.
+    admin_mobile_google_client_ids: str = ""
+    admin_access_token_minutes: int = 15  # phone-app access tokens; refresh tokens are single-use
+    admin_challenge_minutes: int = 5  # how long a sign-in nonce stays usable
+
     # Retired mobile-OTP login (kept only so existing configuration still loads).
     otp_hash_secret: str = _DEV_SECRET
     otp_ttl_seconds: int = 300
@@ -127,6 +136,18 @@ class Settings(BaseSettings):
         return origins
 
     @property
+    def admin_mobile_api_on(self) -> bool:
+        return self.is_dev_like if self.admin_mobile_api_enabled is None else self.admin_mobile_api_enabled
+
+    @property
+    def admin_mobile_audiences(self) -> list[str]:
+        """Audiences accepted for admin-app Google ID tokens (development falls back to GOOGLE_CLIENT_IDS)."""
+        ids = [c.strip() for c in self.admin_mobile_google_client_ids.split(",") if c.strip()]
+        if not ids and self.is_dev_like:
+            return self.google_client_id_list
+        return ids
+
+    @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
@@ -148,6 +169,8 @@ class Settings(BaseSettings):
                 if not self.admin_app_origin_list or any(not o.startswith("https://")
                                                          for o in self.admin_app_origin_list):
                     problems.append("ADMIN_APP_ORIGINS must list the Admin App's https:// origin(s)")
+            if self.admin_mobile_api_enabled and not self.admin_mobile_audiences:
+                problems.append("ADMIN_MOBILE_GOOGLE_CLIENT_IDS is required when ADMIN_MOBILE_API_ENABLED=true")
             if problems:
                 raise ValueError("; ".join(problems))
         return self
