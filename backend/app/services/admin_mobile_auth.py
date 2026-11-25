@@ -32,6 +32,17 @@ from app.services.admin_access import AdminAccessError
 MOBILE = "mobile"
 SIGN_IN_EXPIRED = "This sign-in attempt expired. Please try again."
 SESSION_ENDED = "Your session ended. Please sign in again."
+REUSE_REASON = "refresh_token_reuse"
+REUSE_DETECTED = ("For your security this session was ended because its credentials were used twice. "
+                  "Please sign in again.")
+
+
+def _session_over(sess: AdminSession) -> AdminAccessError:
+    """Why a revoked session can no longer be used. After a refresh-token reuse every later request says so, so the
+    rightful admin learns that a copy of their credentials may exist (not only whoever sent the used token)."""
+    if sess.revoke_reason == REUSE_REASON:
+        return AdminAccessError("session_reuse_detected", REUSE_DETECTED)
+    return AdminAccessError("session_expired", SESSION_ENDED)
 
 
 def _hash(value: str) -> str:
@@ -69,18 +80,34 @@ def create_challenge(db: Session, purpose: str, *, ip: str | None,
     return challenge, nonce
 
 
-def consume_challenge(db: Session, challenge_id: str, purpose: str, *,
+def _challenge_problem(challenge: AdminAuthChallenge | None, purpose: str, session: AdminSession | None) -> str | None:
+    if challenge is None:
+        return "challenge_unknown"
+    if challenge.purpose != purpose or (session is not None and challenge.admin_session_id != session.id):
+        return "challenge_mismatch"
+    if challenge.used_at is not None:
+        return "challenge_reused"
+    if as_utc(challenge.expires_at) <= utcnow():
+        return "challenge_expired"
+    return None
+
+
+def consume_challenge(db: Session, challenge_id: str, purpose: str, *, ip: str | None = None,
                       session: AdminSession | None = None) -> AdminAuthChallenge:
-    """Use up a challenge (whatever happens next, it never works again)."""
+    """Use up a challenge (whatever happens next, it never works again). A refused challenge is audited - a reused
+    one is a replay attempt. The caller commits before reporting the error."""
     try:
         cid = uuid.UUID(challenge_id)
     except (ValueError, TypeError):
         cid = None
     challenge = db.scalar(select(AdminAuthChallenge).where(AdminAuthChallenge.id == cid).with_for_update()) \
         if cid else None
-    if challenge is None or challenge.purpose != purpose or challenge.used_at is not None \
-            or as_utc(challenge.expires_at) <= utcnow() \
-            or (session is not None and challenge.admin_session_id != session.id):
+    problem = _challenge_problem(challenge, purpose, session)
+    if problem is not None:
+        if purpose == "reauth" and session is not None:
+            audit.record(db, "admin_reauth_denied", actor_admin=session.admin_account_id, ip=ip, reason=problem)
+        else:
+            audit.record(db, "admin_login_denied", ip=ip, reason=problem)
         raise AdminAccessError("sign_in_expired", SIGN_IN_EXPIRED)
     challenge.used_at = utcnow()
     db.flush()
@@ -106,7 +133,7 @@ def sign_in(db: Session, challenge_id: str, id_token: str, device: DeviceInfo, *
             user_agent: str | None) -> MobileTokens:
     """Challenge -> Google ID token (admin app audience, carrying the challenge nonce) -> authorised admin ->
     new phone session."""
-    challenge = consume_challenge(db, challenge_id, "signin")
+    challenge = consume_challenge(db, challenge_id, "signin", ip=ip)
     identity = admin_access.verify_google_sign_in(db, id_token, ip=ip,
                                                   audiences=get_settings().admin_mobile_audiences,
                                                   expected_nonce_sha256=challenge.nonce_hash)
@@ -139,7 +166,7 @@ def refresh(db: Session, refresh_token: str, *, ip: str | None) -> MobileTokens:
         raise AdminAccessError("invalid_refresh", SESSION_ENDED)
     if row.used_at is not None:
         if sess.revoked_at is None:
-            admin_access.revoke(sess, "refresh_token_reuse")
+            admin_access.revoke(sess, REUSE_REASON)
             audit.record(db, "admin_refresh_reuse_detected", actor_admin=sess.admin_account_id,
                          target_type="admin_session", target_id=str(sess.id), ip=ip)
         db.commit()
@@ -147,7 +174,7 @@ def refresh(db: Session, refresh_token: str, *, ip: str | None) -> MobileTokens:
     acct = admin_access.check_live(db, sess)
     if acct is None:
         db.commit()  # keep the reason the session ended
-        raise AdminAccessError("session_expired", SESSION_ENDED)
+        raise _session_over(sess)
     row.used_at = utcnow()
     access, new_refresh = _issue_tokens(db, sess)
     return MobileTokens(access, new_refresh, sess, acct)
@@ -156,26 +183,29 @@ def refresh(db: Session, refresh_token: str, *, ip: str | None) -> MobileTokens:
 def authenticate(db: Session, access_token: str) -> tuple[AdminSession, AdminAccount]:
     """The live phone session for a bearer access token.
 
-    Raises ``token_expired`` when only the access token is out of date (the app refreshes and retries) and
-    ``session_expired`` when the session itself is over.
+    Raises ``token_expired`` when only the access token is out of date (the app refreshes and retries),
+    ``session_reuse_detected`` when the session was ended because a refresh token was used twice, and
+    ``session_expired`` when the session is over for any other reason.
     """
     sess = db.scalar(select(AdminSession).where(AdminSession.token_hash == _hash(access_token),
                                                 AdminSession.client == MOBILE)) \
         if access_token and len(access_token) <= 128 else None
-    if sess is None or sess.revoked_at is not None:
+    if sess is None:
         raise AdminAccessError("session_expired", SESSION_ENDED)
+    if sess.revoked_at is not None:
+        raise _session_over(sess)
     if sess.token_expires_at is None or as_utc(sess.token_expires_at) <= utcnow():
         raise AdminAccessError("token_expired", "Access token expired.")
     acct = admin_access.check_live(db, sess)
     if acct is None:
-        raise AdminAccessError("session_expired", SESSION_ENDED)
+        raise _session_over(sess)
     return sess, acct
 
 
 def reauthenticate(db: Session, sess: AdminSession, acct: AdminAccount, challenge_id: str, id_token: str, *,
                    ip: str | None) -> None:
     """Fresh Google sign-in by the same admin before a sensitive action, bound to this session's challenge."""
-    challenge = consume_challenge(db, challenge_id, "reauth", session=sess)
+    challenge = consume_challenge(db, challenge_id, "reauth", ip=ip, session=sess)
     admin_access.reauthenticate(db, sess, acct, id_token, ip=ip, audiences=get_settings().admin_mobile_audiences,
                                 expected_nonce_sha256=challenge.nonce_hash)
 

@@ -94,6 +94,7 @@ def test_challenge_cannot_be_replayed(client):
     assert google_sign_in(client, "owner@example.com", ch=ch).status_code == 200
     again = google_sign_in(client, "owner@example.com", ch=ch)
     assert again.status_code == 401 and _error(again) == "sign_in_expired"
+    assert [r.details["reason"] for r in _audit("admin_login_denied")] == ["challenge_reused"]  # replay audited
 
 
 def test_failed_attempt_uses_up_the_challenge(client):
@@ -103,7 +104,7 @@ def test_failed_attempt_uses_up_the_challenge(client):
     # Even with the right nonce now, the challenge is gone.
     r = google_sign_in(client, "owner@example.com", ch=ch)
     assert r.status_code == 401 and _error(r) == "sign_in_expired"
-    assert [a.details.get("reason") for a in _audit("admin_login_denied")] == ["nonce_mismatch"]
+    assert [a.details.get("reason") for a in _audit("admin_login_denied")] == ["nonce_mismatch", "challenge_reused"]
 
 
 @pytest.mark.parametrize("nonce", ["", "someone-elses-nonce"])
@@ -121,6 +122,7 @@ def test_expired_and_unknown_challenges_are_refused(client):
     assert _error(google_sign_in(client, "owner@example.com", ch=ch)) == "sign_in_expired"
     bogus = {"challenge_id": "not-a-uuid", "nonce": ch["nonce"]}
     assert _error(google_sign_in(client, "owner@example.com", ch=bogus)) == "sign_in_expired"
+    assert {r.details["reason"] for r in _audit("admin_login_denied")} == {"challenge_expired", "challenge_unknown"}
 
 
 def test_device_details_are_validated(client):
@@ -180,9 +182,20 @@ def test_reusing_a_refresh_token_ends_the_session(client):
     assert replay.status_code == 401 and _error(replay) == "refresh_reused"
     assert _session().revoke_reason == "refresh_token_reuse"
     assert len(_audit("admin_refresh_reuse_detected")) == 1
-    # Both the thief's and the owner's tokens are now dead.
-    assert client.get(f"{API}/auth/session", headers=bearer(second)).status_code == 401
-    assert client.post(f"{API}/auth/refresh", json={"refresh_token": second["refresh_token"]}).status_code == 401
+    # Both the thief's and the owner's tokens are now dead - and the rightful app is told why, on any request.
+    r = client.get(f"{API}/auth/session", headers=bearer(second))
+    assert r.status_code == 401 and _error(r) == "session_reuse_detected"
+    assert "used twice" in r.json()["error"]["message"]
+    r = client.post(f"{API}/auth/refresh", json={"refresh_token": second["refresh_token"]})
+    assert r.status_code == 401 and _error(r) == "session_reuse_detected"
+
+
+def test_other_session_endings_keep_the_generic_reason(client):
+    tokens = mobile_sign_in(client, "owner@example.com")
+    client.post(f"{API}/auth/logout", headers=bearer(tokens))
+    assert _error(client.get(f"{API}/auth/session", headers=bearer(tokens))) == "session_expired"
+    r = client.post(f"{API}/auth/refresh", json={"refresh_token": tokens["refresh_token"]})
+    assert _error(r) == "session_expired"
 
 
 def test_unknown_refresh_token_is_refused(client):
@@ -302,6 +315,7 @@ def test_reauth_challenge_belongs_to_its_session(client):
     # A sign-in challenge is not a re-authentication challenge either.
     r = _reauth(client, mine, "owner@example.com", ch=challenge(client))
     assert _error(r) == "sign_in_expired"
+    assert [r.details["reason"] for r in _audit("admin_reauth_denied")] == ["challenge_mismatch", "challenge_mismatch"]
 
 
 def test_reauth_challenge_needs_a_session(client):

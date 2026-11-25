@@ -34,6 +34,11 @@ App                                        Backend                              
   The server stores only SHA-256 hashes of tokens and nonces.
 * **Refresh reuse:** presenting an already-used refresh token ends the whole session (`refresh_reused`,
   audited as `admin_refresh_reuse_detected`): one copy is in someone else's hands.
+  Every later request or refresh of that session answers `session_reuse_detected`, so the rightful admin is warned
+  too, not only whoever sent the used token.
+* **Refused challenges are audited:** a replayed (already used), expired, unknown or wrong-session challenge is
+  recorded as `admin_login_denied` / `admin_reauth_denied` with reason `challenge_reused`, `challenge_expired`,
+  `challenge_unknown` or `challenge_mismatch`.
 * **Session limits** are the portal's: 30 min without requests, 8 h at most (`ADMIN_SESSION_*`). An access
   token never outlives its session. Sign-out, ending a session from the sessions list, or deactivating the admin
   revokes it at once.
@@ -65,6 +70,7 @@ Token response: `{access_token, token_type: "bearer", expires_in, refresh_token,
 |---|---|---|
 | 401 | `token_expired` | refresh once, retry |
 | 401 | `not_authenticated`, `session_expired`, `invalid_refresh`, `refresh_reused` | clear tokens, sign in again |
+| 401 | `session_reuse_detected` | the session was ended because a refresh token was used twice: warn the admin, sign in again |
 | 401 | `sign_in_expired`, `google_token_invalid` | start a new sign-in (new challenge) |
 | 403 | `not_authorised`, `different_account`, `forbidden`, `reauth_required` | explain / re-authenticate |
 | 422 / 429 | `validation_error` / `rate_limited` | |
