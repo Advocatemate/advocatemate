@@ -81,7 +81,10 @@ semantic names (`AppIcons.home`, `AppIcons.court`, `AppIcons.liveBoard`, …), n
    stage filters, case cards.
 8. **Live display board** — status row (Live / Not current + last updated), auto-refresh card, court
    filter chips, grid of court tiles with the current item in large type.
-9. **My List** — date chips, summary (advocate, date, count), search, court filters, court-grouped cards.
+9. **My List** (home style) — navy header with gold curved edge and courthouse: title, date, refresh,
+   back arrow when opened from another screen, date chips styled for the dark header → dark summary card
+   (advocate, total, court pills that filter the list; tap again for all) → search → court groups with a
+   gold-soft court badge and case-count pill. Inside the Daily list's advocate-code view the header is omitted.
 10. **Search** — prominent search field, filter toggle panel, results, recent searches card.
 11. **Saved** — tabs (Saved cases / Favourite advocates) with gold indicator on a light app bar.
 12. **Notifications** — cards with category icon, unread dot, title, body, time.
@@ -108,6 +111,7 @@ semantic names (`AppIcons.home`, `AppIcons.court`, `AppIcons.liveBoard`, …), n
 - Package size: `lucide_icons_flutter` also bundles six stroke-weight fonts (~3.2 MB) the app does not use.
   The main Lucide font is tree-shaken in release builds; check the release APK size and vendor a single
   font if the extra weight matters.
+- Back and close buttons use Lucide icons through the theme (`actionIconTheme`).
 - Inter is the Latin subset (~67 KB per weight); other glyphs fall back to the bundled Noto fonts.
 
 ## Stages

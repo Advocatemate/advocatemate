@@ -13,7 +13,7 @@ import '../../shared/widgets/widgets.dart';
 import '../../theme/app_theme.dart';
 import '../authentication/session_controller.dart';
 import '../my_cause_list/my_cause_list_screen.dart';
-import 'dashboard_art.dart';
+import '../../shared/widgets/brand_art.dart';
 
 final publicationStatusProvider = FutureProvider.autoDispose<Loaded<PublicationStatus>>(
   (ref) => ref.watch(courtRepositoryProvider).publicationStatus(),

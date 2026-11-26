@@ -175,6 +175,7 @@ class CaseCard extends StatelessWidget {
     final secondary = t.textTheme.bodyMedium?.copyWith(color: tk.textSecondary);
     return AppCard(
       onTap: onTap,
+      radius: 18,
       padding: const EdgeInsets.all(14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +185,7 @@ class CaseCard extends StatelessWidget {
               constraints: const BoxConstraints(minWidth: 52),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               margin: const EdgeInsets.only(right: AppSpacing.md),
-              decoration: BoxDecoration(color: tk.subtleFill, borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
+              decoration: BoxDecoration(color: tk.goldSoft, borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
               child: Semantics(
                 label: l.itemNo(itemNo!),
                 excludeSemantics: true,
@@ -488,15 +489,32 @@ class FreshnessBanner extends StatelessWidget {
   }
 }
 
-/// Horizontal chips for source-offered dates plus a calendar picker.
+/// Horizontal chips for source-offered dates plus a calendar picker. [onDark] restyles the chips for a
+/// navy header (translucent white, selected date in gold).
 class DateSelector extends StatelessWidget {
-  const DateSelector({super.key, required this.selected, required this.onChanged, this.offered = const []});
+  const DateSelector({
+    super.key,
+    required this.selected,
+    required this.onChanged,
+    this.offered = const [],
+    this.onDark = false,
+  });
   final DateTime selected;
   final ValueChanged<DateTime> onChanged;
   final List<String> offered;
+  final bool onDark;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => _strip(context);
+
+  /// Explicit chip colours for the navy header (null on light backgrounds: the chip theme applies).
+  ({Color bg, Color fg, BorderSide side})? _dark(bool selected) => !onDark
+      ? null
+      : selected
+      ? (bg: AppColors.gold, fg: AppColors.navyDeep, side: const BorderSide(color: AppColors.gold))
+      : (bg: const Color(0xFF26385A), fg: Colors.white, side: BorderSide(color: Colors.white.withValues(alpha: .22)));
+
+  Widget _strip(BuildContext context) {
     final l = context.l10n;
     final dates = offered.map(DateTime.tryParse).whereType<DateTime>().toList();
     final g = AppLayout.gutter(context);
@@ -507,7 +525,12 @@ class DateSelector extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(g, 8, g, 6),
         children: [
           ActionChip(
-            avatar: const Icon(AppIcons.calendar, size: 16),
+            avatar: Icon(AppIcons.calendar, size: 16, color: onDark ? AppColors.gold : null),
+            color: onDark ? WidgetStatePropertyAll(_dark(false)!.bg) : null,
+            side: _dark(false)?.side,
+            labelStyle: onDark
+                ? Theme.of(context).chipTheme.labelStyle?.copyWith(color: Colors.white, fontWeight: FontWeight.w600)
+                : null,
             label: Text(Fmt.shortDate(selected, locale: context.localeName)),
             tooltip: l.selectDate,
             onPressed: () async {
@@ -524,10 +547,21 @@ class DateSelector extends StatelessWidget {
           for (final d in dates)
             Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: ChoiceChip(
-                label: Text(Fmt.shortDate(d, locale: context.localeName)),
-                selected: DateUtils.isSameDay(d, selected),
-                onSelected: (_) => onChanged(d),
+              child: Builder(
+                builder: (context) {
+                  final on = DateUtils.isSameDay(d, selected);
+                  final dark = _dark(on);
+                  return ChoiceChip(
+                    label: Text(Fmt.shortDate(d, locale: context.localeName)),
+                    selected: on,
+                    color: dark == null ? null : WidgetStatePropertyAll(dark.bg),
+                    side: dark?.side,
+                    labelStyle: dark == null
+                        ? null
+                        : Theme.of(context).chipTheme.labelStyle?.copyWith(color: dark.fg, fontWeight: FontWeight.w600),
+                    onSelected: (_) => onChanged(d),
+                  );
+                },
               ),
             ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Premium legal-tech palette: navy, restrained gold, cool light greys.
@@ -278,6 +279,11 @@ class AppTheme {
       extensions: [tokens],
       textTheme: text,
       iconTheme: IconThemeData(color: scheme.onSurface, size: 22),
+      // Back / close buttons use Lucide too, so no Material glyph appears anywhere.
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (_) => const Icon(LucideIcons.arrowLeft),
+        closeButtonIconBuilder: (_) => const Icon(LucideIcons.x),
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: background,
         foregroundColor: scheme.onSurface,
