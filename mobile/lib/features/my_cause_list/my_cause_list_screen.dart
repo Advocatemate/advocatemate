@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/formatters.dart';
@@ -139,6 +138,8 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
     ].where((g) => g.cases.isNotEmpty).toList();
 
     return ListView(
+      // The navy header already covers the status bar, so the list must not add its own top inset.
+      padding: EdgeInsets.zero,
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
         FreshnessBanner(loaded),
@@ -228,7 +229,7 @@ class _ListHeader extends StatelessWidget {
                       children: [
                         if (canPop) const BackButton(color: Colors.white),
                         if (!canPop) ...[
-                          const Icon(LucideIcons.gavel, color: AppColors.gold, size: 26),
+                          const BrandMark(size: 40, shadow: false),
                           const SizedBox(width: AppSpacing.md),
                         ],
                         Expanded(
@@ -295,10 +296,12 @@ class _SummaryCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const Positioned(
+          Positioned(
             right: 18,
             top: 24,
-            child: ExcludeSemantics(child: Icon(LucideIcons.scale, size: 88, color: Color(0x14FFFFFF))),
+            child: ExcludeSemantics(
+              child: Opacity(opacity: .10, child: Image.asset('assets/images/logo.png', width: 96, height: 96)),
+            ),
           ),
           const Positioned(
             right: 0,

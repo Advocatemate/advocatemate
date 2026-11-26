@@ -281,10 +281,12 @@ class _MyListCard extends StatelessWidget {
           onTap: () => context.go('/my-list'),
           child: Stack(
             children: [
-              const Positioned(
+              Positioned(
                 right: 18,
                 top: 70,
-                child: ExcludeSemantics(child: Icon(LucideIcons.scale, size: 96, color: Color(0x14FFFFFF))),
+                child: ExcludeSemantics(
+                  child: Opacity(opacity: .10, child: Image.asset('assets/images/logo.png', width: 104, height: 104)),
+                ),
               ),
               const Positioned(
                 right: 0,
@@ -300,17 +302,23 @@ class _MyListCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.gavel, color: AppColors.gold, size: 28),
-                        const SizedBox(width: AppSpacing.md),
+                        const BrandMark(size: 32, shadow: false),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: Semantics(
                             header: true,
-                            child: Text(
-                              '${l.myCauseList} · ${l.today}',
-                              style: t.textTheme.titleMedium?.copyWith(color: Colors.white, fontSize: 17),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '${l.myCauseList} · ${l.today}',
+                                maxLines: 1,
+                                style: t.textTheme.titleMedium?.copyWith(color: Colors.white, fontSize: 17),
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(width: AppSpacing.sm),
                         OutlinedButton(
                           onPressed: () => context.go('/my-list'),
                           style: OutlinedButton.styleFrom(
