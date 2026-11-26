@@ -26,7 +26,10 @@ Status: implemented on `main` (Nov 2026). This file is the plan and the referenc
 | `AppColors.textSecondary` | `#5D6676` | secondary text (darkened from `#7A8493` for AA contrast) |
 | `AppColors.textTertiary` | `#7A8493` | hints, inactive icons, captions on large text only |
 
-Dark mode keeps working: components read colours from `Theme.of(context)` / the `AppTokens`
+Dark mode (Nov 2026 rework): warm charcoal surfaces (#0E1013 / #181B20 / #22262D) with gold as the
+accent (`primary` = #E2C27F: selected tab, chips, case numbers, buttons); navy is kept only for the
+hero headers, and the dark feature cards use charcoal gradients with a faint gold edge
+(`featureTop` / `featureBottom` / `featureBorder` tokens). Dark mode keeps working: components read colours from `Theme.of(context)` / the `AppTokens`
 theme extension (`context.tokens`) rather than hard-coded light values.
 
 Typography: **Inter** (bundled, SIL OFL), falling back to Noto Sans and Noto Sans Telugu for
@@ -101,6 +104,11 @@ semantic names (`AppIcons.home`, `AppIcons.court`, `AppIcons.liveBoard`, …), n
 - **Support screen**: no support route exists; the icon is defined for when one is added.
 
 ## Implementation notes
+
+- Brand images (owner-supplied): `assets/images/logo.png` (circular emblem cut from the owner's
+  logo; also the Android/iOS launcher icons) and `court_hero.jpg` / `court_banner.jpg` (the owner's
+  courthouse photo, navy- and gold-toned). The source logo is 351 px, so the 1024 px iOS App Store icon is
+  upscaled; replace it with a high-resolution logo before an App Store release.
 
 - Tests: all existing tests kept. One finder changed: the advocate-favourite toggle used Material's filled
   star; Lucide has no filled glyphs, so the saved state is now `AppIcons.savedOn` (bookmark-check) and

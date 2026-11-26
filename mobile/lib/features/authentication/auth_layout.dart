@@ -38,7 +38,7 @@ class AuthLayout extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(AppSpacing.xl, compactHero ? 28 : 44, AppSpacing.xl, 72),
                     child: Column(
                       children: [
-                        BrandMark(size: compactHero ? 60 : 76),
+                        BrandMark(size: compactHero ? 76 : 96),
                         const SizedBox(height: AppSpacing.lg),
                         Text(
                           l.appName,

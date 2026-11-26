@@ -40,7 +40,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             child: Column(
               children: [
                 const Spacer(flex: 3),
-                const FadeSlideIn(child: BrandMark(size: 92)),
+                const FadeSlideIn(child: BrandMark(size: 128)),
                 const SizedBox(height: AppSpacing.xl),
                 FadeSlideIn(
                   order: 1,

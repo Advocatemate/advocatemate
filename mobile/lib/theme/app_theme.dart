@@ -29,13 +29,14 @@ abstract final class AppColors {
   static const charcoal = textPrimary;
   static const muted = textSecondary;
 
-  // Dark mode
-  static const darkBackground = Color(0xFF0A1220);
-  static const darkSurface = Color(0xFF121D2E);
-  static const darkSurfaceHigh = Color(0xFF1A263A);
-  static const darkText = Color(0xFFE7EAF0);
-  static const darkTextSecondary = Color(0xFFA9B2C1);
-  static const darkOutline = Color(0xFF2A3850);
+  // Dark mode: warm charcoal surfaces with gold accents (not blue), navy kept for the hero only.
+  static const darkBackground = Color(0xFF0E1013);
+  static const darkSurface = Color(0xFF181B20);
+  static const darkSurfaceHigh = Color(0xFF22262D);
+  static const darkText = Color(0xFFEDEEF0);
+  static const darkTextSecondary = Color(0xFFA9ADB5);
+  static const darkOutline = Color(0xFF2B2F37);
+  static const goldLight = Color(0xFFE2C27F);
 }
 
 /// Font families declared in pubspec.yaml (bundled, not taken from the device).
@@ -90,6 +91,9 @@ class AppTokens extends ThemeExtension<AppTokens> {
     required this.heroTop,
     required this.heroBottom,
     required this.subtleFill,
+    required this.featureTop,
+    required this.featureBottom,
+    required this.featureBorder,
   });
 
   final Color gold;
@@ -109,6 +113,11 @@ class AppTokens extends ThemeExtension<AppTokens> {
   /// Tinted fill for icon badges, item-number blocks and skeletons.
   final Color subtleFill;
 
+  /// Gradient and edge of the dark "feature" cards (My Cause List, banners).
+  final Color featureTop;
+  final Color featureBottom;
+  final Color featureBorder;
+
   static const light = AppTokens(
     gold: AppColors.gold,
     goldText: AppColors.goldDeep,
@@ -124,23 +133,29 @@ class AppTokens extends ThemeExtension<AppTokens> {
     heroTop: AppColors.navy,
     heroBottom: AppColors.navyDeep,
     subtleFill: Color(0xFFEEF1F6),
+    featureTop: AppColors.navy,
+    featureBottom: AppColors.navyDeep,
+    featureBorder: Color(0x00000000),
   );
 
   static const dark = AppTokens(
     gold: AppColors.gold,
-    goldText: Color(0xFFDDBB74),
-    goldSoft: Color(0xFF2F2818),
+    goldText: AppColors.goldLight,
+    goldSoft: Color(0xFF2E2719),
     onGoldSoft: Color(0xFFEBD3A0),
     success: Color(0xFF5FCB94),
     warning: Color(0xFFF0AE52),
     danger: Color(0xFFF2B8B5),
-    info: Color(0xFF9DB7E3),
+    info: Color(0xFFB9C3D3),
     textSecondary: AppColors.darkTextSecondary,
-    textTertiary: Color(0xFF808B9D),
+    textTertiary: Color(0xFF7F848D),
     cardBorder: AppColors.darkOutline,
-    heroTop: Color(0xFF13213A),
-    heroBottom: Color(0xFF0B1528),
+    heroTop: Color(0xFF142035),
+    heroBottom: Color(0xFF0C1220),
     subtleFill: AppColors.darkSurfaceHigh,
+    featureTop: Color(0xFF242832),
+    featureBottom: Color(0xFF15171C),
+    featureBorder: Color(0x40C49A45),
   );
 
   @override
@@ -165,6 +180,9 @@ class AppTokens extends ThemeExtension<AppTokens> {
       heroTop: c(heroTop, other.heroTop),
       heroBottom: c(heroBottom, other.heroBottom),
       subtleFill: c(subtleFill, other.subtleFill),
+      featureTop: c(featureTop, other.featureTop),
+      featureBottom: c(featureBottom, other.featureBottom),
+      featureBorder: c(featureBorder, other.featureBorder),
     );
   }
 }
@@ -212,25 +230,25 @@ class AppTheme {
     tokens: AppTokens.dark,
     scheme: const ColorScheme(
       brightness: Brightness.dark,
-      primary: Color(0xFFB4C7E8),
-      onPrimary: AppColors.navyDeep,
-      primaryContainer: Color(0xFF1E2E48),
-      onPrimaryContainer: Color(0xFFD6E1F3),
+      primary: AppColors.goldLight,
+      onPrimary: Color(0xFF1C1609),
+      primaryContainer: Color(0xFF2E2719),
+      onPrimaryContainer: Color(0xFFF3E3BF),
       secondary: AppColors.gold,
       onSecondary: AppColors.navyDeep,
-      secondaryContainer: Color(0xFF2F2818),
+      secondaryContainer: Color(0xFF2E2719),
       onSecondaryContainer: Color(0xFFEBD3A0),
       error: Color(0xFFF2B8B5),
       onError: Color(0xFF601410),
       surface: AppColors.darkSurface,
       onSurface: AppColors.darkText,
       onSurfaceVariant: AppColors.darkTextSecondary,
-      surfaceContainerLowest: Color(0xFF0E1726),
-      surfaceContainerLow: Color(0xFF141F31),
-      surfaceContainer: Color(0xFF172236),
+      surfaceContainerLowest: Color(0xFF121418),
+      surfaceContainerLow: Color(0xFF15181C),
+      surfaceContainer: Color(0xFF1C1F25),
       surfaceContainerHigh: AppColors.darkSurfaceHigh,
-      surfaceContainerHighest: Color(0xFF213049),
-      outline: Color(0xFF34435C),
+      surfaceContainerHighest: Color(0xFF2A2E36),
+      outline: Color(0xFF3A3F48),
       outlineVariant: AppColors.darkOutline,
       shadow: Colors.black,
       surfaceTint: Colors.transparent,

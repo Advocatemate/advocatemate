@@ -166,7 +166,7 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
         else
           for (final g in groups) ...[
             Padding(
-              padding: AppLayout.page(context, top: AppSpacing.lg, bottom: AppSpacing.md - 2),
+              padding: AppLayout.page(context, top: AppSpacing.md, bottom: AppSpacing.sm + 2),
               child: _CourtHeader(court: g.court, count: g.cases.length),
             ),
             for (final c in g.cases)
@@ -212,19 +212,13 @@ class _ListHeader extends StatelessWidget {
       painter: HeroBackgroundPainter(top: tk.heroTop, bottom: tk.heroBottom, curve: 26),
       child: Stack(
         children: [
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 30,
-            width: MediaQuery.sizeOf(context).width * .42,
-            child: const ExcludeSemantics(
-              child: CustomPaint(painter: CourthousePainter(color: Color(0x268FA6C9))),
-            ),
+          Positioned.fill(
+            child: HeroPhoto(top: tk.heroTop, bottom: tk.heroBottom, curve: 26, textSide: .97),
           ),
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: 28),
+              padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -291,10 +285,11 @@ class _SummaryCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(
+        border: Border.all(color: context.tokens.featureBorder),
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.navy, AppColors.navyDeep],
+          colors: [context.tokens.featureTop, context.tokens.featureBottom],
         ),
         boxShadow: const [BoxShadow(color: Color(0x330B1930), blurRadius: 18, offset: Offset(0, 8))],
       ),
@@ -313,7 +308,7 @@ class _SummaryCard extends StatelessWidget {
             child: CustomPaint(painter: GoldSwooshPainter()),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.lg + 4, AppSpacing.md + 2, AppSpacing.lg, AppSpacing.lg),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg + 4, AppSpacing.md + 2, AppSpacing.lg, AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

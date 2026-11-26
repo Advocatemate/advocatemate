@@ -379,8 +379,9 @@ class AppLoader extends StatelessWidget {
 
 /// AdvocateMate mark: gold scales of justice on a navy tile (drawn, no external asset).
 class BrandMark extends StatelessWidget {
-  const BrandMark({super.key, this.size = 64});
+  const BrandMark({super.key, this.size = 64, this.shadow = true});
   final double size;
+  final bool shadow;
 
   @override
   Widget build(BuildContext context) {
@@ -391,16 +392,10 @@ class BrandMark extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(size * .28),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.navyLight, AppColors.navyDeep],
-          ),
-          border: Border.all(color: AppColors.gold.withValues(alpha: .75), width: 1.5),
-          boxShadow: const [BoxShadow(color: Color(0x330B1930), blurRadius: 18, offset: Offset(0, 8))],
+          shape: BoxShape.circle,
+          boxShadow: shadow ? const [BoxShadow(color: Color(0x55000000), blurRadius: 18, offset: Offset(0, 8))] : null,
         ),
-        child: Icon(AppIcons.judge, color: AppColors.gold, size: size * .5),
+        child: Image.asset('assets/images/logo.png', width: size, height: size, filterQuality: FilterQuality.medium),
       ),
     );
   }

@@ -93,14 +93,8 @@ class _Hero extends StatelessWidget {
       painter: HeroBackgroundPainter(top: tk.heroTop, bottom: tk.heroBottom, curve: 44),
       child: Stack(
         children: [
-          Positioned(
-            right: 0,
-            bottom: 40,
-            width: MediaQuery.sizeOf(context).width * .55,
-            height: 190,
-            child: const ExcludeSemantics(
-              child: CustomPaint(painter: CourthousePainter(color: Color(0x388FA6C9))),
-            ),
+          Positioned.fill(
+            child: HeroPhoto(top: tk.heroTop, bottom: tk.heroBottom, curve: 44),
           ),
           SafeArea(
             bottom: false,
@@ -111,7 +105,7 @@ class _Hero extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(LucideIcons.scale, color: AppColors.gold, size: 40),
+                      const BrandMark(size: 52, shadow: false),
                       const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Column(
@@ -271,10 +265,11 @@ class _MyListCard extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: br,
-        gradient: const LinearGradient(
+        border: Border.all(color: context.tokens.featureBorder),
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.navy, AppColors.navyDeep],
+          colors: [context.tokens.featureTop, context.tokens.featureBottom],
         ),
         boxShadow: const [BoxShadow(color: Color(0x330B1930), blurRadius: 18, offset: Offset(0, 8))],
       ),
@@ -667,24 +662,37 @@ class _JusticeBanner extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(colors: [AppColors.navyDeep, AppColors.navy, AppColors.navyLight]),
+        border: Border.all(color: context.tokens.featureBorder),
+        gradient: LinearGradient(
+          colors: Theme.of(context).brightness == Brightness.light
+              ? const [AppColors.navyDeep, AppColors.navy, AppColors.navyLight]
+              : [context.tokens.featureBottom, context.tokens.featureTop],
+        ),
       ),
       child: Stack(
         children: [
+          // Gold-toned courthouse photo fading in from the right.
           Positioned(
-            right: -6,
-            top: 10,
+            right: 0,
+            top: 0,
             bottom: 0,
-            width: 150,
-            child: const ExcludeSemantics(
-              child: CustomPaint(painter: CourthousePainter(color: Color(0x66C49A45))),
+            width: 170,
+            child: ExcludeSemantics(
+              child: ShaderMask(
+                blendMode: BlendMode.dstIn,
+                shaderCallback: (r) => const LinearGradient(
+                  colors: [Colors.transparent, Color(0xCCFFFFFF), Colors.white],
+                  stops: [0, .45, 1],
+                ).createShader(r),
+                child: Image.asset('assets/images/court_banner.jpg', fit: BoxFit.cover, alignment: Alignment.topCenter),
+              ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg + 4),
             child: Row(
               children: [
-                const Icon(LucideIcons.scale, color: AppColors.gold, size: 44),
+                const BrandMark(size: 56, shadow: false),
                 Container(
                   width: 1,
                   height: 48,
