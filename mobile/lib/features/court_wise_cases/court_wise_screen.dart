@@ -180,7 +180,8 @@ class _CourtWiseScreenState extends ConsumerState<CourtWiseScreen> {
                               ChipStrip(
                                 children: [
                                   ChoiceChip(
-                                    label: Text(l.filters),
+                                    key: const Key('filterAll'),
+                                    label: Text(l.filterAll),
                                     selected: _stage == null,
                                     onSelected: (_) => setState(() => _stage = null),
                                   ),

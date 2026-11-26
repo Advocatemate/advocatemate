@@ -643,4 +643,27 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get justiceForAllSubtitle =>
       'స్మార్ట్ లీగల్ టూల్స్‌తో న్యాయవాదులకు సాధికారత';
+
+  @override
+  String get filterAll => 'అన్నీ';
+
+  @override
+  String get savingPdf => 'PDF సేవ్ అవుతోంది…';
+
+  @override
+  String pdfSaved(String location) {
+    return 'PDF $locationలో సేవ్ అయింది';
+  }
+
+  @override
+  String pdfAlreadySaved(String location) {
+    return 'ఈ PDF ఇప్పటికే $locationలో సేవ్ అయి ఉంది';
+  }
+
+  @override
+  String get pdfSaveFailed => 'PDF సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get pdfSavePermission =>
+      'PDFలను ఈ పరికరంలో సేవ్ చేయడానికి నిల్వ అనుమతి ఇవ్వండి.';
 }

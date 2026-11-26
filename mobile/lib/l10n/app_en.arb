@@ -318,5 +318,25 @@
   "liveDisplayBoard": "Live Display Board",
   "courtShortName": "AP High Court",
   "justiceForAll": "Justice for All",
-  "justiceForAllSubtitle": "Empowering Advocates with Smart Legal Tools"
+  "justiceForAllSubtitle": "Empowering Advocates with Smart Legal Tools",
+  "filterAll": "All",
+  "savingPdf": "Saving PDF…",
+  "pdfSaved": "PDF saved to {location}",
+  "@pdfSaved": {
+    "placeholders": {
+      "location": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfAlreadySaved": "This PDF is already saved in {location}",
+  "@pdfAlreadySaved": {
+    "placeholders": {
+      "location": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfSaveFailed": "Could not save the PDF. Please try again.",
+  "pdfSavePermission": "Allow storage access to save PDFs on this device."
 }

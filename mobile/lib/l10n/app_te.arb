@@ -184,5 +184,11 @@
   "liveDisplayBoard": "లైవ్ డిస్‌ప్లే బోర్డ్",
   "courtShortName": "ఏపీ హైకోర్టు",
   "justiceForAll": "అందరికీ న్యాయం",
-  "justiceForAllSubtitle": "స్మార్ట్ లీగల్ టూల్స్‌తో న్యాయవాదులకు సాధికారత"
+  "justiceForAllSubtitle": "స్మార్ట్ లీగల్ టూల్స్‌తో న్యాయవాదులకు సాధికారత",
+  "filterAll": "అన్నీ",
+  "savingPdf": "PDF సేవ్ అవుతోంది…",
+  "pdfSaved": "PDF {location}లో సేవ్ అయింది",
+  "pdfAlreadySaved": "ఈ PDF ఇప్పటికే {location}లో సేవ్ అయి ఉంది",
+  "pdfSaveFailed": "PDF సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+  "pdfSavePermission": "PDFలను ఈ పరికరంలో సేవ్ చేయడానికి నిల్వ అనుమతి ఇవ్వండి."
 }

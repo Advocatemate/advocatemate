@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/formatters.dart';
@@ -333,7 +332,7 @@ class _MyListCard extends StatelessWidget {
                             children: [
                               Text(l.continueAction),
                               const SizedBox(width: 6),
-                              const Icon(LucideIcons.arrowRight, size: 16, color: AppColors.gold),
+                              const Icon(AppIcons.arrowRight, size: 16, color: AppColors.gold),
                             ],
                           ),
                         ),
@@ -397,7 +396,7 @@ class _PublicationCard extends ConsumerWidget {
           height: 52,
           alignment: Alignment.center,
           decoration: BoxDecoration(color: tk.goldSoft, shape: BoxShape.circle),
-          child: Icon(AppIcons.daily, color: tk.goldText, size: 24),
+          child: Icon(AppIcons.publicationDate, color: tk.goldText, size: 24),
         ),
         const SizedBox(width: AppSpacing.md),
         Expanded(
@@ -482,10 +481,10 @@ class _StatTile extends StatelessWidget {
     final light = t.brightness == Brightness.light;
     final key = status.toUpperCase();
     final (IconData icon, Color fg, Color bg) = key == 'UPLOADED'
-        ? (LucideIcons.cloudUpload, tk.success, light ? const Color(0xFFE3F4EA) : tk.success.withValues(alpha: .16))
+        ? (AppIcons.uploaded, tk.success, light ? const Color(0xFFE3F4EA) : tk.success.withValues(alpha: .16))
         : key.contains('LEAVE')
-        ? (AppIcons.clock, t.colorScheme.primary, light ? const Color(0xFFE9EEF6) : tk.subtleFill)
-        : (AppIcons.info, tk.textSecondary, tk.subtleFill);
+        ? (AppIcons.onLeave, t.colorScheme.primary, light ? const Color(0xFFE9EEF6) : tk.subtleFill)
+        : (key.contains('PROCESS') ? AppIcons.inProcess : AppIcons.info, tk.textSecondary, tk.subtleFill);
     final label = status
         .toLowerCase()
         .split(RegExp(r'[\s_]+'))
@@ -533,9 +532,9 @@ class _QuickAccess extends StatelessWidget {
     final textScale = (MediaQuery.textScalerOf(context).scale(14) / 14).clamp(1.0, 1.6);
     final tiles = [
       _QuickTile(AppIcons.daily, l.dailyCauseList, () => context.push('/cause-list/daily')),
-      _QuickTile(LucideIcons.calendarClock, l.weeklyCauseList, () => context.push('/cause-list/weekly')),
-      _QuickTile(LucideIcons.listPlus, l.supplementaryCauseList, () => context.push('/cause-list/supplementary')),
-      _QuickTile(LucideIcons.monitor, l.liveDisplayBoard, () => context.push('/live')),
+      _QuickTile(AppIcons.weekly, l.weeklyCauseList, () => context.push('/cause-list/weekly')),
+      _QuickTile(AppIcons.supplementary, l.supplementaryCauseList, () => context.push('/cause-list/supplementary')),
+      _QuickTile(AppIcons.liveBoard, l.liveDisplayBoard, () => context.push('/live')),
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -552,7 +551,7 @@ class _QuickAccess extends StatelessWidget {
               style: TextButton.styleFrom(foregroundColor: context.tokens.goldText),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [Text(l.viewAll), const SizedBox(width: 6), const Icon(LucideIcons.arrowRight, size: 18)],
+                children: [Text(l.viewAll), const SizedBox(width: 6), const Icon(AppIcons.arrowRight, size: 18)],
               ),
             ),
           ],
@@ -649,7 +648,7 @@ class _QuickTile extends StatelessWidget {
             height: 26,
             alignment: Alignment.center,
             decoration: BoxDecoration(color: tk.subtleFill, shape: BoxShape.circle),
-            child: Icon(LucideIcons.arrowRight, size: 16, color: t.colorScheme.primary),
+            child: Icon(AppIcons.arrowRight, size: 16, color: t.colorScheme.primary),
           ),
         ],
       ),

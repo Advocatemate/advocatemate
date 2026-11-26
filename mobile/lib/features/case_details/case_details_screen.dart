@@ -101,7 +101,16 @@ class _CaseDetailsScreenState extends ConsumerState<CaseDetailsScreen> {
             IconButton(
               tooltip: l.caseSummaryPdf,
               icon: const Icon(AppIcons.pdf),
-              onPressed: () => context.push('/pdf?kind=summary&case=${value.requireValue.data.caseId}'),
+              onPressed: () => context.push(
+                Uri(
+                  path: '/pdf',
+                  queryParameters: {
+                    'kind': 'summary',
+                    'case': value.requireValue.data.caseId,
+                    'label': value.requireValue.data.display,
+                  },
+                ).toString(),
+              ),
             ),
         ],
       ),
@@ -269,11 +278,11 @@ class EnrichmentBanner extends StatelessWidget {
     final l = context.l10n;
     final tk = context.tokens;
     final (String text, Color color, IconData icon, bool spinner) = switch (status.state) {
-      'pending' => (l.enrichmentPending, tk.info, AppIcons.clock, true),
+      'pending' => (l.enrichmentPending, tk.info, AppIcons.pending, true),
       'running' => (l.enrichmentRunning, tk.info, AppIcons.sync, true),
       'failed' => (l.enrichmentFailed, tk.danger, AppIcons.error, false),
-      'completed' when status.freshness == 'stale' => (l.enrichmentStale, tk.warning, AppIcons.history, false),
-      'completed' => (l.enrichmentCompleted, tk.success, AppIcons.verified, false),
+      'completed' when status.freshness == 'stale' => (l.enrichmentStale, tk.warning, AppIcons.stale, false),
+      'completed' => (l.enrichmentCompleted, tk.success, AppIcons.caseStatus, false),
       _ => (l.notYetAvailable, tk.textSecondary, AppIcons.info, false),
     };
     final when = Fmt.parse(status.fetchedAt);

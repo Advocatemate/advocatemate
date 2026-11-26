@@ -150,6 +150,7 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
               data: data,
               selectedCourt: _court,
               onCourt: (c) => setState(() => _court = _court == c ? null : c),
+              onAll: () => setState(() => _court = null),
             ),
           ),
         ),
@@ -273,10 +274,11 @@ class _ListHeader extends StatelessWidget {
 
 /// Dark summary card (as on Home): advocate, total, and court pills that filter the list.
 class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({required this.data, required this.selectedCourt, required this.onCourt});
+  const _SummaryCard({required this.data, required this.selectedCourt, required this.onCourt, required this.onAll});
   final AdvocateCauseList data;
   final String? selectedCourt;
   final ValueChanged<String> onCourt;
+  final VoidCallback onAll;
 
   @override
   Widget build(BuildContext context) {
@@ -340,6 +342,14 @@ class _SummaryCard extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
+                      // "All" resets the court filter; only offered when there is more than one court.
+                      if (data.courts.length > 1)
+                        _CourtFilterPill(
+                          key: const Key('filterAll'),
+                          label: l.filterAll,
+                          selected: selectedCourt == null,
+                          onTap: onAll,
+                        ),
                       for (final c in data.courts)
                         _CourtFilterPill(
                           label: '${l.court(c.courtNo)} · ${c.cases.length}',
@@ -358,9 +368,9 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-/// Court pill on the dark card; tapping filters the list to that court, tapping again shows all.
+/// Court pill on the dark card; tapping filters the list to that court, tapping again (or "All") shows all.
 class _CourtFilterPill extends StatelessWidget {
-  const _CourtFilterPill({required this.label, required this.selected, required this.onTap});
+  const _CourtFilterPill({super.key, required this.label, required this.selected, required this.onTap});
   final String label;
   final bool selected;
   final VoidCallback onTap;

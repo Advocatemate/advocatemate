@@ -36,13 +36,20 @@ abstract final class AppIcons {
   static const IconData advocateCode = LucideIcons.idCard;
   static const IconData listing = LucideIcons.scrollText;
   static const IconData publication = LucideIcons.megaphone;
+  static const IconData publicationDate = LucideIcons.calendarCheck;
+  static const IconData caseStatus = LucideIcons.clipboardCheck;
+
+  // Publication status (per court)
+  static const IconData uploaded = LucideIcons.cloudUpload;
+  static const IconData onLeave = LucideIcons.calendarOff;
+  static const IconData inProcess = LucideIcons.hourglass;
 
   // Account
   static const IconData notifications = LucideIcons.bell;
   static const IconData notificationsOff = LucideIcons.bellOff;
   static const IconData profile = LucideIcons.circleUserRound;
   static const IconData settings = LucideIcons.settings;
-  static const IconData support = LucideIcons.lifeBuoy;
+  static const IconData support = LucideIcons.headset;
   static const IconData switchAccount = LucideIcons.arrowLeftRight;
   static const IconData logout = LucideIcons.logOut;
   static const IconData signIn = LucideIcons.logIn;
@@ -51,17 +58,20 @@ abstract final class AppIcons {
   static const IconData shield = LucideIcons.shieldCheck;
   static const IconData language = LucideIcons.languages;
   static const IconData theme = LucideIcons.sunMoon;
-  static const IconData clearData = LucideIcons.eraser;
+  static const IconData clearData = LucideIcons.brushCleaning;
   static const IconData info = LucideIcons.info;
 
   // Saving
   static const IconData save = LucideIcons.bookmarkPlus;
   static const IconData savedOn = LucideIcons.bookmarkCheck;
   static const IconData delete = LucideIcons.trash2;
+  static const IconData download = LucideIcons.download;
 
   // Actions
   static const IconData chevronRight = LucideIcons.chevronRight;
   static const IconData chevronLeft = LucideIcons.chevronLeft;
+  static const IconData chevronDown = LucideIcons.chevronDown;
+  static const IconData arrowRight = LucideIcons.arrowRight;
   static const IconData refresh = LucideIcons.refreshCw;
   static const IconData filters = LucideIcons.slidersHorizontal;
   static const IconData sort = LucideIcons.arrowUpDown;
@@ -79,12 +89,14 @@ abstract final class AppIcons {
   static const IconData warning = LucideIcons.triangleAlert;
   static const IconData history = LucideIcons.history;
   static const IconData clock = LucideIcons.clock;
+  static const IconData pending = LucideIcons.hourglass;
+  static const IconData stale = LucideIcons.clockAlert;
   static const IconData sync = LucideIcons.refreshCw;
   static const IconData check = LucideIcons.check;
   static const IconData checkCircle = LucideIcons.circleCheck;
   static const IconData offBoard = LucideIcons.circleMinus;
-  static const IconData differs = LucideIcons.gitCompareArrows;
-  static const IconData unknown = LucideIcons.circleHelp;
-  static const IconData liveDot = LucideIcons.circleDot;
+  static const IconData differs = LucideIcons.fileDiff;
+  static const IconData unknown = LucideIcons.fileQuestionMark;
+  static const IconData liveDot = LucideIcons.radio;
   static const IconData factCheck = LucideIcons.fileCheck;
 }

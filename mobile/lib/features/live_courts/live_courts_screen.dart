@@ -90,7 +90,7 @@ class _LiveCourtsScreenState extends ConsumerState<LiveCourtsScreen> {
                             StatusChip(
                               current ? l.liveCurrent : l.liveNotCurrent,
                               color: current ? AppColors.success : AppColors.danger,
-                              icon: current ? AppIcons.liveDot : AppIcons.history,
+                              icon: current ? AppIcons.liveDot : AppIcons.stale,
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -129,7 +129,8 @@ class _LiveCourtsScreenState extends ConsumerState<LiveCourtsScreen> {
                     child: ChipStrip(
                       children: [
                         ChoiceChip(
-                          label: Text(l.filters),
+                          key: const Key('filterAll'),
+                          label: Text(l.filterAll),
                           selected: _court == null,
                           onSelected: (_) => setState(() => _court = null),
                         ),

@@ -643,4 +643,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get justiceForAllSubtitle =>
       'Empowering Advocates with Smart Legal Tools';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get savingPdf => 'Saving PDF…';
+
+  @override
+  String pdfSaved(String location) {
+    return 'PDF saved to $location';
+  }
+
+  @override
+  String pdfAlreadySaved(String location) {
+    return 'This PDF is already saved in $location';
+  }
+
+  @override
+  String get pdfSaveFailed => 'Could not save the PDF. Please try again.';
+
+  @override
+  String get pdfSavePermission =>
+      'Allow storage access to save PDFs on this device.';
 }

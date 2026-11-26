@@ -1207,6 +1207,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Empowering Advocates with Smart Legal Tools'**
   String get justiceForAllSubtitle;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @savingPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving PDF…'**
+  String get savingPdf;
+
+  /// No description provided for @pdfSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF saved to {location}'**
+  String pdfSaved(String location);
+
+  /// No description provided for @pdfAlreadySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'This PDF is already saved in {location}'**
+  String pdfAlreadySaved(String location);
+
+  /// No description provided for @pdfSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the PDF. Please try again.'**
+  String get pdfSaveFailed;
+
+  /// No description provided for @pdfSavePermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow storage access to save PDFs on this device.'**
+  String get pdfSavePermission;
 }
 
 class _AppLocalizationsDelegate

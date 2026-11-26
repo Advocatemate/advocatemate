@@ -18,7 +18,7 @@ IconData _icon(String category) => switch (category) {
   'favourite_advocate' => AppIcons.advocate,
   'case_update' => AppIcons.caseUpdate,
   'court_board' => AppIcons.liveBoard,
-  'enrichment' => AppIcons.factCheck,
+  'enrichment' => AppIcons.caseStatus,
   _ => AppIcons.notifications,
 };
 

@@ -11,17 +11,26 @@ import '../../core/errors.dart';
 import '../../core/providers.dart';
 import '../../shared/widgets/widgets.dart';
 import '../../theme/app_theme.dart';
+import 'pdf_saver.dart';
 
 /// What to open: official weekly / court PDF (proxied by backend) or generated summary.
 class PdfRequest {
-  const PdfRequest({required this.kind, this.caseId, this.courtNo, this.isoDate});
+  const PdfRequest({required this.kind, this.caseId, this.courtNo, this.isoDate, this.label});
   final String kind; // weekly | court | summary
   final String? caseId;
   final String? courtNo;
   final String? isoDate;
 
-  factory PdfRequest.fromQuery(Map<String, String> q) =>
-      PdfRequest(kind: q['kind'] ?? 'weekly', caseId: q['case'], courtNo: q['court'], isoDate: q['date']);
+  /// Human-readable case number (summary PDFs), used only to name the downloaded file.
+  final String? label;
+
+  factory PdfRequest.fromQuery(Map<String, String> q) => PdfRequest(
+    kind: q['kind'] ?? 'weekly',
+    caseId: q['case'],
+    courtNo: q['court'],
+    isoDate: q['date'],
+    label: q['label'],
+  );
 
   bool get isGenerated => kind == 'summary';
 
@@ -32,6 +41,10 @@ class PdfRequest {
       };
 
   Map<String, dynamic>? get query => kind == 'court' ? {'date': isoDate} : null;
+
+  /// Name for the copy saved by Download (the preview keeps [fileName] in the app's temporary folder).
+  String get downloadName =>
+      pdfDownloadName(kind: kind, label: label, caseId: caseId, courtNo: courtNo, isoDate: isoDate);
 
   String get fileName => switch (kind) {
         'summary' => 'case-summary-advocatemate-generated.pdf',
@@ -117,6 +130,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
       appBar: AppBar(
         title: Text(title),
         actions: [
+          if (_file != null) PdfDownloadButton(filePath: _file!, fileName: widget.request.downloadName),
           if (_file != null)
             IconButton(
               tooltip: l.share,

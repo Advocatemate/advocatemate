@@ -55,7 +55,7 @@ class SettingsScreen extends ConsumerWidget {
                     child: DropdownButton<String>(
                       value: s.locale?.languageCode ?? Localizations.localeOf(context).languageCode,
                       borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                      icon: const Icon(AppIcons.chevronRight, size: 16),
+                      icon: const Icon(AppIcons.chevronDown, size: 16),
                       onChanged: (code) async {
                         if (code == null) return;
                         await ref.read(appSettingsProvider.notifier).setLanguage(code);
@@ -114,7 +114,7 @@ class SettingsScreen extends ConsumerWidget {
                   (v) => setPref(p.copyWith(caseUpdates: v)),
                 ),
                 prefRow(AppIcons.liveBoard, l.prefCourtBoard, p.courtBoard, (v) => setPref(p.copyWith(courtBoard: v))),
-                prefRow(AppIcons.factCheck, l.prefEnrichment, p.enrichment, (v) => setPref(p.copyWith(enrichment: v))),
+                prefRow(AppIcons.caseStatus, l.prefEnrichment, p.enrichment, (v) => setPref(p.copyWith(enrichment: v))),
                 prefRow(
                   AppIcons.notifications,
                   l.prefAnnouncements,

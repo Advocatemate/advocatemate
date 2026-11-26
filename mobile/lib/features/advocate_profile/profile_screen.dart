@@ -67,7 +67,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 StatusChip(
                   verified ? l.identityRegistryVerified : l.notYetAvailable,
                   color: verified ? AppColors.success : AppColors.warning,
-                  icon: verified ? AppIcons.verified : AppIcons.clock,
+                  icon: verified ? AppIcons.verified : AppIcons.pending,
                 ),
               ],
             ),

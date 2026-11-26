@@ -195,7 +195,7 @@ class _CourtSection extends StatelessWidget {
   Widget _entry(BuildContext context, PassedOverEntry e) {
     final l = context.l10n;
     final chip = switch (e.status) {
-      'pending' => StatusChip(l.passedOverPending, color: AppColors.warning, icon: AppIcons.clock),
+      'pending' => StatusChip(l.passedOverPending, color: AppColors.warning, icon: AppIcons.pending),
       'no_longer_pending' => StatusChip(l.passedOverNoLongerPending, color: AppColors.success, icon: AppIcons.check),
       _ => StatusChip(l.passedOverOffBoard, color: AppColors.muted, icon: AppIcons.offBoard),
     };
