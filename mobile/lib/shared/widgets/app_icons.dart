@@ -12,7 +12,7 @@ abstract final class AppIcons {
 
   // Navigation
   static const IconData home = LucideIcons.house;
-  static const IconData myList = LucideIcons.listChecks;
+  static const IconData myList = LucideIcons.clipboardList;
   static const IconData search = LucideIcons.search;
   static const IconData saved = LucideIcons.bookmark;
   static const IconData more = LucideIcons.layoutGrid;

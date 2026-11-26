@@ -42,7 +42,7 @@ semantic names (`AppIcons.home`, `AppIcons.court`, `AppIcons.liveBoard`, …), n
 
 | Concept | Lucide |
 |---|---|
-| Home / My List / Search / Saved / More | `house` / `listChecks` / `search` / `bookmark` / `layoutGrid` |
+| Home / My List / Search / Saved / More | `house` / `clipboardList` / `search` / `bookmark` / `layoutGrid` |
 | Daily / Weekly / Supplementary | `calendarDays` / `calendarRange` / `calendarPlus` |
 | Court / Cases / Judge | `landmark` / `briefcaseBusiness` / `scale` |
 | Live display board | `monitorPlay` |
@@ -68,11 +68,12 @@ semantic names (`AppIcons.home`, `AppIcons.court`, `AppIcons.liveBoard`, …), n
 2. **Google sign-in** — navy hero with brand; white sheet with title, subtitle, Google button,
    verification note, error, data notice.
 3. **Advocate Code** — "Step 2 of 2", signed-in Google account pill, code field, verify, switch account.
-4. **Home** — navy hero (avatar, bell with unread badge, time-of-day greeting, *Welcome, name*, advocate
-   code pill) → *Today's cause list* card (total cases, court-wise chips, link to My List) →
-   *Cause-list publication* card (date, uploaded progress bar, status badges e.g. UPLOADED / ON LEAVE) →
-   *Quick access* 2×2 grid (Daily, Weekly, Supplementary, Live display) → *Shortcuts* card
-   (Passed-over, Search cases, Favourite advocates, Saved cases, Notifications).
+4. **Home** (matches the owner's reference mockup, Nov 2026) — navy hero with a drawn courthouse and a gold
+   curved edge: AdvocateMate/AP High Court brand, bell with unread badge, avatar, *Welcome, name*, advocate code
+   pill, date → dark *My Cause List · Today* card (total, court pills, Continue, gold swoosh) → *Cause-list
+   publication* card with one stat tile per status (e.g. 27 Uploaded, 03 On Leave) → *Quick Access* 2×2
+   (Daily, Weekly, Supplementary, Live Display Board) with *View All* (More) → *Justice for All* banner.
+   Bottom bar: selected item on a navy tile with a gold underline.
 5. **Daily cause list** — light app bar, segmented Court-wise / Advocate code switch, date chips,
    search, court cards (navy number badge, name, bench · count).
 6. **Weekly / Supplementary** — same browser as Daily (weekly adds the PDF action).
@@ -100,7 +101,8 @@ semantic names (`AppIcons.home`, `AppIcons.court`, `AppIcons.liveBoard`, …), n
 
 - Tests: all existing tests kept. One finder changed: the advocate-favourite toggle used Material's filled
   star; Lucide has no filled glyphs, so the saved state is now `AppIcons.savedOn` (bookmark-check) and
-  `advocate_lookup_test.dart` looks for that icon instead.
+  `advocate_lookup_test.dart` looks for that icon instead. The dashboard test now reads the publication count
+  from the "Uploaded" stat tile instead of the old "UPLOADED · 2" badge.
 - Formatting: the codebase does not follow `dart format` output, so only redesigned UI code was formatted
   (page width 120); untouched logic keeps its original layout.
 - Package size: `lucide_icons_flutter` also bundles six stroke-weight fonts (~3.2 MB) the app does not use.

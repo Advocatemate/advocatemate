@@ -62,7 +62,8 @@ import 'app_localizations_te.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,15 +84,19 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('te')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('te'),
+  ];
 
   /// No description provided for @appName.
   ///
@@ -1136,35 +1142,11 @@ abstract class AppLocalizations {
   /// **'Too many advocate lookups. Please wait a few minutes and try again.'**
   String get errTooManyLookups;
 
-  /// No description provided for @greetingMorning.
-  ///
-  /// In en, this message translates to:
-  /// **'Good morning'**
-  String get greetingMorning;
-
-  /// No description provided for @greetingAfternoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Good afternoon'**
-  String get greetingAfternoon;
-
-  /// No description provided for @greetingEvening.
-  ///
-  /// In en, this message translates to:
-  /// **'Good evening'**
-  String get greetingEvening;
-
   /// No description provided for @quickAccess.
   ///
   /// In en, this message translates to:
-  /// **'Quick access'**
+  /// **'Quick Access'**
   String get quickAccess;
-
-  /// No description provided for @shortcuts.
-  ///
-  /// In en, this message translates to:
-  /// **'Shortcuts'**
-  String get shortcuts;
 
   /// No description provided for @sectionCauseLists.
   ///
@@ -1190,32 +1172,45 @@ abstract class AppLocalizations {
   /// **'Data and privacy'**
   String get sectionData;
 
-  /// No description provided for @todaysCauseList.
-  ///
-  /// In en, this message translates to:
-  /// **'Today\'s cause list'**
-  String get todaysCauseList;
-
-  /// No description provided for @viewMyList.
-  ///
-  /// In en, this message translates to:
-  /// **'View my list'**
-  String get viewMyList;
-
-  /// No description provided for @courtsUploaded.
-  ///
-  /// In en, this message translates to:
-  /// **'{uploaded} of {total} courts uploaded'**
-  String courtsUploaded(int uploaded, int total);
-
   /// No description provided for @stepOf.
   ///
   /// In en, this message translates to:
   /// **'Step {current} of {total}'**
   String stepOf(int current, int total);
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// No description provided for @liveDisplayBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Display Board'**
+  String get liveDisplayBoard;
+
+  /// No description provided for @courtShortName.
+  ///
+  /// In en, this message translates to:
+  /// **'AP High Court'**
+  String get courtShortName;
+
+  /// No description provided for @justiceForAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Justice for All'**
+  String get justiceForAll;
+
+  /// No description provided for @justiceForAllSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empowering Advocates with Smart Legal Tools'**
+  String get justiceForAllSubtitle;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1224,7 +1219,8 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'te'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'te'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;

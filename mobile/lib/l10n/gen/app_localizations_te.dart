@@ -162,13 +162,16 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get offlineBanner => 'సేవ్ చేసిన సమాచారం చూపబడుతోంది. ఈ సమాచారం తాజాది కాకపోవచ్చు.';
+  String get offlineBanner =>
+      'సేవ్ చేసిన సమాచారం చూపబడుతోంది. ఈ సమాచారం తాజాది కాకపోవచ్చు.';
 
   @override
-  String get staleBanner => 'కోర్టు వెబ్‌సైట్ అందుబాటులో లేదు. చివరిగా సేవ్ చేసిన కాపీ చూపబడుతోంది.';
+  String get staleBanner =>
+      'కోర్టు వెబ్‌సైట్ అందుబాటులో లేదు. చివరిగా సేవ్ చేసిన కాపీ చూపబడుతోంది.';
 
   @override
-  String get liveStaleBanner => 'ఈ డిస్‌ప్లే సమాచారం పాతది. ఇది ప్రస్తుత కోర్టు స్థితి కాదు.';
+  String get liveStaleBanner =>
+      'ఈ డిస్‌ప్లే సమాచారం పాతది. ఇది ప్రస్తుత కోర్టు స్థితి కాదు.';
 
   @override
   String get liveNotCurrent => 'ప్రస్తుతం కాదు';
@@ -289,7 +292,8 @@ class AppLocalizationsTe extends AppLocalizations {
       'బహిరంగ APHC సమాచారం నుండి అడ్వకేట్‌మేట్ రూపొందించింది. ఇది అధికారిక కోర్టు పత్రం లేదా ఉత్తర్వు కాదు.';
 
   @override
-  String get officialOrdersUnavailable => 'అధికారిక ఉత్తర్వుల PDFలు ఇంకా అందుబాటులో లేవు.';
+  String get officialOrdersUnavailable =>
+      'అధికారిక ఉత్తర్వుల PDFలు ఇంకా అందుబాటులో లేవు.';
 
   @override
   String get weeklyPdf => 'వారపు జాబితా PDF';
@@ -368,13 +372,15 @@ class AppLocalizationsTe extends AppLocalizations {
   String get markAllRead => 'అన్నీ చదివినట్లు గుర్తించండి';
 
   @override
-  String get errorGeneric => 'ఏదో పొరపాటు జరిగింది. దయచేసి మళ్ళీ ప్రయత్నించండి.';
+  String get errorGeneric =>
+      'ఏదో పొరపాటు జరిగింది. దయచేసి మళ్ళీ ప్రయత్నించండి.';
 
   @override
   String get errorNetwork => 'ఇంటర్నెట్ కనెక్షన్ లేదు.';
 
   @override
-  String get sessionExpired => 'మీ సెషన్ ముగిసింది. దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.';
+  String get sessionExpired =>
+      'మీ సెషన్ ముగిసింది. దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.';
 
   @override
   String source(String name) {
@@ -392,10 +398,12 @@ class AppLocalizationsTe extends AppLocalizations {
   String get signInWithGoogle => 'Google తో సైన్ ఇన్ చేయండి';
 
   @override
-  String get googleSignInSubtitle => 'మీ న్యాయవాది కోడ్‌కు నమోదైన Google ఖాతాను ఉపయోగించండి.';
+  String get googleSignInSubtitle =>
+      'మీ న్యాయవాది కోడ్‌కు నమోదైన Google ఖాతాను ఉపయోగించండి.';
 
   @override
-  String get googleSignInNote => 'మీ గుర్తింపు న్యాయవాదుల రిజిస్ట్రీతో స్వయంచాలకంగా ధృవీకరించబడుతుంది.';
+  String get googleSignInNote =>
+      'మీ గుర్తింపు న్యాయవాదుల రిజిస్ట్రీతో స్వయంచాలకంగా ధృవీకరించబడుతుంది.';
 
   @override
   String get advocateCodeTitle => 'మీ న్యాయవాది కోడ్ నమోదు చేయండి';
@@ -418,50 +426,62 @@ class AppLocalizationsTe extends AppLocalizations {
   String get googleAccount => 'Google ఖాతా';
 
   @override
-  String get identityRegistryVerified => 'న్యాయవాదుల రిజిస్ట్రీతో ధృవీకరించబడింది';
+  String get identityRegistryVerified =>
+      'న్యాయవాదుల రిజిస్ట్రీతో ధృవీకరించబడింది';
 
   @override
-  String get errInvalidAdvocateCode => 'చెల్లని న్యాయవాది కోడ్. దయచేసి మీ కోడ్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.';
+  String get errInvalidAdvocateCode =>
+      'చెల్లని న్యాయవాది కోడ్. దయచేసి మీ కోడ్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.';
 
   @override
   String get errEmailMismatch =>
       'మీ Google ఖాతా ఇమెయిల్ ఈ న్యాయవాది కోడ్‌కు నమోదైన ఇమెయిల్‌తో సరిపోలడం లేదు. దయచేసి మీ నమోదిత ఇమెయిల్‌తో సైన్ ఇన్ చేయండి.';
 
   @override
-  String get errAdvocateAlreadyLinked => 'ఈ న్యాయవాది కోడ్ ఇప్పటికే వేరే Google ఖాతాకు లింక్ చేయబడింది.';
+  String get errAdvocateAlreadyLinked =>
+      'ఈ న్యాయవాది కోడ్ ఇప్పటికే వేరే Google ఖాతాకు లింక్ చేయబడింది.';
 
   @override
-  String get errGoogleLinkedElsewhere => 'ఈ Google ఖాతా ఇప్పటికే వేరే న్యాయవాది కోడ్‌కు లింక్ చేయబడింది.';
+  String get errGoogleLinkedElsewhere =>
+      'ఈ Google ఖాతా ఇప్పటికే వేరే న్యాయవాది కోడ్‌కు లింక్ చేయబడింది.';
 
   @override
-  String get errAdvocateNotEligible => 'ఈ న్యాయవాది కోడ్ అడ్వకేట్‌మేట్ ఉపయోగానికి క్రియాశీలంగా లేదు.';
+  String get errAdvocateNotEligible =>
+      'ఈ న్యాయవాది కోడ్ అడ్వకేట్‌మేట్ ఉపయోగానికి క్రియాశీలంగా లేదు.';
 
   @override
-  String get errRegistryEmailMissing => 'ఈ న్యాయవాది కోడ్‌కు నమోదైన ఇమెయిల్ లేదు, కాబట్టి ధృవీకరించలేము.';
+  String get errRegistryEmailMissing =>
+      'ఈ న్యాయవాది కోడ్‌కు నమోదైన ఇమెయిల్ లేదు, కాబట్టి ధృవీకరించలేము.';
 
   @override
   String get errGoogleCancelled => 'Google సైన్ ఇన్ రద్దు చేయబడింది.';
 
   @override
-  String get errGoogleNotConfigured => 'ఈ యాప్ వెర్షన్‌లో Google సైన్ ఇన్ సెటప్ చేయబడలేదు.';
+  String get errGoogleNotConfigured =>
+      'ఈ యాప్ వెర్షన్‌లో Google సైన్ ఇన్ సెటప్ చేయబడలేదు.';
 
   @override
-  String get errGoogleUnavailable => 'ఈ పరికరంలో Google సైన్ ఇన్ అందుబాటులో లేదు.';
+  String get errGoogleUnavailable =>
+      'ఈ పరికరంలో Google సైన్ ఇన్ అందుబాటులో లేదు.';
 
   @override
-  String get errGoogleEmailUnverified => 'మీ Google ఖాతా ఇమెయిల్ ధృవీకరించబడలేదు.';
+  String get errGoogleEmailUnverified =>
+      'మీ Google ఖాతా ఇమెయిల్ ధృవీకరించబడలేదు.';
 
   @override
-  String get errLinkExpired => 'మీ Google సైన్ ఇన్ గడువు ముగిసింది. దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.';
+  String get errLinkExpired =>
+      'మీ Google సైన్ ఇన్ గడువు ముగిసింది. దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.';
 
   @override
-  String get accessEndedNotEligible => 'యాక్సెస్ ముగిసింది: ఈ న్యాయవాది కోడ్ ఇకపై క్రియాశీలంగా లేదు.';
+  String get accessEndedNotEligible =>
+      'యాక్సెస్ ముగిసింది: ఈ న్యాయవాది కోడ్ ఇకపై క్రియాశీలంగా లేదు.';
 
   @override
   String get passedOverList => 'పాస్-ఓవర్ జాబితా';
 
   @override
-  String get passedOverIntro => 'కోర్టు వెనక్కి ఉంచిన (పాస్-ఓవర్) కేసులు, APHC డిస్‌ప్లే బోర్డు నుండి.';
+  String get passedOverIntro =>
+      'కోర్టు వెనక్కి ఉంచిన (పాస్-ఓవర్) కేసులు, APHC డిస్‌ప్లే బోర్డు నుండి.';
 
   @override
   String passedOverRecordedSince(String time) {
@@ -470,7 +490,12 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String passedOverSummary(int total, int pending) {
-    String _temp0 = intl.Intl.pluralLogic(total, locale: localeName, other: '$total అంశాలు', one: '1 అంశం');
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total అంశాలు',
+      one: '1 అంశం',
+    );
     return '$_temp0 · $pending పెండింగ్';
   }
 
@@ -506,7 +531,8 @@ class AppLocalizationsTe extends AppLocalizations {
       'AdvocateMate బోర్డును తనిఖీ చేసినప్పుడు చూసినవి మాత్రమే. ఎల్లప్పుడూ కోర్టులో నిర్ధారించుకోండి.';
 
   @override
-  String get passedOverBoardStale => 'డిస్‌ప్లే బోర్డు ఇటీవల నవీకరించబడలేదు. స్థితులు పాతవి కావచ్చు.';
+  String get passedOverBoardStale =>
+      'డిస్‌ప్లే బోర్డు ఇటీవల నవీకరించబడలేదు. స్థితులు పాతవి కావచ్చు.';
 
   @override
   String pdfVerified(int count) {
@@ -528,13 +554,16 @@ class AppLocalizationsTe extends AppLocalizations {
   String get pdfUnreadable => 'తనిఖీ కోసం అధికారిక PDFని చదవలేకపోయాం.';
 
   @override
-  String get pdfNotAvailable => 'తనిఖీ చేయడానికి అధికారిక PDF ఇంకా అందుబాటులో లేదు.';
+  String get pdfNotAvailable =>
+      'తనిఖీ చేయడానికి అధికారిక PDF ఇంకా అందుబాటులో లేదు.';
 
   @override
-  String get pdfFallbackUnavailable => 'ఆన్‌లైన్ జాబితా లోడ్ కాలేదు. ఈ అంశాలు అధికారిక PDF నుండి చదవబడ్డాయి.';
+  String get pdfFallbackUnavailable =>
+      'ఆన్‌లైన్ జాబితా లోడ్ కాలేదు. ఈ అంశాలు అధికారిక PDF నుండి చదవబడ్డాయి.';
 
   @override
-  String get pdfFallbackEmpty => 'ఆన్‌లైన్ జాబితా ఖాళీగా ఉంది. ఈ అంశాలు అధికారిక PDF నుండి చదవబడ్డాయి.';
+  String get pdfFallbackEmpty =>
+      'ఆన్‌లైన్ జాబితా ఖాళీగా ఉంది. ఈ అంశాలు అధికారిక PDF నుండి చదవబడ్డాయి.';
 
   @override
   String get pdfDiffersBadge => 'PDF నుండి తేడా';
@@ -558,10 +587,12 @@ class AppLocalizationsTe extends AppLocalizations {
   String get advocateLookupView => 'చూడండి';
 
   @override
-  String get advocateLookupIntro => 'ఏ న్యాయవాది కోడ్‌నైనా నమోదు చేసి, కాజ్ లిస్ట్‌లో వారి కేసులు చూడండి.';
+  String get advocateLookupIntro =>
+      'ఏ న్యాయవాది కోడ్‌నైనా నమోదు చేసి, కాజ్ లిస్ట్‌లో వారి కేసులు చూడండి.';
 
   @override
-  String get advocateLookupSource => 'హైకోర్టు Lexika సేవ నుండి. దాని తేదీలు డైలీ జాబితా కంటే ఒక రోజు వెనుక ఉండవచ్చు.';
+  String get advocateLookupSource =>
+      'హైకోర్టు Lexika సేవ నుండి. దాని తేదీలు డైలీ జాబితా కంటే ఒక రోజు వెనుక ఉండవచ్చు.';
 
   @override
   String get advocateLookupRecent => 'ఇటీవలివి';
@@ -570,25 +601,15 @@ class AppLocalizationsTe extends AppLocalizations {
   String get advocateLookupInvalid => 'అంకెలు మాత్రమే నమోదు చేయండి (8 వరకు).';
 
   @override
-  String get errAdvocateNotFound => 'ఈ కోడ్‌కు న్యాయవాది కనబడలేదు. కోడ్ సరిచూసి మళ్లీ ప్రయత్నించండి.';
+  String get errAdvocateNotFound =>
+      'ఈ కోడ్‌కు న్యాయవాది కనబడలేదు. కోడ్ సరిచూసి మళ్లీ ప్రయత్నించండి.';
 
   @override
-  String get errTooManyLookups => 'చాలా ఎక్కువ న్యాయవాది శోధనలు. కొన్ని నిమిషాలు ఆగి మళ్లీ ప్రయత్నించండి.';
-
-  @override
-  String get greetingMorning => 'శుభోదయం';
-
-  @override
-  String get greetingAfternoon => 'శుభ మధ్యాహ్నం';
-
-  @override
-  String get greetingEvening => 'శుభ సాయంత్రం';
+  String get errTooManyLookups =>
+      'చాలా ఎక్కువ న్యాయవాది శోధనలు. కొన్ని నిమిషాలు ఆగి మళ్లీ ప్రయత్నించండి.';
 
   @override
   String get quickAccess => 'త్వరిత ప్రవేశం';
-
-  @override
-  String get shortcuts => 'షార్ట్‌కట్‌లు';
 
   @override
   String get sectionCauseLists => 'కాజ్ లిస్ట్‌లు';
@@ -603,18 +624,23 @@ class AppLocalizationsTe extends AppLocalizations {
   String get sectionData => 'డేటా మరియు గోప్యత';
 
   @override
-  String get todaysCauseList => 'ఈరోజు కాజ్ లిస్ట్';
-
-  @override
-  String get viewMyList => 'నా జాబితా చూడండి';
-
-  @override
-  String courtsUploaded(int uploaded, int total) {
-    return '$total కోర్టులలో $uploaded అప్‌లోడ్ అయ్యాయి';
-  }
-
-  @override
   String stepOf(int current, int total) {
     return 'దశ $current/$total';
   }
+
+  @override
+  String get viewAll => 'అన్నీ చూడండి';
+
+  @override
+  String get liveDisplayBoard => 'లైవ్ డిస్‌ప్లే బోర్డ్';
+
+  @override
+  String get courtShortName => 'ఏపీ హైకోర్టు';
+
+  @override
+  String get justiceForAll => 'అందరికీ న్యాయం';
+
+  @override
+  String get justiceForAllSubtitle =>
+      'స్మార్ట్ లీగల్ టూల్స్‌తో న్యాయవాదులకు సాధికారత';
 }

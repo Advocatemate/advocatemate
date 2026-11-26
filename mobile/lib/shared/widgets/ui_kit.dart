@@ -224,8 +224,8 @@ class AvatarInitials extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context);
     final initials = initialsOf(name);
-    final bg = onDark ? AppColors.navyLight : context.tokens.goldSoft;
-    final fg = onDark ? AppColors.goldSoft : context.tokens.onGoldSoft;
+    final bg = onDark ? const Color(0xFF1B2E50) : context.tokens.goldSoft;
+    final fg = onDark ? Colors.white : context.tokens.onGoldSoft;
     return ExcludeSemantics(
       child: Container(
         width: size,
@@ -234,7 +234,10 @@ class AvatarInitials extends StatelessWidget {
         decoration: BoxDecoration(
           color: bg,
           shape: BoxShape.circle,
-          border: Border.all(color: AppColors.gold.withValues(alpha: onDark ? .9 : .55), width: 1.5),
+          border: Border.all(
+            color: AppColors.gold.withValues(alpha: onDark ? .95 : .55),
+            width: onDark ? 2.5 : 1.5,
+          ),
         ),
         child: initials.isEmpty
             ? Icon(AppIcons.advocate, size: size * .48, color: fg)

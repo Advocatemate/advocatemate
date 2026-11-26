@@ -141,7 +141,9 @@ void main() {
     await pumpApp(tester, deps);
     expect(find.text('Welcome, ADVOCATE ONE'), findsOneWidget);
     expect(find.text('3 cases'), findsOneWidget);
-    expect(find.text('UPLOADED · 2'), findsOneWidget);
+    expect(
+        find.descendant(of: find.byKey(const Key('pubStat-UPLOADED')), matching: find.text('02')), findsOneWidget);
+    expect(find.text('Uploaded'), findsOneWidget);
     expect(find.text('Court 3 · 2'), findsOneWidget);
     expect(find.text('1'), findsWidgets); // unread badge
   });
