@@ -79,12 +79,12 @@ class _CourtWiseScreenState extends ConsumerState<CourtWiseScreen> {
         actions: [
           IconButton(
             tooltip: l.officialPdf,
-            icon: const Icon(Icons.picture_as_pdf_outlined),
+            icon: const Icon(AppIcons.pdf),
             onPressed: () => context.push('/pdf?kind=court&court=${widget.courtNo}&date=${widget.isoDate}'),
           ),
           PopupMenuButton<CourtSort>(
             tooltip: l.sortBy,
-            icon: const Icon(Icons.sort),
+            icon: const Icon(AppIcons.sort),
             initialValue: _sort,
             onSelected: (s) => setState(() => _sort = s),
             itemBuilder: (_) => [
@@ -94,7 +94,7 @@ class _CourtWiseScreenState extends ConsumerState<CourtWiseScreen> {
           ),
           IconButton(
             tooltip: l.refresh,
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(AppIcons.refresh),
             onPressed: () async {
               try {
                 await ref.read(courtRepositoryProvider).courtListing(widget.listType, widget.isoDate, widget.courtNo, refresh: true);
@@ -124,60 +124,108 @@ class _CourtWiseScreenState extends ConsumerState<CourtWiseScreen> {
                   return const SizedBox(height: AppSpacing.xxl);
                 }
                 if (i == 0) {
-                  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    FreshnessBanner(loaded),
-                    PdfCheckBanner(
-                      listing: data,
-                      showingDifferences: _onlyPdfDifferences,
-                      onToggleDifferences: () => setState(() => _onlyPdfDifferences = !_onlyPdfDifferences),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        if (data.bench != null) Text(data.bench!, style: Theme.of(context).textTheme.titleMedium),
-                        Text('${Fmt.displayDate(data.listDate, locale: context.localeName)} · ${l.casesCount(data.totalCases)}'),
-                        for (final h in data.headings)
-                          Text(h, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.muted)),
-                        const SizedBox(height: AppSpacing.md),
-                        SearchField(controller: _search, onChanged: (v) => setState(() => _query = v)),
-                        if (stages.length > 1)
-                          SizedBox(
-                            height: 48,
-                            child: ListView(scrollDirection: Axis.horizontal, children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 6, right: 6),
-                                child: ChoiceChip(
-                                    label: Text(l.filters), selected: _stage == null, onSelected: (_) => setState(() => _stage = null)),
+                  final tk = context.tokens;
+                  final tt = Theme.of(context).textTheme;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      FreshnessBanner(loaded),
+                      PdfCheckBanner(
+                        listing: data,
+                        showingDifferences: _onlyPdfDifferences,
+                        onToggleDifferences: () => setState(() => _onlyPdfDifferences = !_onlyPdfDifferences),
+                      ),
+                      Padding(
+                        padding: AppLayout.page(context, top: AppSpacing.md),
+                        child: AppCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const IconBadge(AppIcons.judge, size: 38, iconSize: 19),
+                                  const SizedBox(width: AppSpacing.md),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        if (data.bench != null) Text(data.bench!, style: tt.titleSmall),
+                                        Text(
+                                          '${Fmt.displayDate(data.listDate, locale: context.localeName)} · ${l.casesCount(data.totalCases)}',
+                                          style: tt.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                              for (final s in stages)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 6, right: 6),
-                                  child: ChoiceChip(label: Text(s), selected: _stage == s, onSelected: (_) => setState(() => _stage = s)),
-                                ),
-                            ]),
+                              if (data.headings.isNotEmpty) ...[
+                                const SizedBox(height: AppSpacing.md),
+                                const Divider(height: 1),
+                                const SizedBox(height: AppSpacing.sm),
+                                for (final h in data.headings)
+                                  Text(h, style: tt.bodySmall?.copyWith(color: tk.textTertiary)),
+                              ],
+                            ],
                           ),
-                      ]),
-                    ),
-                    if (items.isEmpty) EmptyState(message: data.items.isEmpty ? l.emptyCauseList : l.emptySearch),
-                  ]);
+                        ),
+                      ),
+                      Padding(
+                        padding: AppLayout.page(context, top: AppSpacing.md, bottom: AppSpacing.sm),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SearchField(controller: _search, onChanged: (v) => setState(() => _query = v)),
+                            if (stages.length > 1)
+                              ChipStrip(
+                                children: [
+                                  ChoiceChip(
+                                    label: Text(l.filters),
+                                    selected: _stage == null,
+                                    onSelected: (_) => setState(() => _stage = null),
+                                  ),
+                                  for (final s in stages)
+                                    ChoiceChip(
+                                      label: Text(s),
+                                      selected: _stage == s,
+                                      onSelected: (_) => setState(() => _stage = s),
+                                    ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (items.isEmpty)
+                        EmptyState(
+                          message: data.items.isEmpty ? l.emptyCauseList : l.emptySearch,
+                          icon: data.items.isEmpty ? AppIcons.empty : AppIcons.searchEmpty,
+                        ),
+                    ],
+                  );
                 }
                 if (i == items.length + 1) {
                   return Padding(
                     key: const Key('pdfOnlySection'),
-                    padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.sm),
-                    child: Text(l.pdfOnlyTitle, style: Theme.of(context).textTheme.titleSmall),
+                    padding: AppLayout.page(context, top: AppSpacing.lg, bottom: AppSpacing.sm),
+                    child: Row(
+                      children: [
+                        Icon(AppIcons.pdf, size: 16, color: context.tokens.warning),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(l.pdfOnlyTitle, style: Theme.of(context).textTheme.titleSmall)),
+                      ],
+                    ),
                   );
                 }
                 if (i > items.length + 1) {
                   final p = pdfOnly[i - items.length - 2];
                   return Padding(
-                    padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
+                    padding: AppLayout.page(context, bottom: AppSpacing.md - 2),
                     child: _card(context, p, badges: [StatusChip(l.pdfOnlyTitle, color: AppColors.warning)]),
                   );
                 }
                 final it = items[i - 1];
                 return Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
+                  padding: AppLayout.page(context, bottom: AppSpacing.md - 2),
                   child: _card(context, it, badges: [?pdfCheckBadge(context, it.pdfCheck)]),
                 );
               },

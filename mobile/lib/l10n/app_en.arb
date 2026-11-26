@@ -297,5 +297,38 @@
   "advocateLookupRecent": "Recent",
   "advocateLookupInvalid": "Enter digits only (up to 8).",
   "errAdvocateNotFound": "No advocate was found for this code. Check the code and try again.",
-  "errTooManyLookups": "Too many advocate lookups. Please wait a few minutes and try again."
+  "errTooManyLookups": "Too many advocate lookups. Please wait a few minutes and try again.",
+  "greetingMorning": "Good morning",
+  "greetingAfternoon": "Good afternoon",
+  "greetingEvening": "Good evening",
+  "quickAccess": "Quick access",
+  "shortcuts": "Shortcuts",
+  "sectionCauseLists": "Cause lists",
+  "sectionAccount": "Account",
+  "sectionAppearance": "Appearance",
+  "sectionData": "Data and privacy",
+  "todaysCauseList": "Today's cause list",
+  "viewMyList": "View my list",
+  "courtsUploaded": "{uploaded} of {total} courts uploaded",
+  "@courtsUploaded": {
+    "placeholders": {
+      "uploaded": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "stepOf": "Step {current} of {total}",
+  "@stepOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

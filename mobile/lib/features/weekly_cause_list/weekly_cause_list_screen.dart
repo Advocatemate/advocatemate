@@ -11,15 +11,15 @@ class WeeklyCauseListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CauseListBrowser(
-        listType: 'W',
-        title: context.l10n.weeklyCauseList,
-        initialDate: initialDate,
-        actions: [
-          IconButton(
-            tooltip: context.l10n.weeklyPdf,
-            icon: const Icon(Icons.picture_as_pdf_outlined),
-            onPressed: () => context.push('/pdf?kind=weekly'),
-          ),
-        ],
-      );
+    listType: 'W',
+    title: context.l10n.weeklyCauseList,
+    initialDate: initialDate,
+    actions: [
+      IconButton(
+        tooltip: context.l10n.weeklyPdf,
+        icon: const Icon(AppIcons.pdf),
+        onPressed: () => context.push('/pdf?kind=weekly'),
+      ),
+    ],
+  );
 }

@@ -40,55 +40,112 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final t = Theme.of(context);
+    final tk = context.tokens;
     final me = ref.watch(currentMeProvider);
     if (me == null) return const Scaffold(body: SizedBox.shrink());
     final verified = me.identityVerification == 'registry_verified';
+    final name = me.displayName ?? me.advocateName ?? '';
     return Scaffold(
       appBar: AppBar(title: Text(l.profile)),
-      body: ListView(padding: const EdgeInsets.all(AppSpacing.lg), children: [
-        SectionCard(
-          title: l.profile,
-          child: Column(children: [
-            // Source-owned fields: read only.
-            LabelValue(l.advocateName, me.advocateName ?? '-'),
-            LabelValue(l.advocateCode, me.advocateCode ?? '-'),
-            LabelValue(l.googleAccount, me.googleEmail ?? '-'),
-            Row(children: [
-              SizedBox(width: 140, child: Text(l.identityStatus, style: Theme.of(context).textTheme.bodySmall)),
-              Flexible(
-                child: StatusChip(verified ? l.identityRegistryVerified : l.notYetAvailable,
-                    color: verified ? AppColors.success : AppColors.warning,
-                    icon: verified ? Icons.verified_outlined : null),
+      body: ListView(
+        padding: AppLayout.page(context, top: AppSpacing.sm, bottom: AppSpacing.xxl),
+        children: [
+          AppCard(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: Column(
+              children: [
+                AvatarInitials(name: name, size: 72),
+                const SizedBox(height: AppSpacing.md),
+                Text(me.advocateName ?? name, textAlign: TextAlign.center, style: t.textTheme.titleLarge),
+                const SizedBox(height: 4),
+                Text(
+                  '${l.advocateCode}: ${me.advocateCode ?? '-'}',
+                  style: t.textTheme.bodySmall?.copyWith(color: tk.goldText),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                StatusChip(
+                  verified ? l.identityRegistryVerified : l.notYetAvailable,
+                  color: verified ? AppColors.success : AppColors.warning,
+                  icon: verified ? AppIcons.verified : AppIcons.clock,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          SectionCard(
+            title: l.profile,
+            icon: AppIcons.profile,
+            child: Column(
+              children: [
+                // Source-owned fields: read only.
+                LabelValue(l.advocateName, me.advocateName ?? '-'),
+                LabelValue(l.advocateCode, me.advocateCode ?? '-'),
+                LabelValue(l.googleAccount, me.googleEmail ?? '-'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 7),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 132, child: Text(l.identityStatus, style: t.textTheme.bodySmall)),
+                      const SizedBox(width: AppSpacing.sm),
+                      Flexible(
+                        child: StatusChip(
+                          verified ? l.identityVerified : l.notYetAvailable,
+                          color: verified ? AppColors.success : AppColors.warning,
+                          icon: verified ? AppIcons.verified : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          SectionCard(
+            title: l.settings,
+            icon: AppIcons.settings,
+            child: Column(
+              children: [
+                TextField(
+                  controller: _displayName,
+                  decoration: const InputDecoration(
+                    labelText: 'Display name',
+                    prefixIcon: Icon(AppIcons.advocate, size: 18),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(AppIcons.email, size: 18)),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                PrimaryButton(onPressed: _save, busy: _saving, label: l.save),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          MenuGroup(
+            children: [
+              MenuRow(
+                key: const Key('switchGoogleAccount'),
+                icon: AppIcons.switchAccount,
+                label: l.switchGoogleAccount,
+                trailing: const SizedBox.shrink(),
+                onTap: () => ref.read(sessionProvider.notifier).useDifferentAccount(),
               ),
-            ]),
-          ]),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        SectionCard(
-          title: l.settings,
-          child: Column(children: [
-            TextField(controller: _displayName, decoration: const InputDecoration(labelText: 'Display name')),
-            const SizedBox(height: AppSpacing.md),
-            TextField(
-                controller: _email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'Email')),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton(onPressed: _saving ? null : _save, child: Text(l.save)),
-          ]),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        OutlinedButton.icon(
-          key: const Key('switchGoogleAccount'),
-          onPressed: () => ref.read(sessionProvider.notifier).useDifferentAccount(),
-          icon: const Icon(Icons.switch_account_outlined),
-          label: Text(l.switchGoogleAccount),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        OutlinedButton.icon(
-          onPressed: () => ref.read(sessionProvider.notifier).logout(),
-          icon: const Icon(Icons.logout),
-          label: Text(l.logout),
-        ),
-      ]),
+              MenuRow(
+                icon: AppIcons.logout,
+                label: l.logout,
+                destructive: true,
+                trailing: const SizedBox.shrink(),
+                onTap: () => ref.read(sessionProvider.notifier).logout(),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

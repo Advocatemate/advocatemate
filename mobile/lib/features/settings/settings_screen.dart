@@ -5,6 +5,7 @@ import '../../core/providers.dart';
 import '../../shared/models/models.dart';
 import '../../shared/personal_repository.dart';
 import '../../shared/widgets/widgets.dart';
+import '../../theme/app_theme.dart';
 import '../authentication/auth_repository.dart';
 import '../authentication/session_controller.dart';
 import 'app_settings.dart';
@@ -30,82 +31,123 @@ class SettingsScreen extends ConsumerWidget {
       }
     }
 
+    Widget prefRow(IconData icon, String label, bool value, ValueChanged<bool> onChanged) => MenuRow(
+      icon: icon,
+      label: label,
+      trailing: Switch(value: value, onChanged: onChanged),
+    );
+
     return Scaffold(
       appBar: AppBar(title: Text(l.settings)),
-      body: ListView(children: [
-        ListTile(
-          leading: const Icon(Icons.translate),
-          title: Text(l.language),
-          trailing: DropdownButton<String>(
-            value: s.locale?.languageCode ?? Localizations.localeOf(context).languageCode,
-            onChanged: (code) async {
-              if (code == null) return;
-              await ref.read(appSettingsProvider.notifier).setLanguage(code);
-              try {
-                final me = await ref.read(authRepositoryProvider).updateMe(language: code);
-                ref.read(sessionProvider.notifier).update(me);
-              } catch (_) {}
-            },
-            items: [for (final e in supportedLanguages.entries) DropdownMenuItem(value: e.key, child: Text(e.value))],
+      body: ListView(
+        padding: AppLayout.page(context, top: AppSpacing.sm, bottom: AppSpacing.xxl),
+        children: [
+          SectionHeader(l.sectionAppearance),
+          AppCard(
+            padding: const EdgeInsets.only(top: AppSpacing.xs, bottom: AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                MenuRow(
+                  icon: AppIcons.language,
+                  label: l.language,
+                  trailing: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: s.locale?.languageCode ?? Localizations.localeOf(context).languageCode,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                      icon: const Icon(AppIcons.chevronRight, size: 16),
+                      onChanged: (code) async {
+                        if (code == null) return;
+                        await ref.read(appSettingsProvider.notifier).setLanguage(code);
+                        try {
+                          final me = await ref.read(authRepositoryProvider).updateMe(language: code);
+                          ref.read(sessionProvider.notifier).update(me);
+                        } catch (_) {}
+                      },
+                      items: [
+                        for (final e in supportedLanguages.entries)
+                          DropdownMenuItem(value: e.key, child: Text(e.value)),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(indent: 64, height: 1),
+                MenuRow(icon: AppIcons.theme, label: l.theme),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  child: SegmentedButton<ThemeMode>(
+                    showSelectedIcon: false,
+                    expandedInsets: EdgeInsets.zero,
+                    segments: [
+                      ButtonSegment(value: ThemeMode.system, label: Text(l.themeSystem)),
+                      ButtonSegment(value: ThemeMode.light, label: Text(l.themeLight)),
+                      ButtonSegment(value: ThemeMode.dark, label: Text(l.themeDark)),
+                    ],
+                    selected: {s.themeMode},
+                    onSelectionChanged: (v) => ref.read(appSettingsProvider.notifier).setThemeMode(v.first),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        ListTile(
-          leading: const Icon(Icons.dark_mode_outlined),
-          title: Text(l.theme),
-          trailing: SegmentedButton<ThemeMode>(
-            showSelectedIcon: false,
-            segments: [
-              ButtonSegment(value: ThemeMode.system, label: Text(l.themeSystem)),
-              ButtonSegment(value: ThemeMode.light, label: Text(l.themeLight)),
-              ButtonSegment(value: ThemeMode.dark, label: Text(l.themeDark)),
+          const SizedBox(height: AppSpacing.xl),
+          SectionHeader(l.notificationPreferences),
+          prefs.when(
+            data: (p) => MenuGroup(
+              children: [
+                prefRow(
+                  AppIcons.publication,
+                  l.prefPublication,
+                  p.causeListPublication,
+                  (v) => setPref(p.copyWith(causeListPublication: v)),
+                ),
+                prefRow(
+                  AppIcons.advocates,
+                  l.prefFavouriteAdvocates,
+                  p.favouriteAdvocates,
+                  (v) => setPref(p.copyWith(favouriteAdvocates: v)),
+                ),
+                prefRow(
+                  AppIcons.caseUpdate,
+                  l.prefCaseUpdates,
+                  p.caseUpdates,
+                  (v) => setPref(p.copyWith(caseUpdates: v)),
+                ),
+                prefRow(AppIcons.liveBoard, l.prefCourtBoard, p.courtBoard, (v) => setPref(p.copyWith(courtBoard: v))),
+                prefRow(AppIcons.factCheck, l.prefEnrichment, p.enrichment, (v) => setPref(p.copyWith(enrichment: v))),
+                prefRow(
+                  AppIcons.notifications,
+                  l.prefAnnouncements,
+                  p.announcements,
+                  (v) => setPref(p.copyWith(announcements: v)),
+                ),
+              ],
+            ),
+            error: (e, _) => MenuGroup(
+              children: [MenuRow(icon: AppIcons.info, label: l.notYetAvailable)],
+            ),
+            loading: () => const Padding(padding: EdgeInsets.all(AppSpacing.lg), child: LinearProgressIndicator()),
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          SectionHeader(l.sectionData),
+          MenuGroup(
+            children: [
+              MenuRow(
+                icon: AppIcons.clearData,
+                label: l.clearCache,
+                trailing: const SizedBox.shrink(),
+                onTap: () async {
+                  await ref.read(cacheStoreProvider).clear();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.cacheCleared)));
+                  }
+                },
+              ),
+              MenuRow(icon: AppIcons.info, label: l.about, subtitle: l.dataNotice),
             ],
-            selected: {s.themeMode},
-            onSelectionChanged: (v) => ref.read(appSettingsProvider.notifier).setThemeMode(v.first),
           ),
-        ),
-        const Divider(),
-        ListTile(title: Text(l.notificationPreferences, style: Theme.of(context).textTheme.titleSmall)),
-        prefs.when(
-          data: (p) => Column(children: [
-            SwitchListTile(
-                title: Text(l.prefPublication),
-                value: p.causeListPublication,
-                onChanged: (v) => setPref(p.copyWith(causeListPublication: v))),
-            SwitchListTile(
-                title: Text(l.prefFavouriteAdvocates),
-                value: p.favouriteAdvocates,
-                onChanged: (v) => setPref(p.copyWith(favouriteAdvocates: v))),
-            SwitchListTile(
-                title: Text(l.prefCaseUpdates), value: p.caseUpdates, onChanged: (v) => setPref(p.copyWith(caseUpdates: v))),
-            SwitchListTile(
-                title: Text(l.prefCourtBoard), value: p.courtBoard, onChanged: (v) => setPref(p.copyWith(courtBoard: v))),
-            SwitchListTile(
-                title: Text(l.prefEnrichment), value: p.enrichment, onChanged: (v) => setPref(p.copyWith(enrichment: v))),
-            SwitchListTile(
-                title: Text(l.prefAnnouncements),
-                value: p.announcements,
-                onChanged: (v) => setPref(p.copyWith(announcements: v))),
-          ]),
-          error: (e, _) => ListTile(title: Text(l.notYetAvailable)),
-          loading: () => const LinearProgressIndicator(),
-        ),
-        const Divider(),
-        ListTile(
-          leading: const Icon(Icons.cleaning_services_outlined),
-          title: Text(l.clearCache),
-          onTap: () async {
-            await ref.read(cacheStoreProvider).clear();
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.cacheCleared)));
-            }
-          },
-        ),
-        ListTile(
-          leading: const Icon(Icons.info_outline),
-          title: Text(l.about),
-          subtitle: Text(l.dataNotice),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

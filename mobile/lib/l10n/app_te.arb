@@ -173,5 +173,18 @@
   "advocateLookupRecent": "ఇటీవలివి",
   "advocateLookupInvalid": "అంకెలు మాత్రమే నమోదు చేయండి (8 వరకు).",
   "errAdvocateNotFound": "ఈ కోడ్‌కు న్యాయవాది కనబడలేదు. కోడ్ సరిచూసి మళ్లీ ప్రయత్నించండి.",
-  "errTooManyLookups": "చాలా ఎక్కువ న్యాయవాది శోధనలు. కొన్ని నిమిషాలు ఆగి మళ్లీ ప్రయత్నించండి."
+  "errTooManyLookups": "చాలా ఎక్కువ న్యాయవాది శోధనలు. కొన్ని నిమిషాలు ఆగి మళ్లీ ప్రయత్నించండి.",
+  "greetingMorning": "శుభోదయం",
+  "greetingAfternoon": "శుభ మధ్యాహ్నం",
+  "greetingEvening": "శుభ సాయంత్రం",
+  "quickAccess": "త్వరిత ప్రవేశం",
+  "shortcuts": "షార్ట్‌కట్‌లు",
+  "sectionCauseLists": "కాజ్ లిస్ట్‌లు",
+  "sectionAccount": "ఖాతా",
+  "sectionAppearance": "రూపం",
+  "sectionData": "డేటా మరియు గోప్యత",
+  "todaysCauseList": "ఈరోజు కాజ్ లిస్ట్",
+  "viewMyList": "నా జాబితా చూడండి",
+  "courtsUploaded": "{total} కోర్టులలో {uploaded} అప్‌లోడ్ అయ్యాయి",
+  "stepOf": "దశ {current}/{total}"
 }

@@ -26,10 +26,11 @@ class FavouritesScreen extends ConsumerWidget {
         appBar: AppBar(
           title: Text(l.navFavourites),
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: const Color(0xFFB7C2D6),
-            indicatorColor: AppColors.gold,
-            tabs: [Tab(text: l.favouriteCases), Tab(text: l.favouriteAdvocates)],
+            indicatorWeight: 2.5,
+            tabs: [
+              Tab(text: l.favouriteCases),
+              Tab(text: l.favouriteAdvocates),
+            ],
           ),
         ),
         body: const TabBarView(children: [_CasesTab(), _AdvocatesTab()]),
@@ -50,21 +51,27 @@ class _CasesTab extends ConsumerWidget {
       builder: (items) => RefreshIndicator(
         onRefresh: () => refreshProvider(ref, favouriteCasesProvider),
         child: items.isEmpty
-            ? ListView(children: [EmptyState(message: l.emptyFavourites, icon: Icons.bookmark_border)])
+            ? ListView(
+                children: [EmptyState(message: l.emptyFavourites, icon: AppIcons.saved)],
+              )
             : ListView.separated(
-                padding: const EdgeInsets.all(AppSpacing.lg),
+                padding: AppLayout.page(context, top: AppSpacing.lg, bottom: AppSpacing.xxl),
                 itemCount: items.length,
-                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md - 2),
                 itemBuilder: (_, i) {
                   final f = items[i];
                   return Dismissible(
                     key: ValueKey(f.id),
                     direction: DismissDirection.endToStart,
                     background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        color: AppColors.danger,
-                        child: const Icon(Icons.delete_outline, color: Colors.white)),
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 24),
+                      decoration: BoxDecoration(
+                        color: context.tokens.danger,
+                        borderRadius: BorderRadius.circular(AppSpacing.radius),
+                      ),
+                      child: Icon(AppIcons.delete, color: Theme.of(context).colorScheme.surface),
+                    ),
                     onDismissed: (_) async {
                       try {
                         await ref.read(personalRepositoryProvider).removeFavouriteCase(f.id);
@@ -126,7 +133,7 @@ class _AdvocatesTab extends ConsumerWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _add(context, ref),
-        icon: const Icon(Icons.person_add_alt_1),
+        icon: const Icon(AppIcons.addAdvocate, size: AppIcons.size),
         label: Text(l.addAdvocate),
       ),
       body: AsyncBody<List<FavouriteAdvocate>>(
@@ -135,34 +142,57 @@ class _AdvocatesTab extends ConsumerWidget {
         builder: (items) => RefreshIndicator(
           onRefresh: () => refreshProvider(ref, favouriteAdvocatesProvider),
           child: items.isEmpty
-              ? ListView(children: [EmptyState(message: l.emptyFavourites, icon: Icons.people_outline)])
-              : ListView(padding: const EdgeInsets.all(AppSpacing.lg), children: [
-                  for (final f in items)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: Card(
-                        child: ListTile(
-                          leading: const CircleAvatar(child: Icon(Icons.person_outline)),
-                          title: Text(f.advocateName ?? f.advocateCode),
-                          subtitle: Text('${l.advocateCode}: ${f.advocateCode}'),
+              ? ListView(
+                  children: [EmptyState(message: l.emptyFavourites, icon: AppIcons.advocates)],
+                )
+              : ListView(
+                  padding: AppLayout.page(context, top: AppSpacing.lg),
+                  children: [
+                    for (final f in items)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.md - 2),
+                        child: AppCard(
                           onTap: () => context.push('/advocate/${f.advocateCode}'),
-                          trailing: IconButton(
-                            tooltip: l.removeFavourite,
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () async {
-                              try {
-                                await ref.read(personalRepositoryProvider).removeFavouriteAdvocate(f.id);
-                              } catch (e) {
-                                if (context.mounted) showError(context, e);
-                              }
-                              ref.invalidate(favouriteAdvocatesProvider);
-                            },
+                          padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                          child: Row(
+                            children: [
+                              AvatarInitials(name: f.advocateName ?? '', size: 42),
+                              const SizedBox(width: AppSpacing.md),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      f.advocateName ?? f.advocateCode,
+                                      style: Theme.of(context).textTheme.titleSmall,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${l.advocateCode}: ${f.advocateCode}',
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: l.removeFavourite,
+                                icon: Icon(AppIcons.delete, size: AppIcons.size, color: context.tokens.textSecondary),
+                                onPressed: () async {
+                                  try {
+                                    await ref.read(personalRepositoryProvider).removeFavouriteAdvocate(f.id);
+                                  } catch (e) {
+                                    if (context.mounted) showError(context, e);
+                                  }
+                                  ref.invalidate(favouriteAdvocatesProvider);
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                  const SizedBox(height: 80),
-                ]),
+                    const SizedBox(height: 80),
+                  ],
+                ),
         ),
       ),
     );
@@ -184,7 +214,10 @@ class FavouriteCaseButton extends ConsumerWidget {
     }
     return IconButton(
       tooltip: existing == null ? l.addFavourite : l.removeFavourite,
-      icon: Icon(existing == null ? Icons.bookmark_border : Icons.bookmark, color: AppColors.gold),
+      icon: Icon(
+        existing == null ? AppIcons.save : AppIcons.savedOn,
+        color: existing == null ? null : context.tokens.goldText,
+      ),
       onPressed: () async {
         final repo = ref.read(personalRepositoryProvider);
         try {

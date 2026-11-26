@@ -100,7 +100,7 @@ class _CaseDetailsScreenState extends ConsumerState<CaseDetailsScreen> {
           if (value.hasValue)
             IconButton(
               tooltip: l.caseSummaryPdf,
-              icon: const Icon(Icons.picture_as_pdf_outlined),
+              icon: const Icon(AppIcons.pdf),
               onPressed: () => context.push('/pdf?kind=summary&case=${value.requireValue.data.caseId}'),
             ),
         ],
@@ -120,7 +120,7 @@ class _CaseDetailsScreenState extends ConsumerState<CaseDetailsScreen> {
                 FreshnessBanner(loaded),
                 EnrichmentBanner(status: status, onRetry: () => _refresh(d.caseId)),
                 Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  padding: AppLayout.page(context, top: AppSpacing.md),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _sections(context, d)),
                 ),
               ],
@@ -150,73 +150,109 @@ class _CaseDetailsScreenState extends ConsumerState<CaseDetailsScreen> {
         for (final p in list)
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: CircleAvatar(radius: 14, child: Text('${p['party_no'] ?? ''}', style: const TextStyle(fontSize: 12))),
+            leading: Container(
+              width: 30,
+              height: 30,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: context.tokens.subtleFill, shape: BoxShape.circle),
+              child: Text(
+                '${p['party_no'] ?? ''}',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
+              ),
+            ),
             title: Text('${p['name']}'),
             subtitle: Text([label, if (p['description'] != null) '${p['description']}'].join(' · ')),
           ),
     ];
 
     return [
-      SectionCard(title: l.caseIdentity, child: kv(d.identity, skip: {'case_id'})),
-      if (d.information.isNotEmpty) ...[gap(), SectionCard(title: l.caseInformation, child: kv(d.information))],
+      SectionCard(
+        title: l.caseIdentity,
+        icon: AppIcons.cases,
+        child: kv(d.identity, skip: {'case_id'}),
+      ),
+      if (d.information.isNotEmpty) ...[
+        gap(),
+        SectionCard(title: l.caseInformation, icon: AppIcons.listing, child: kv(d.information)),
+      ],
       gap(),
       SectionCard(
         title: l.parties,
-        child: parties.isEmpty ? Text(l.notYetAvailable) : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: parties),
+        icon: AppIcons.advocates,
+        child: parties.isEmpty
+            ? Text(l.notYetAvailable)
+            : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: parties),
       ),
       if (d.advocates.isNotEmpty) ...[
         gap(),
         SectionCard(
           title: l.advocates,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            kv(d.advocates, skip: {'vakalath'}),
-            if (d.vakalath.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(l.vakalath, style: Theme.of(context).textTheme.titleSmall),
-              for (final v in d.vakalath)
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                  leading: StatusChip('${v['side'] ?? ''} ${v['party_no'] ?? ''}'.trim()),
-                  title: Text('${v['advocate_name']}'),
-                  subtitle: v['advocate_code'] == null ? null : Text('${l.advocateCode}: ${v['advocate_code']}'),
-                  onTap: v['advocate_code'] == null ? null : () => context.push('/advocate/${v['advocate_code']}'),
-                ),
+          icon: AppIcons.advocate,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              kv(d.advocates, skip: {'vakalath'}),
+              if (d.vakalath.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(l.vakalath, style: Theme.of(context).textTheme.titleSmall),
+                for (final v in d.vakalath)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    leading: StatusChip('${v['side'] ?? ''} ${v['party_no'] ?? ''}'.trim()),
+                    title: Text('${v['advocate_name']}'),
+                    subtitle: v['advocate_code'] == null ? null : Text('${l.advocateCode}: ${v['advocate_code']}'),
+                    onTap: v['advocate_code'] == null ? null : () => context.push('/advocate/${v['advocate_code']}'),
+                  ),
+              ],
             ],
-          ]),
+          ),
         ),
       ],
       if (d.observedListings.isNotEmpty) ...[
         gap(),
         SectionCard(
           title: l.listingHistory,
-          child: Column(children: [
-            for (final x in d.observedListings)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: const Icon(Icons.event_note_outlined, color: AppColors.gold),
-                title: Text('${Fmt.shortDate(x['list_date'], locale: loc)} · ${l.court('${x['court_no']}')} · ${l.itemNo('${x['item_no']}')}'),
-                subtitle: x['stage'] == null ? null : Text('${x['stage']}'),
-              ),
-          ]),
+          icon: AppIcons.history,
+          child: Column(
+            children: [
+              for (final x in d.observedListings)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: Icon(AppIcons.calendar, size: AppIcons.sizeSm, color: context.tokens.goldText),
+                  title: Text(
+                    '${Fmt.shortDate(x['list_date'], locale: loc)} · ${l.court('${x['court_no']}')} · ${l.itemNo('${x['item_no']}')}',
+                  ),
+                  subtitle: x['stage'] == null ? null : Text('${x['stage']}'),
+                ),
+            ],
+          ),
         ),
       ],
       gap(),
       SectionCard(
         title: l.additionalInformation,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          if (d.additional['other_source_fields'] is Map) kv(Map<String, dynamic>.from(d.additional['other_source_fields'] as Map)),
-          Text(l.officialOrdersUnavailable, style: Theme.of(context).textTheme.bodySmall),
-          if (d.unavailableNote != null) ...[
-            const SizedBox(height: 4),
-            Text(d.unavailableNote!, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.muted)),
+        icon: AppIcons.info,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (d.additional['other_source_fields'] is Map)
+              kv(Map<String, dynamic>.from(d.additional['other_source_fields'] as Map)),
+            Text(l.officialOrdersUnavailable, style: Theme.of(context).textTheme.bodySmall),
+            if (d.unavailableNote != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                d.unavailableNote!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: context.tokens.textTertiary),
+              ),
+            ],
+            if (d.provenance['source'] != null) ...[
+              const SizedBox(height: 8),
+              Text(l.source('${d.provenance['source']}'), style: Theme.of(context).textTheme.bodySmall),
+            ],
           ],
-          if (d.provenance['source'] != null) ...[
-            const SizedBox(height: 8),
-            Text(l.source('${d.provenance['source']}'), style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ]),
+        ),
       ),
       const SizedBox(height: AppSpacing.xxl),
     ];
@@ -231,37 +267,35 @@ class EnrichmentBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final tk = context.tokens;
     final (String text, Color color, IconData icon, bool spinner) = switch (status.state) {
-      'pending' => (l.enrichmentPending, AppColors.navyLight, Icons.schedule, true),
-      'running' => (l.enrichmentRunning, AppColors.navyLight, Icons.sync, true),
-      'failed' => (l.enrichmentFailed, AppColors.danger, Icons.error_outline, false),
-      'completed' when status.freshness == 'stale' => (l.enrichmentStale, AppColors.warning, Icons.history, false),
-      'completed' => (l.enrichmentCompleted, AppColors.success, Icons.verified_outlined, false),
-      _ => (l.notYetAvailable, AppColors.muted, Icons.info_outline, false),
+      'pending' => (l.enrichmentPending, tk.info, AppIcons.clock, true),
+      'running' => (l.enrichmentRunning, tk.info, AppIcons.sync, true),
+      'failed' => (l.enrichmentFailed, tk.danger, AppIcons.error, false),
+      'completed' when status.freshness == 'stale' => (l.enrichmentStale, tk.warning, AppIcons.history, false),
+      'completed' => (l.enrichmentCompleted, tk.success, AppIcons.verified, false),
+      _ => (l.notYetAvailable, tk.textSecondary, AppIcons.info, false),
     };
     final when = Fmt.parse(status.fetchedAt);
+    final Widget? action;
+    if (!spinner && onRetry != null && status.state != 'completed') {
+      action = TextButton(onPressed: onRetry, child: Text(l.retry));
+    } else if (status.state == 'completed' && status.freshness == 'stale' && onRetry != null) {
+      action = TextButton(onPressed: onRetry, child: Text(l.refresh));
+    } else {
+      action = null;
+    }
     return Semantics(
       liveRegion: true,
-      child: Container(
+      child: InfoBanner(
         key: Key('enrichment-${status.state}'),
-        color: color.withValues(alpha: .1),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 10),
-        child: Row(children: [
-          spinner
-              ? SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: color))
-              : Icon(icon, color: color, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              [text, if (when != null) l.lastUpdated(Fmt.timestamp(when, locale: context.localeName))].join('\n'),
-              style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13),
-            ),
-          ),
-          if (!spinner && onRetry != null && status.state != 'completed')
-            TextButton(onPressed: onRetry, child: Text(l.retry))
-          else if (status.state == 'completed' && status.freshness == 'stale' && onRetry != null)
-            TextButton(onPressed: onRetry, child: Text(l.refresh)),
-        ]),
+        color: color,
+        icon: icon,
+        leading: spinner
+            ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: color))
+            : null,
+        text: [text, if (when != null) l.lastUpdated(Fmt.timestamp(when, locale: context.localeName))].join('\n'),
+        action: action,
       ),
     );
   }

@@ -30,77 +30,119 @@ class _PassedOverScreenState extends ConsumerState<PassedOverScreen> {
     final l = context.l10n;
     final value = ref.watch(passedOverProvider(_date));
     return Scaffold(
-      appBar: AppBar(title: Text(l.passedOverList), actions: [
-        IconButton(
-          tooltip: l.refresh,
-          icon: const Icon(Icons.refresh),
-          onPressed: () => ref.invalidate(passedOverProvider(_date)),
-        ),
-      ]),
+      appBar: AppBar(
+        title: Text(l.passedOverList),
+        actions: [
+          IconButton(
+            tooltip: l.refresh,
+            icon: const Icon(AppIcons.refresh),
+            onPressed: () => ref.invalidate(passedOverProvider(_date)),
+          ),
+        ],
+      ),
       body: AsyncBody<Loaded<PassedOverList>>(
         value: value,
         onRetry: () => ref.invalidate(passedOverProvider(_date)),
         builder: (loaded) {
           final data = loaded.data;
           final t = Theme.of(context);
-          final muted = t.textTheme.bodySmall?.copyWith(color: t.colorScheme.onSurface.withValues(alpha: .65));
+          final muted = t.textTheme.bodySmall;
           return RefreshIndicator(
             onRefresh: () => refreshProvider(ref, passedOverProvider(_date)),
-            child: ListView(physics: const AlwaysScrollableScrollPhysics(), children: [
-              FreshnessBanner(loaded),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(Fmt.displayDate(data.listDate, locale: context.localeName), style: t.textTheme.titleMedium),
-                  const SizedBox(height: 4),
-                  Text(l.passedOverIntro, style: t.textTheme.bodyMedium),
-                  if (data.observedFrom != null)
-                    Text(l.passedOverRecordedSince(Fmt.time(data.observedFrom, locale: context.localeName)), style: muted),
-                  if (data.total > 0) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(l.passedOverSummary(data.total, data.pending),
-                        key: const Key('passedOverSummary'), style: t.textTheme.titleSmall),
-                  ],
-                ]),
-              ),
-              if (data.isToday && data.boardStale == true)
-                Container(
-                  key: const Key('passedOverBoardStale'),
-                  margin: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 0),
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                      color: AppColors.warning.withValues(alpha: .12), borderRadius: BorderRadius.circular(12)),
-                  child: Text(l.passedOverBoardStale,
-                      style: t.textTheme.bodySmall?.copyWith(color: AppColors.warning, fontWeight: FontWeight.w600)),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                FreshnessBanner(loaded),
+                Padding(
+                  padding: AppLayout.page(context, top: AppSpacing.md),
+                  child: AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const IconBadge(AppIcons.passedOver, size: 38, iconSize: 19),
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    Fmt.displayDate(data.listDate, locale: context.localeName),
+                                    style: t.textTheme.titleMedium,
+                                  ),
+                                  if (data.observedFrom != null)
+                                    Text(
+                                      l.passedOverRecordedSince(
+                                        Fmt.time(data.observedFrom, locale: context.localeName),
+                                      ),
+                                      style: muted,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Text(
+                          l.passedOverIntro,
+                          style: t.textTheme.bodyMedium?.copyWith(color: context.tokens.textSecondary),
+                        ),
+                        if (data.total > 0) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          Text(
+                            l.passedOverSummary(data.total, data.pending),
+                            key: const Key('passedOverSummary'),
+                            style: t.textTheme.titleSmall?.copyWith(color: t.colorScheme.primary),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-              if (data.availableDates.length > 1)
-                SizedBox(
-                  height: 52,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 0),
+                if (data.isToday && data.boardStale == true)
+                  InfoBanner(
+                    key: const Key('passedOverBoardStale'),
+                    color: context.tokens.warning,
+                    icon: AppIcons.warning,
+                    text: l.passedOverBoardStale,
+                  ),
+                if (data.availableDates.length > 1)
+                  ChipStrip(
+                    padding: EdgeInsets.fromLTRB(
+                      AppLayout.gutter(context),
+                      AppSpacing.sm,
+                      AppLayout.gutter(context),
+                      0,
+                    ),
                     children: [
                       for (final d in data.availableDates)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 6),
-                          child: ChoiceChip(
-                            label: Text(Fmt.shortDate(d, locale: context.localeName)),
-                            selected: d == data.listDate,
-                            onSelected: (_) => setState(() => _date = d),
-                          ),
+                        ChoiceChip(
+                          label: Text(Fmt.shortDate(d, locale: context.localeName)),
+                          selected: d == data.listDate,
+                          onSelected: (_) => setState(() => _date = d),
                         ),
                     ],
                   ),
+                if (data.courts.isEmpty)
+                  EmptyState(message: l.passedOverNone, icon: AppIcons.factCheck)
+                else
+                  for (final c in data.courts) _CourtSection(court: c),
+                Padding(
+                  padding: AppLayout.page(context, top: AppSpacing.lg, bottom: AppSpacing.xxl),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(AppIcons.info, size: 14, color: context.tokens.textTertiary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(l.passedOverNote, style: muted?.copyWith(color: context.tokens.textTertiary)),
+                      ),
+                    ],
+                  ),
                 ),
-              if (data.courts.isEmpty)
-                EmptyState(message: l.passedOverNone, icon: Icons.fact_check_outlined)
-              else
-                for (final c in data.courts) _CourtSection(court: c),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xxl),
-                child: Text(l.passedOverNote, style: muted),
-              ),
-            ]),
+              ],
+            ),
           );
         },
       ),
@@ -123,35 +165,73 @@ class _CourtSection extends StatelessWidget {
     ].join(' · ');
     return Padding(
       key: Key('passedOverCourt-${court.courtNo}'),
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(header, style: t.textTheme.titleSmall?.copyWith(color: AppColors.navy)),
-        const SizedBox(height: AppSpacing.sm),
-        for (final e in court.items)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: _entry(context, e),
+      padding: AppLayout.page(context, top: AppSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            header: true,
+            child: Row(
+              children: [
+                Icon(AppIcons.court, size: 16, color: context.tokens.goldText),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(header, style: t.textTheme.titleSmall?.copyWith(color: t.colorScheme.primary)),
+                ),
+              ],
+            ),
           ),
-      ]),
+          const SizedBox(height: AppSpacing.md - 2),
+          for (final e in court.items)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md - 2),
+              child: _entry(context, e),
+            ),
+        ],
+      ),
     );
   }
 
   Widget _entry(BuildContext context, PassedOverEntry e) {
     final l = context.l10n;
     final chip = switch (e.status) {
-      'pending' => StatusChip(l.passedOverPending, color: AppColors.warning, icon: Icons.schedule),
-      'no_longer_pending' => StatusChip(l.passedOverNoLongerPending, color: AppColors.success, icon: Icons.check),
-      _ => StatusChip(l.passedOverOffBoard, color: AppColors.muted, icon: Icons.remove_circle_outline),
+      'pending' => StatusChip(l.passedOverPending, color: AppColors.warning, icon: AppIcons.clock),
+      'no_longer_pending' => StatusChip(l.passedOverNoLongerPending, color: AppColors.success, icon: AppIcons.check),
+      _ => StatusChip(l.passedOverOffBoard, color: AppColors.muted, icon: AppIcons.offBoard),
     };
     final kept = Text(l.passedOverKeptAt(Fmt.time(e.firstSeenAt, locale: context.localeName)));
     final it = e.listing;
     if (it == null) {
-      return Card(
-        child: ListTile(
-          leading: CircleAvatar(backgroundColor: AppColors.navy, foregroundColor: AppColors.gold, child: Text(e.itemNo)),
-          title: Text(l.passedOverItemNotFound(e.itemNo)),
-          subtitle: kept,
-          trailing: chip,
+      final t = Theme.of(context);
+      return AppCard(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            Container(
+              constraints: const BoxConstraints(minWidth: 46),
+              height: 46,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.navy,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+              ),
+              child: Text(e.itemNo, style: t.textTheme.titleSmall?.copyWith(color: AppColors.gold)),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l.passedOverItemNotFound(e.itemNo), style: t.textTheme.titleSmall),
+                  const SizedBox(height: 2),
+                  DefaultTextStyle.merge(style: t.textTheme.bodySmall, child: kept),
+                  const SizedBox(height: 8),
+                  chip,
+                ],
+              ),
+            ),
+          ],
         ),
       );
     }

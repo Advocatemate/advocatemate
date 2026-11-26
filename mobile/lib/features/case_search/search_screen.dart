@@ -97,99 +97,160 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final t = Theme.of(context);
+    final tk = context.tokens;
     final exact = CaseIdentity.tryParse(_q.text);
     return Scaffold(
-      appBar: AppBar(title: Text(l.searchCases), actions: [
-        IconButton(
-          tooltip: l.filters,
-          icon: Icon(_showFilters ? Icons.filter_alt : Icons.filter_alt_outlined),
-          onPressed: () => setState(() => _showFilters = !_showFilters),
-        ),
-      ]),
-      body: ListView(padding: const EdgeInsets.all(AppSpacing.lg), children: [
-        TextField(
-          key: const Key('searchField'),
-          controller: _q,
-          onChanged: _onChanged,
-          onSubmitted: (_) => _search(),
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search),
-            hintText: l.searchHint,
-            suffixIcon: IconButton(
-              tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-              icon: const Icon(Icons.close),
-              onPressed: () => setState(() {
-                _q.clear();
-                _result = null;
-                _suggestions = const [];
-              }),
+      appBar: AppBar(
+        title: Text(l.searchCases),
+        actions: [
+          IconButton(
+            tooltip: l.filters,
+            isSelected: _showFilters,
+            style: IconButton.styleFrom(backgroundColor: _showFilters ? tk.goldSoft : null),
+            icon: Icon(AppIcons.filters, color: _showFilters ? tk.onGoldSoft : null),
+            onPressed: () => setState(() => _showFilters = !_showFilters),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+        ],
+      ),
+      body: ListView(
+        padding: AppLayout.page(context, top: AppSpacing.sm, bottom: AppSpacing.xxl),
+        children: [
+          TextField(
+            key: const Key('searchField'),
+            controller: _q,
+            onChanged: _onChanged,
+            onSubmitted: (_) => _search(),
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(AppIcons.search, size: AppIcons.size),
+              hintText: l.searchHint,
+              suffixIcon: IconButton(
+                tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+                icon: const Icon(AppIcons.clear, size: AppIcons.size),
+                onPressed: () => setState(() {
+                  _q.clear();
+                  _result = null;
+                  _suggestions = const [];
+                }),
+              ),
             ),
           ),
-        ),
-        for (final s in _suggestions)
-          ListTile(
-            dense: true,
-            leading: const Icon(Icons.north_west, size: 18),
-            title: Text(s),
-            onTap: () {
-              _q.text = s;
-              _search();
-            },
+          if (_suggestions.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.sm),
+              child: AppCard(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                child: Column(
+                  children: [
+                    for (final s in _suggestions)
+                      ListTile(
+                        dense: true,
+                        leading: Icon(AppIcons.suggestion, size: 16, color: tk.textTertiary),
+                        title: Text(s),
+                        onTap: () {
+                          _q.text = s;
+                          _search();
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: !_showFilters
+                ? const SizedBox(width: double.infinity)
+                : Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.md),
+                    child: AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(AppIcons.filters, size: 16, color: tk.goldText),
+                              const SizedBox(width: 8),
+                              Text(l.filters, style: t.textTheme.titleSmall),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _type,
+                                  decoration: InputDecoration(labelText: l.caseType),
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Expanded(
+                                child: TextField(
+                                  controller: _year,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(labelText: l.caseYear),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          TextField(
+                            controller: _party,
+                            decoration: InputDecoration(labelText: l.partyName),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          TextField(
+                            controller: _advocate,
+                            decoration: InputDecoration(labelText: l.advocateName),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
           ),
-        if (_showFilters) ...[
           const SizedBox(height: AppSpacing.md),
-          Row(children: [
-            Expanded(child: TextField(controller: _type, decoration: InputDecoration(labelText: l.caseType))),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-                child: TextField(
-                    controller: _year, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l.caseYear))),
-          ]),
-          const SizedBox(height: AppSpacing.sm),
-          TextField(controller: _party, decoration: InputDecoration(labelText: l.partyName)),
-          const SizedBox(height: AppSpacing.sm),
-          TextField(controller: _advocate, decoration: InputDecoration(labelText: l.advocateName)),
+          PrimaryButton(onPressed: _search, busy: _busy, icon: AppIcons.search, label: l.searchCases),
+          const SizedBox(height: AppSpacing.lg),
+          if (_error != null) ErrorState(error: _error!, onRetry: _search),
+          if (_result != null) ..._results(context, _result!, exact),
+          if (_result == null && !_busy) _history(context),
         ],
-        const SizedBox(height: AppSpacing.md),
-        FilledButton.icon(
-            onPressed: _busy ? null : _search, icon: const Icon(Icons.search), label: Text(l.searchCases)),
-        const SizedBox(height: AppSpacing.lg),
-        if (_busy) const LinearProgressIndicator(),
-        if (_error != null) ErrorState(error: _error!, onRetry: _search),
-        if (_result != null) ..._results(context, _result!, exact),
-        if (_result == null && !_busy) _history(context),
-      ]),
+      ),
     );
   }
 
   List<Widget> _results(BuildContext context, SearchResponse r, CaseIdentity? exact) {
     final l = context.l10n;
     return [
-      Text(l.casesCount(r.total), style: Theme.of(context).textTheme.titleSmall),
-      const SizedBox(height: AppSpacing.sm),
+      SectionHeader(l.casesCount(r.total)),
       if (r.results.isEmpty) ...[
-        EmptyState(message: r.hint ?? l.emptySearch, icon: Icons.search_off),
+        EmptyState(message: r.hint ?? l.emptySearch, icon: AppIcons.searchEmpty),
         if (exact != null)
           OutlinedButton.icon(
-            icon: const Icon(Icons.open_in_new),
+            icon: const Icon(AppIcons.openExternal, size: AppIcons.sizeSm),
             label: Text('${l.caseDetails}: ${exact.slash}'),
             onPressed: () => openCase(context, caseNumber: exact.slash),
           ),
       ],
-      for (final s in r.results)
+      for (final (i, s) in r.results.indexed)
         Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-          child: CaseCard(
-            caseNumber: s.caseNumber,
-            petitioner: s.petitioner,
-            respondent: s.respondent,
-            subtitle: s.lastListed == null
-                ? s.status
-                : '${Fmt.shortDate(s.lastListed!.listDate, locale: context.localeName)} · '
-                    '${l.court(s.lastListed!.courtNo)} · ${l.itemNo(s.lastListed!.itemNo)}',
-            badges: [if (s.status != null) StatusChip(s.status!, color: AppColors.navyLight)],
-            onTap: () => openCase(context, caseId: s.caseId),
+          padding: const EdgeInsets.only(bottom: AppSpacing.md - 2),
+          child: FadeSlideIn(
+            order: i,
+            child: CaseCard(
+              caseNumber: s.caseNumber,
+              petitioner: s.petitioner,
+              respondent: s.respondent,
+              subtitle: s.lastListed == null
+                  ? s.status
+                  : '${Fmt.shortDate(s.lastListed!.listDate, locale: context.localeName)} · '
+                        '${l.court(s.lastListed!.courtNo)} · ${l.itemNo(s.lastListed!.itemNo)}',
+              badges: [if (s.status != null) StatusChip(s.status!, color: AppColors.navyLight)],
+              onTap: () => openCase(context, caseId: s.caseId),
+            ),
           ),
         ),
     ];
@@ -202,6 +263,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     if (items.isEmpty) return const SizedBox.shrink();
     return SectionCard(
       title: l.searchHistory,
+      icon: AppIcons.history,
       trailing: TextButton(
         onPressed: () async {
           await ref.read(courtRepositoryProvider).clearSearchHistory();
@@ -209,16 +271,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         },
         child: Text(l.clearHistory),
       ),
-      child: Wrap(spacing: 6, runSpacing: 6, children: [
-        for (final q in items)
-          ActionChip(
-            label: Text(q),
-            onPressed: () {
-              _q.text = q;
-              _search();
-            },
-          ),
-      ]),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final q in items)
+            ActionChip(
+              avatar: const Icon(AppIcons.history, size: 14),
+              label: Text(q),
+              onPressed: () {
+                _q.text = q;
+                _search();
+              },
+            ),
+        ],
+      ),
     );
   }
 }

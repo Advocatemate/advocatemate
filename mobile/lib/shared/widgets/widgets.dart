@@ -7,6 +7,11 @@ import '../../core/formatters.dart';
 import '../../core/loaded.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import 'app_icons.dart';
+import 'ui_kit.dart';
+
+export 'app_icons.dart';
+export 'ui_kit.dart';
 
 extension L10nX on BuildContext {
   AppLocalizations get l10n => AppLocalizations.of(this);
@@ -14,32 +19,48 @@ extension L10nX on BuildContext {
 }
 
 // ------------------------------------------------------------------ containers
+/// Titled card: a short gold accent bar marks the section heading.
 class SectionCard extends StatelessWidget {
-  const SectionCard({super.key, this.title, required this.child, this.trailing, this.padding});
+  const SectionCard({super.key, this.title, required this.child, this.trailing, this.padding, this.icon});
   final String? title;
   final Widget child;
   final Widget? trailing;
   final EdgeInsetsGeometry? padding;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
-    return Card(
-      child: Padding(
-        padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return AppCard(
+      padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           if (title != null)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: Row(children: [
-                Container(width: 3, height: 18, color: AppColors.gold),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(child: Semantics(header: true, child: Text(title!, style: t.textTheme.titleMedium))),
-                ?trailing,
-              ]),
+              child: Row(
+                children: [
+                  if (icon != null) ...[
+                    IconBadge(icon!, size: 32, iconSize: 17),
+                    const SizedBox(width: AppSpacing.md),
+                  ] else ...[
+                    Container(
+                      width: 3,
+                      height: 16,
+                      decoration: BoxDecoration(color: context.tokens.gold, borderRadius: BorderRadius.circular(2)),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  Expanded(
+                    child: Semantics(header: true, child: Text(title!, style: t.textTheme.titleMedium)),
+                  ),
+                  ?trailing,
+                ],
+              ),
             ),
           child,
-        ]),
+        ],
       ),
     );
   }
@@ -54,39 +75,67 @@ class LabelValue extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 7),
       child: MergeSemantics(
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(
-              width: 140,
-              child: Text(label, style: t.textTheme.bodySmall?.copyWith(color: t.colorScheme.onSurface.withValues(alpha: .65)))),
-          Expanded(child: SelectableText(value, style: t.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500))),
-        ]),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(width: 132, child: Text(label, style: t.textTheme.bodySmall)),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: SelectableText(value, style: t.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
+/// Status badge: tinted pill with optional icon. Brand status colours are swapped for their
+/// dark-mode equivalents automatically.
 class StatusChip extends StatelessWidget {
   const StatusChip(this.label, {super.key, this.color, this.icon});
   final String label;
   final Color? color;
   final IconData? icon;
 
+  static Color resolve(BuildContext context, Color? c) {
+    final tk = context.tokens;
+    final scheme = Theme.of(context).colorScheme;
+    if (c == null || c == AppColors.navy) return scheme.primary;
+    if (c == AppColors.success) return tk.success;
+    if (c == AppColors.warning) return tk.warning;
+    if (c == AppColors.danger) return tk.danger;
+    if (c == AppColors.muted) return tk.textSecondary;
+    if (c == AppColors.navyLight) return tk.info;
+    if (c == AppColors.gold) return tk.goldText;
+    return c;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final c = color ?? Theme.of(context).colorScheme.primary;
+    final c = resolve(context, color);
+    final t = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: c.withValues(alpha: .12), borderRadius: BorderRadius.circular(20)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        if (icon != null) ...[Icon(icon, size: 14, color: c), const SizedBox(width: 4)],
-        Flexible(
-          child: Text(label,
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: c.withValues(alpha: t.brightness == Brightness.light ? .10 : .18),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[Icon(icon, size: 13, color: c), const SizedBox(width: 5)],
+          Flexible(
+            child: Text(
+              label,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: c, fontSize: 12.5, fontWeight: FontWeight.w600)),
-        ),
-      ]),
+              style: t.textTheme.labelMedium?.copyWith(color: c, fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -121,65 +170,116 @@ class CaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
+    final tk = context.tokens;
     final l = context.l10n;
-    return Card(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppSpacing.radius),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            if (itemNo != null)
-              Container(
-                constraints: const BoxConstraints(minWidth: 48),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                margin: const EdgeInsets.only(right: AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: t.colorScheme.primary.withValues(alpha: .08),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Semantics(
-                  label: l.itemNo(itemNo!),
-                  excludeSemantics: true,
-                  child: Column(children: [
-                    Text('ITEM', style: t.textTheme.labelSmall?.copyWith(color: AppColors.gold, letterSpacing: 1)),
-                    Text(itemNo!, style: t.textTheme.titleMedium?.copyWith(color: t.colorScheme.primary)),
-                  ]),
+    final secondary = t.textTheme.bodyMedium?.copyWith(color: tk.textSecondary);
+    return AppCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (itemNo != null)
+            Container(
+              constraints: const BoxConstraints(minWidth: 52),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              margin: const EdgeInsets.only(right: AppSpacing.md),
+              decoration: BoxDecoration(color: tk.subtleFill, borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
+              child: Semantics(
+                label: l.itemNo(itemNo!),
+                excludeSemantics: true,
+                child: Column(
+                  children: [
+                    Text(
+                      'ITEM',
+                      style: t.textTheme.labelSmall?.copyWith(color: tk.goldText, fontSize: 9.5, letterSpacing: 1.2),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      itemNo!,
+                      style: t.textTheme.titleMedium?.copyWith(
+                        color: t.colorScheme.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Expanded(child: Text(caseNumber, style: t.textTheme.titleMedium)),
-                  ?trailing,
-                ]),
+            ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        caseNumber,
+                        style: t.textTheme.titleMedium?.copyWith(
+                          color: t.colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    ?trailing,
+                  ],
+                ),
                 if (courtNo != null)
-                  Text(l.court(courtNo!), style: t.textTheme.bodySmall?.copyWith(color: AppColors.gold)),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Row(
+                      children: [
+                        Icon(AppIcons.court, size: 13, color: tk.goldText),
+                        const SizedBox(width: 5),
+                        Text(l.court(courtNo!), style: t.textTheme.labelMedium?.copyWith(color: tk.goldText)),
+                      ],
+                    ),
+                  ),
                 if (petitioner != null) ...[
                   const SizedBox(height: 6),
-                  Text(petitioner!, style: t.textTheme.bodyMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  Text(
+                    petitioner!,
+                    style: t.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
                 if (respondent != null)
-                  Text('${l.versus} ${respondent!}',
-                      style: t.textTheme.bodyMedium?.copyWith(color: t.colorScheme.onSurface.withValues(alpha: .75)),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 4),
+                  Text('${l.versus} ${respondent!}', style: secondary, maxLines: 2, overflow: TextOverflow.ellipsis),
+                if (subtitle != null && subtitle!.isNotEmpty) ...[
+                  const SizedBox(height: 6),
                   Text(subtitle!, style: t.textTheme.bodySmall),
                 ],
                 if (advocates.isNotEmpty) ...[
                   const SizedBox(height: 6),
-                  Text(advocates.join(' · '),
-                      style: t.textTheme.bodySmall?.copyWith(color: t.colorScheme.onSurface.withValues(alpha: .6)),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 1),
+                        child: Icon(AppIcons.advocates, size: 13, color: tk.textTertiary),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          advocates.join(' · '),
+                          style: t.textTheme.bodySmall,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
-                if (badges.isNotEmpty) ...[const SizedBox(height: 8), Wrap(spacing: 6, runSpacing: 6, children: badges)],
-              ]),
+                if (badges.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Wrap(spacing: 6, runSpacing: 6, children: badges),
+                ],
+              ],
             ),
-          ]),
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -207,19 +307,55 @@ class _SkeletonListState extends State<SkeletonList> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final base = Theme.of(context).colorScheme.surfaceContainerHighest;
+    final t = Theme.of(context);
+    final fill = context.tokens.subtleFill;
+    Widget bar(double w, double h) => Container(
+      width: w,
+      height: h,
+      decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(6)),
+    );
     return Semantics(
       label: 'Loading',
       child: ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: AppLayout.page(context, top: AppSpacing.lg, bottom: AppSpacing.lg),
         itemCount: widget.count,
         separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
         itemBuilder: (_, _) => FadeTransition(
-          opacity: Tween(begin: .45, end: 1.0).animate(_c),
+          opacity: Tween(begin: .5, end: 1.0).animate(_c),
           child: Container(
-              height: widget.height,
-              decoration: BoxDecoration(color: base, borderRadius: BorderRadius.circular(AppSpacing.radius))),
+            height: widget.height,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: t.colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppSpacing.radius),
+              border: Border.all(color: context.tokens.cardBorder),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (_, c) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        bar(c.maxWidth * .55, 12),
+                        const SizedBox(height: 10),
+                        bar(c.maxWidth * .9, 10),
+                        if (widget.height >= 80) ...[const SizedBox(height: 8), bar(c.maxWidth * .7, 10)],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -227,23 +363,44 @@ class _SkeletonListState extends State<SkeletonList> with SingleTickerProviderSt
 }
 
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.message, this.icon = Icons.inbox_outlined, this.action});
+  const EmptyState({super.key, required this.message, this.icon = AppIcons.empty, this.action, this.title});
   final String message;
   final IconData icon;
   final Widget? action;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
+    final tk = context.tokens;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, size: 56, color: t.colorScheme.primary.withValues(alpha: .35)),
-          const SizedBox(height: AppSpacing.lg),
-          Text(message, textAlign: TextAlign.center, style: t.textTheme.bodyLarge),
-          if (action != null) ...[const SizedBox(height: AppSpacing.lg), action!],
-        ]),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: 40),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 340),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 76,
+                height: 76,
+                decoration: BoxDecoration(color: tk.subtleFill, shape: BoxShape.circle),
+                child: Icon(icon, size: 32, color: t.colorScheme.primary.withValues(alpha: .75)),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              if (title != null) ...[
+                Text(title!, textAlign: TextAlign.center, style: t.textTheme.titleMedium),
+                const SizedBox(height: 6),
+              ],
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: t.textTheme.bodyMedium?.copyWith(color: tk.textSecondary),
+              ),
+              if (action != null) ...[const SizedBox(height: AppSpacing.lg), action!],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -260,14 +417,16 @@ class ErrorState extends StatelessWidget {
     final e = unwrapError(error);
     final message = apiErrorText(context, e);
     return EmptyState(
-      icon: e is ApiException && e.isNetwork ? Icons.wifi_off_rounded : Icons.error_outline_rounded,
+      icon: e is ApiException && e.isNetwork ? AppIcons.offline : AppIcons.error,
       message: message,
-      action: onRetry == null ? null : OutlinedButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: Text(l.retry)),
+      action: onRetry == null
+          ? null
+          : OutlinedButton.icon(onPressed: onRetry, icon: const Icon(AppIcons.refresh, size: 18), label: Text(l.retry)),
     );
   }
 }
 
-/// Renders an [AsyncValue] with skeleton / error / data states.
+/// Renders an [AsyncValue] with skeleton / error / data states; data fades in on first show.
 class AsyncBody<T> extends StatelessWidget {
   const AsyncBody({super.key, required this.value, required this.builder, this.onRetry, this.skeletonCount = 6});
   final AsyncValue<T> value;
@@ -278,9 +437,12 @@ class AsyncBody<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (value) {
-      AsyncData(:final value) => builder(value),
+      AsyncData(:final value) => FadeSlideIn(offset: 6, child: builder(value)),
       AsyncError(:final error) => ErrorState(error: error, onRetry: onRetry),
-      _ => value.hasValue ? builder(value.requireValue) : SkeletonList(count: skeletonCount),
+      _ =>
+        value.hasValue
+            ? FadeSlideIn(offset: 6, child: builder(value.requireValue))
+            : SkeletonList(count: skeletonCount),
     };
   }
 }
@@ -298,29 +460,30 @@ class FreshnessBanner extends StatelessWidget {
       final when = loaded.savedAt ?? loaded.fetchedAt;
       return Semantics(
         liveRegion: true,
-        child: Container(
-          width: double.infinity,
-          color: AppColors.warning.withValues(alpha: .14),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 10),
-          child: Row(children: [
-            const Icon(Icons.history_toggle_off, color: AppColors.warning, size: 20),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                '${loaded.fromCache ? l.offlineBanner : l.staleBanner}'
-                '${when != null ? '\n${l.lastUpdated(Fmt.timestamp(when, locale: context.localeName))}' : ''}',
-                style: t.textTheme.bodySmall?.copyWith(color: AppColors.warning, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ]),
+        child: InfoBanner(
+          color: context.tokens.warning,
+          icon: AppIcons.history,
+          text:
+              '${loaded.fromCache ? l.offlineBanner : l.staleBanner}'
+              '${when != null ? '\n${l.lastUpdated(Fmt.timestamp(when, locale: context.localeName))}' : ''}',
         ),
       );
     }
     if (loaded.fetchedAt == null) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 0),
-      child: Text(l.lastUpdated(Fmt.timestamp(loaded.fetchedAt, locale: context.localeName)),
-          style: t.textTheme.bodySmall?.copyWith(color: t.colorScheme.onSurface.withValues(alpha: .6))),
+      padding: AppLayout.page(context, top: AppSpacing.sm),
+      child: Row(
+        children: [
+          Icon(AppIcons.clock, size: 13, color: context.tokens.textTertiary),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              l.lastUpdated(Fmt.timestamp(loaded.fetchedAt, locale: context.localeName)),
+              style: t.textTheme.bodySmall,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -336,14 +499,15 @@ class DateSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final dates = offered.map(DateTime.tryParse).whereType<DateTime>().toList();
+    final g = AppLayout.gutter(context);
     return SizedBox(
-      height: 52,
+      height: 54,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 6),
+        padding: EdgeInsets.fromLTRB(g, 8, g, 6),
         children: [
           ActionChip(
-            avatar: const Icon(Icons.calendar_month, size: 18),
+            avatar: const Icon(AppIcons.calendar, size: 16),
             label: Text(Fmt.shortDate(selected, locale: context.localeName)),
             tooltip: l.selectDate,
             onPressed: () async {
@@ -359,7 +523,7 @@ class DateSelector extends StatelessWidget {
           ),
           for (final d in dates)
             Padding(
-              padding: const EdgeInsets.only(left: 6),
+              padding: const EdgeInsets.only(left: 8),
               child: ChoiceChip(
                 label: Text(Fmt.shortDate(d, locale: context.localeName)),
                 selected: DateUtils.isSameDay(d, selected),
@@ -372,10 +536,12 @@ class DateSelector extends StatelessWidget {
   }
 }
 
+/// Rounded search field with a clear button.
 class SearchField extends StatelessWidget {
-  const SearchField({super.key, required this.controller, required this.onChanged, this.hint});
+  const SearchField({super.key, required this.controller, required this.onChanged, this.hint, this.onSubmitted});
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onSubmitted;
   final String? hint;
 
   @override
@@ -383,9 +549,10 @@ class SearchField extends StatelessWidget {
     return TextField(
       controller: controller,
       onChanged: onChanged,
+      onSubmitted: onSubmitted,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon: const Icon(AppIcons.search, size: AppIcons.size),
         hintText: hint ?? context.l10n.searchHint,
         suffixIcon: ValueListenableBuilder(
           valueListenable: controller,
@@ -393,12 +560,37 @@ class SearchField extends StatelessWidget {
               ? const SizedBox.shrink()
               : IconButton(
                   tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(AppIcons.clear, size: AppIcons.size),
                   onPressed: () {
                     controller.clear();
                     onChanged('');
                   }),
         ),
+      ),
+    );
+  }
+}
+
+/// Horizontal row of filter chips (court / stage / date filters).
+class ChipStrip extends StatelessWidget {
+  const ChipStrip({super.key, required this.children, this.padding});
+  final List<Widget> children;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: padding ?? const EdgeInsets.only(top: 8),
+        children: [
+          for (final (i, c) in children.indexed)
+            Padding(
+              padding: EdgeInsets.only(right: i == children.length - 1 ? 0 : 8),
+              child: c,
+            ),
+        ],
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:advocatemate/shared/widgets/app_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -72,7 +73,7 @@ void main() {
     await tester.tap(find.byKey(const Key('favouriteAdvocateToggle')));
     await tester.pumpAndSettle();
     expect(deps.backend.paths().any((p) => p == 'POST /favourites/advocates' || p.endsWith('/favourites/advocates')), isTrue);
-    expect(find.byIcon(Icons.star), findsOneWidget);
+    expect(find.byIcon(AppIcons.savedOn), findsOneWidget); // toggled to saved
 
     await tester.tap(find.text('WP/777/2026'));
     await tester.pumpAndSettle();

@@ -82,18 +82,21 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
       ]);
     if (widget.embedded) return body;
     return Scaffold(
-      appBar: AppBar(title: Text(title), actions: [
-        IconButton(
-          tooltip: l.refresh,
-          icon: const Icon(Icons.refresh),
-          onPressed: () async {
-            try {
-              await ref.read(courtRepositoryProvider).advocateCauseList(code, _date, refresh: true);
-            } catch (_) {}
-            ref.invalidate(advocateCauseListProvider(key));
-          },
-        ),
-      ]),
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          IconButton(
+            tooltip: l.refresh,
+            icon: const Icon(AppIcons.refresh),
+            onPressed: () async {
+              try {
+                await ref.read(courtRepositoryProvider).advocateCauseList(code, _date, refresh: true);
+              } catch (_) {}
+              ref.invalidate(advocateCauseListProvider(key));
+            },
+          ),
+        ],
+      ),
       body: body,
     );
   }
@@ -114,6 +117,7 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
 
   Widget _content(BuildContext context, Loaded<AdvocateCauseList> loaded) {
     final l = context.l10n;
+    final t = Theme.of(context);
     final data = loaded.data;
     final q = _query.toLowerCase();
     bool match(AdvocateListing c) =>
@@ -129,54 +133,88 @@ class _MyCauseListScreenState extends ConsumerState<MyCauseListScreen> {
       children: [
         FreshnessBanner(loaded),
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            if (data.advocateName != null)
-              Text(data.advocateName!, style: Theme.of(context).textTheme.titleMedium),
-            Text('${Fmt.displayDate(data.listDate, locale: context.localeName)} · ${l.casesCount(data.totalCases)}'),
-            const SizedBox(height: AppSpacing.md),
-            SearchField(controller: _search, onChanged: (v) => setState(() => _query = v)),
-            if (data.courts.length > 1)
-              SizedBox(
-                height: 48,
-                child: ListView(scrollDirection: Axis.horizontal, children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 6, top: 6),
-                    child: ChoiceChip(label: Text(l.filters), selected: _court == null, onSelected: (_) => setState(() => _court = null)),
+          padding: AppLayout.page(context, top: AppSpacing.md),
+          child: AppCard(
+            child: Row(
+              children: [
+                IconBadge(
+                  AppIcons.cases,
+                  size: 40,
+                  iconSize: 20,
+                  background: context.tokens.goldSoft,
+                  color: context.tokens.onGoldSoft,
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (data.advocateName != null) Text(data.advocateName!, style: t.textTheme.titleMedium),
+                      Text(Fmt.displayDate(data.listDate, locale: context.localeName), style: t.textTheme.bodySmall),
+                    ],
                   ),
-                  for (final g in data.courts)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 6, top: 6),
-                      child: ChoiceChip(
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  l.casesCount(data.totalCases),
+                  style: t.textTheme.titleSmall?.copyWith(color: t.colorScheme.primary),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: AppLayout.page(context, top: AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SearchField(controller: _search, onChanged: (v) => setState(() => _query = v)),
+              if (data.courts.length > 1)
+                ChipStrip(
+                  children: [
+                    ChoiceChip(
+                      label: Text(l.filters),
+                      selected: _court == null,
+                      onSelected: (_) => setState(() => _court = null),
+                    ),
+                    for (final g in data.courts)
+                      ChoiceChip(
                         label: Text(l.court(g.courtNo)),
                         selected: _court == g.courtNo,
                         onSelected: (_) => setState(() => _court = g.courtNo),
                       ),
-                    ),
-                ]),
-              ),
-          ]),
+                  ],
+                ),
+            ],
+          ),
         ),
         if (!data.dateOfferedBySource && data.totalCases == 0)
-          EmptyState(message: l.dateNotOffered, icon: Icons.event_busy)
+          EmptyState(message: l.dateNotOffered, icon: AppIcons.dateMissing)
         else if (groups.isEmpty)
-          EmptyState(message: q.isEmpty ? l.emptyCauseList : l.emptySearch)
+          EmptyState(
+            message: q.isEmpty ? l.emptyCauseList : l.emptySearch,
+            icon: q.isEmpty ? AppIcons.empty : AppIcons.searchEmpty,
+          )
         else
           for (final g in groups) ...[
             Padding(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.sm),
+              padding: AppLayout.page(context, top: AppSpacing.xl, bottom: AppSpacing.md - 2),
               child: Semantics(
                 header: true,
-                child: Row(children: [
-                  Text(l.court(g.court), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.gold)),
-                  const SizedBox(width: 8),
-                  Text('· ${l.casesCount(g.cases.length)}'),
-                ]),
+                child: Row(
+                  children: [
+                    Icon(AppIcons.court, size: 16, color: context.tokens.goldText),
+                    const SizedBox(width: 8),
+                    Text(l.court(g.court), style: t.textTheme.titleSmall?.copyWith(color: t.colorScheme.primary)),
+                    const SizedBox(width: 8),
+                    Text('· ${l.casesCount(g.cases.length)}', style: t.textTheme.bodySmall),
+                  ],
+                ),
               ),
             ),
             for (final c in g.cases)
               Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
+                padding: AppLayout.page(context, bottom: AppSpacing.md - 2),
                 child: CaseCard(
                   itemNo: c.itemNo,
                   caseNumber: c.caseNumber ?? c.rawCase,

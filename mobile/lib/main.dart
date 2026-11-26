@@ -28,10 +28,10 @@ Future<void> main() async {
   ));
 }
 
-/// Bundled Noto fonts are SIL OFL 1.1; show their licences on the Flutter licences page.
+/// Bundled Inter and Noto fonts are SIL OFL 1.1; show their licences on the Flutter licences page.
 void _registerFontLicences() {
   LicenseRegistry.addLicense(() async* {
-    for (final (family, file) in [('Noto Sans', 'OFL-NotoSans.txt'), ('Noto Sans Telugu', 'OFL-NotoSansTelugu.txt')]) {
+    for (final (family, file) in [('Inter', 'OFL-Inter.txt'), ('Noto Sans', 'OFL-NotoSans.txt'), ('Noto Sans Telugu', 'OFL-NotoSansTelugu.txt')]) {
       yield LicenseEntryWithLineBreaks([family], await rootBundle.loadString('assets/fonts/$file'));
     }
   });

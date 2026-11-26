@@ -43,12 +43,23 @@ class _LiveCourtsScreenState extends ConsumerState<LiveCourtsScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final t = Theme.of(context);
+    final tk = context.tokens;
     final settings = ref.watch(appSettingsProvider);
     final value = ref.watch(liveBoardProvider);
+    final textScale = (MediaQuery.textScalerOf(context).scale(14) / 14).clamp(1.0, 1.6);
     return Scaffold(
-      appBar: AppBar(title: Text(l.liveCourts), actions: [
-        IconButton(tooltip: l.refresh, icon: const Icon(Icons.refresh), onPressed: () => ref.invalidate(liveBoardProvider)),
-      ]),
+      appBar: AppBar(
+        title: Text(l.liveCourts),
+        actions: [
+          IconButton(
+            tooltip: l.refresh,
+            icon: const Icon(AppIcons.refresh),
+            onPressed: () => ref.invalidate(liveBoardProvider),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+        ],
+      ),
       body: AsyncBody<Loaded<LiveBoard>>(
         value: value,
         onRetry: () => ref.invalidate(liveBoardProvider),
@@ -58,63 +69,99 @@ class _LiveCourtsScreenState extends ConsumerState<LiveCourtsScreen> {
           final courts = _court == null ? b.courts : b.courts.where((c) => c.courtNo == _court).toList();
           return RefreshIndicator(
             onRefresh: () => refreshProvider(ref, liveBoardProvider),
-            child: ListView(physics: const AlwaysScrollableScrollPhysics(), children: [
-              if (!current)
-                Container(
-                  key: const Key('liveStaleBanner'),
-                  color: AppColors.danger.withValues(alpha: .1),
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Text(b.note ?? l.liveStaleBanner,
-                      style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.w600)),
-                ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
-                child: Row(children: [
-                  StatusChip(current ? l.liveCurrent : l.liveNotCurrent,
-                      color: current ? AppColors.success : AppColors.danger,
-                      icon: current ? Icons.circle : Icons.history),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(l.lastUpdated(Fmt.timestamp(b.fetchedAt, locale: context.localeName)),
-                        style: Theme.of(context).textTheme.bodySmall),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                if (!current)
+                  InfoBanner(
+                    key: const Key('liveStaleBanner'),
+                    color: tk.danger,
+                    icon: AppIcons.warning,
+                    text: b.note ?? l.liveStaleBanner,
                   ),
-                ]),
-              ),
-              SwitchListTile(
-                title: Text(l.autoRefresh),
-                value: settings.liveAutoRefresh,
-                onChanged: (v) => ref.read(appSettingsProvider.notifier).setLiveAutoRefresh(v),
-              ),
-              SizedBox(
-                height: 48,
-                child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 16), children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: ChoiceChip(label: Text(l.filters), selected: _court == null, onSelected: (_) => setState(() => _court = null)),
-                  ),
-                  for (final c in b.courts)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 6),
-                      child: ChoiceChip(
-                          label: Text(c.courtNo), selected: _court == c.courtNo, onSelected: (_) => setState(() => _court = c.courtNo)),
-                    ),
-                ]),
-              ),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 1.25),
-                itemCount: courts.length,
-                itemBuilder: (_, i) => _CourtTile(court: courts[i], current: current),
-              ),
-              if (b.source != null)
                 Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: Text(l.source(b.source!), style: Theme.of(context).textTheme.bodySmall),
+                  padding: AppLayout.page(context, top: AppSpacing.md),
+                  child: AppCard(
+                    padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.sm, AppSpacing.md),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            StatusChip(
+                              current ? l.liveCurrent : l.liveNotCurrent,
+                              color: current ? AppColors.success : AppColors.danger,
+                              icon: current ? AppIcons.liveDot : AppIcons.history,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                l.lastUpdated(Fmt.timestamp(b.fetchedAt, locale: context.localeName)),
+                                style: t.textTheme.bodySmall,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        const Divider(height: 1),
+                        Row(
+                          children: [
+                            Icon(AppIcons.sync, size: 16, color: tk.textSecondary),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                l.autoRefresh,
+                                style: t.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Switch(
+                              value: settings.liveAutoRefresh,
+                              onChanged: (v) => ref.read(appSettingsProvider.notifier).setLiveAutoRefresh(v),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-            ]),
+                if (b.courts.length > 1)
+                  Padding(
+                    padding: AppLayout.page(context, top: AppSpacing.xs),
+                    child: ChipStrip(
+                      children: [
+                        ChoiceChip(
+                          label: Text(l.filters),
+                          selected: _court == null,
+                          onSelected: (_) => setState(() => _court = null),
+                        ),
+                        for (final c in b.courts)
+                          ChoiceChip(
+                            label: Text(c.courtNo),
+                            selected: _court == c.courtNo,
+                            onSelected: (_) => setState(() => _court = c.courtNo),
+                          ),
+                      ],
+                    ),
+                  ),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: AppLayout.page(context, top: AppSpacing.md, bottom: AppSpacing.md),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 220,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    mainAxisExtent: 136 * textScale,
+                  ),
+                  itemCount: courts.length,
+                  itemBuilder: (_, i) => _CourtTile(court: courts[i], current: current),
+                ),
+                if (b.source != null)
+                  Padding(
+                    padding: AppLayout.page(context, bottom: AppSpacing.xl),
+                    child: Text(l.source(b.source!), style: t.textTheme.bodySmall?.copyWith(color: tk.textTertiary)),
+                  ),
+              ],
+            ),
           );
         },
       ),
@@ -131,32 +178,72 @@ class _CourtTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final t = Theme.of(context);
+    final tk = context.tokens;
     final active = court.state == 'in_progress';
     final stateText = switch (court.state) {
       'not_in_session' => l.notInSession,
       'session_started' => l.sessionStarted,
       _ => l.currentItem,
     };
-    return Card(
+    final dot = !current
+        ? tk.textTertiary
+        : (active ? tk.success : (court.state == 'session_started' ? tk.warning : tk.textTertiary));
+    return AppCard(
+      padding: const EdgeInsets.all(14),
       child: Semantics(
         label: '${l.court(court.courtNo)}, $stateText ${court.currentItem ?? ''}${current ? '' : ', ${l.liveNotCurrent}'}',
         excludeSemantics: true,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Text(l.court(court.courtNo), style: t.textTheme.titleSmall),
-              const Spacer(),
-              if (court.coram != null) Text(court.coram!, style: t.textTheme.labelSmall?.copyWith(color: AppColors.gold)),
-            ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(AppIcons.court, size: 14, color: tk.goldText),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(l.court(court.courtNo), style: t.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
+                ),
+                if (court.coram != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(color: tk.goldSoft, borderRadius: BorderRadius.circular(6)),
+                    child: Text(
+                      court.coram!,
+                      style: t.textTheme.labelSmall?.copyWith(color: tk.onGoldSoft, letterSpacing: .3),
+                    ),
+                  ),
+              ],
+            ),
             const Spacer(),
-            Text(stateText, style: t.textTheme.bodySmall),
+            Row(
+              children: [
+                Container(
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(stateText, style: t.textTheme.bodySmall, overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            ),
             if (active)
-              Text(court.currentItem ?? '-',
-                  style: t.textTheme.headlineSmall?.copyWith(
-                      color: current ? t.colorScheme.primary : t.colorScheme.onSurface.withValues(alpha: .45))),
-            if (court.keptBack != null) Text('${l.keptBack}: ${court.keptBack}', style: t.textTheme.labelSmall),
-          ]),
+              Text(
+                court.currentItem ?? '-',
+                style: t.textTheme.headlineMedium?.copyWith(
+                  color: current ? t.colorScheme.primary : t.colorScheme.onSurface.withValues(alpha: .4),
+                  height: 1.15,
+                ),
+              ),
+            if (court.keptBack != null)
+              Text(
+                '${l.keptBack}: ${court.keptBack}',
+                style: t.textTheme.labelSmall?.copyWith(color: tk.textSecondary),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+          ],
         ),
       ),
     );

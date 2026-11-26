@@ -114,29 +114,35 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
       _ => l.weeklyPdf,
     };
     return Scaffold(
-      appBar: AppBar(title: Text(title), actions: [
-        if (_file != null)
-          IconButton(
-            tooltip: l.share,
-            icon: const Icon(Icons.ios_share),
-            onPressed: () => SharePlus.instance.share(ShareParams(
-              files: [XFile(_file!, mimeType: 'application/pdf')],
-              text: widget.request.isGenerated ? l.generatedPdfNotice : null,
-            )),
-          ),
-      ]),
-      body: Column(children: [
-        if (widget.request.isGenerated || _official == false)
-          Container(
-            width: double.infinity,
-            color: AppColors.danger.withValues(alpha: .1),
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: Text(l.generatedPdfNotice,
-                key: const Key('generatedNotice'),
-                style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.w600)),
-          ),
-        Expanded(child: _body(context)),
-      ]),
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          if (_file != null)
+            IconButton(
+              tooltip: l.share,
+              icon: const Icon(AppIcons.share),
+              onPressed: () => SharePlus.instance.share(
+                ShareParams(
+                  files: [XFile(_file!, mimeType: 'application/pdf')],
+                  text: widget.request.isGenerated ? l.generatedPdfNotice : null,
+                ),
+              ),
+            ),
+        ],
+      ),
+      body: Column(
+        children: [
+          if (widget.request.isGenerated || _official == false)
+            InfoBanner(
+              key: const Key('generatedNotice'),
+              color: context.tokens.danger,
+              icon: AppIcons.warning,
+              text: l.generatedPdfNotice,
+              margin: AppLayout.page(context, top: AppSpacing.xs, bottom: AppSpacing.sm),
+            ),
+          Expanded(child: _body(context)),
+        ],
+      ),
     );
   }
 
@@ -146,37 +152,67 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
     final c = _controller;
     if (c == null) {
       return Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          SizedBox(width: 220, child: LinearProgressIndicator(value: _progress > 0 ? _progress : null)),
-          const SizedBox(height: 12),
-          Text(l.downloading((_progress * 100).round())),
-        ]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const IconBadge(AppIcons.pdf, size: 64, iconSize: 28),
+            const SizedBox(height: AppSpacing.lg),
+            SizedBox(
+              width: 220,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(minHeight: 6, value: _progress > 0 ? _progress : null),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(l.downloading((_progress * 100).round()), style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
       );
     }
-    return Column(children: [
-      Expanded(child: PdfViewPinch(controller: c)),
-      SafeArea(
-        top: false,
-        child: PdfPageNumber(
-          controller: c,
-          builder: (_, loadingState, page, pagesCount) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              IconButton(
-                  tooltip: MaterialLocalizations.of(context).previousPageTooltip,
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed: page > 1 ? () => c.previousPage(duration: const Duration(milliseconds: 200), curve: Curves.easeOut) : null),
-              Text(l.page(page, pagesCount ?? 0)),
-              IconButton(
-                  tooltip: MaterialLocalizations.of(context).nextPageTooltip,
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: page < (pagesCount ?? 0)
-                      ? () => c.nextPage(duration: const Duration(milliseconds: 200), curve: Curves.easeOut)
-                      : null),
-            ]),
+    return Column(
+      children: [
+        Expanded(child: PdfViewPinch(controller: c)),
+        SafeArea(
+          top: false,
+          child: PdfPageNumber(
+            controller: c,
+            builder: (_, loadingState, page, pagesCount) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: context.tokens.cardBorder),
+                    boxShadow: AppShadows.card(Theme.of(context).brightness),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        tooltip: MaterialLocalizations.of(context).previousPageTooltip,
+                        icon: const Icon(AppIcons.chevronLeft),
+                        onPressed: page > 1
+                            ? () => c.previousPage(duration: const Duration(milliseconds: 200), curve: Curves.easeOut)
+                            : null,
+                      ),
+                      Text(l.page(page, pagesCount ?? 0), style: Theme.of(context).textTheme.labelLarge),
+                      IconButton(
+                        tooltip: MaterialLocalizations.of(context).nextPageTooltip,
+                        icon: const Icon(AppIcons.chevronRight),
+                        onPressed: page < (pagesCount ?? 0)
+                            ? () => c.nextPage(duration: const Duration(milliseconds: 200), curve: Curves.easeOut)
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 }

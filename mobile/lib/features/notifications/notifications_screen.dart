@@ -14,13 +14,13 @@ final notificationsProvider =
     FutureProvider.autoDispose<NotificationPage>((ref) => ref.watch(personalRepositoryProvider).notifications());
 
 IconData _icon(String category) => switch (category) {
-      'cause_list_publication' => Icons.campaign_outlined,
-      'favourite_advocate' => Icons.person_outline,
-      'case_update' => Icons.gavel_outlined,
-      'court_board' => Icons.live_tv_outlined,
-      'enrichment' => Icons.fact_check_outlined,
-      _ => Icons.notifications_outlined,
-    };
+  'cause_list_publication' => AppIcons.publication,
+  'favourite_advocate' => AppIcons.advocate,
+  'case_update' => AppIcons.caseUpdate,
+  'court_board' => AppIcons.liveBoard,
+  'enrichment' => AppIcons.factCheck,
+  _ => AppIcons.notifications,
+};
 
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
@@ -40,38 +40,97 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final t = Theme.of(context);
+    final tk = context.tokens;
     return Scaffold(
-      appBar: AppBar(title: Text(l.notifications), actions: [
-        TextButton(
-          onPressed: () async {
-            await ref.read(personalRepositoryProvider).markRead(all: true);
-            ref.invalidate(notificationsProvider);
-            ref.invalidate(unreadCountProvider);
-          },
-          child: Text(l.markAllRead, style: const TextStyle(color: Colors.white)),
-        ),
-      ]),
+      appBar: AppBar(
+        title: Text(l.notifications),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await ref.read(personalRepositoryProvider).markRead(all: true);
+              ref.invalidate(notificationsProvider);
+              ref.invalidate(unreadCountProvider);
+            },
+            child: Text(l.markAllRead),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+        ],
+      ),
       body: AsyncBody<NotificationPage>(
         value: ref.watch(notificationsProvider),
         onRetry: () => ref.invalidate(notificationsProvider),
         builder: (page) => RefreshIndicator(
           onRefresh: () => refreshProvider(ref, notificationsProvider),
           child: page.items.isEmpty
-              ? ListView(children: [EmptyState(message: l.emptyNotifications, icon: Icons.notifications_none)])
+              ? ListView(
+                  children: [EmptyState(message: l.emptyNotifications, icon: AppIcons.notificationsOff)],
+                )
               : ListView.separated(
+                  padding: AppLayout.page(context, top: AppSpacing.md, bottom: AppSpacing.xxl),
                   itemCount: page.items.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md - 2),
                   itemBuilder: (_, i) {
                     final n = page.items[i];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: n.read ? Theme.of(context).colorScheme.surfaceContainerHighest : AppColors.goldSoft,
-                        child: Icon(_icon(n.category), color: AppColors.navy),
-                      ),
-                      title: Text(n.title, style: TextStyle(fontWeight: n.read ? FontWeight.w400 : FontWeight.w700)),
-                      subtitle: Text('${n.body}\n${Fmt.timestamp(n.createdAt, locale: context.localeName)}'),
-                      isThreeLine: true,
+                    return AppCard(
                       onTap: () => _open(context, ref, n),
+                      color: n.read
+                          ? null
+                          : Color.alphaBlend(tk.goldSoft.withValues(alpha: .35), t.colorScheme.surface),
+                      padding: const EdgeInsets.all(14),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          IconBadge(
+                            _icon(n.category),
+                            size: 40,
+                            iconSize: 19,
+                            background: n.read ? tk.subtleFill : tk.goldSoft,
+                            color: n.read ? t.colorScheme.primary : tk.onGoldSoft,
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        n.title,
+                                        style: t.textTheme.titleSmall?.copyWith(
+                                          fontWeight: n.read ? FontWeight.w500 : FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                    if (!n.read)
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        margin: const EdgeInsets.only(left: 8, top: 5),
+                                        decoration: BoxDecoration(color: tk.gold, shape: BoxShape.circle),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 3),
+                                Text(n.body, style: t.textTheme.bodyMedium?.copyWith(color: tk.textSecondary)),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Icon(AppIcons.clock, size: 12, color: tk.textTertiary),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      Fmt.timestamp(n.createdAt, locale: context.localeName),
+                                      style: t.textTheme.bodySmall?.copyWith(color: tk.textTertiary),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),

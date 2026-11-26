@@ -19,7 +19,7 @@ class PdfCheckBanner extends StatelessWidget {
       return _Banner(
         key: const Key('pdfFallbackBanner'),
         color: AppColors.warning,
-        icon: Icons.picture_as_pdf_outlined,
+        icon: AppIcons.pdf,
         text: listing.fallbackReason == 'online_list_empty' ? l.pdfFallbackEmpty : l.pdfFallbackUnavailable,
       );
     }
@@ -28,15 +28,16 @@ class PdfCheckBanner extends StatelessWidget {
     switch (v.status) {
       case 'verified':
         return _Banner(
-            key: const Key('pdfVerifiedBanner'),
-            color: AppColors.success,
-            icon: Icons.verified_outlined,
-            text: l.pdfVerified(v.matched));
+          key: const Key('pdfVerifiedBanner'),
+          color: AppColors.success,
+          icon: AppIcons.verified,
+          text: l.pdfVerified(v.matched),
+        );
       case 'differences':
         return _Banner(
           key: const Key('pdfDifferencesBanner'),
           color: AppColors.warning,
-          icon: Icons.compare_arrows,
+          icon: AppIcons.differs,
           text: l.pdfDifferences(v.differs, v.notInPdf, v.pdfOnly),
           action: (v.differs + v.notInPdf) > 0 && onToggleDifferences != null
               ? TextButton(
@@ -59,9 +60,9 @@ Widget? pdfCheckBadge(BuildContext context, PdfCheck? check) {
   final l = context.l10n;
   switch (check?.status) {
     case 'differs':
-      return StatusChip(l.pdfDiffersBadge, color: AppColors.warning, icon: Icons.compare_arrows);
+      return StatusChip(l.pdfDiffersBadge, color: AppColors.warning, icon: AppIcons.differs);
     case 'not_in_pdf':
-      return StatusChip(l.pdfNotInPdfBadge, color: AppColors.warning, icon: Icons.help_outline);
+      return StatusChip(l.pdfNotInPdfBadge, color: AppColors.warning, icon: AppIcons.unknown);
     default:
       return null;
   }
@@ -75,23 +76,8 @@ class _Banner extends StatelessWidget {
   final Widget? action;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 0),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 10),
-      decoration: BoxDecoration(color: color.withValues(alpha: .12), borderRadius: BorderRadius.circular(12)),
-      child: Row(children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(text,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: color, fontWeight: FontWeight.w600)),
-        ),
-        ?action,
-      ]),
-    );
-  }
+  Widget build(BuildContext context) =>
+      InfoBanner(color: StatusChip.resolve(context, color), icon: icon, text: text, action: action);
 }
 
 class _Note extends StatelessWidget {
@@ -101,15 +87,16 @@ class _Note extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
+    final c = context.tokens.textTertiary;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 0),
-      child: Row(children: [
-        Icon(Icons.picture_as_pdf_outlined, size: 16, color: t.colorScheme.onSurface.withValues(alpha: .5)),
-        const SizedBox(width: 6),
-        Expanded(
-            child: Text(text,
-                style: t.textTheme.bodySmall?.copyWith(color: t.colorScheme.onSurface.withValues(alpha: .6)))),
-      ]),
+      padding: AppLayout.page(context, top: AppSpacing.sm),
+      child: Row(
+        children: [
+          Icon(AppIcons.pdf, size: 15, color: c),
+          const SizedBox(width: 6),
+          Expanded(child: Text(text, style: t.textTheme.bodySmall)),
+        ],
+      ),
     );
   }
 }

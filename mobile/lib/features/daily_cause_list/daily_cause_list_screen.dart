@@ -25,13 +25,18 @@ class _DailyCauseListScreenState extends State<DailyCauseListScreen> {
   Widget _switcher(BuildContext context) {
     final l = context.l10n;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
+      padding: AppLayout.page(context, top: AppSpacing.xs, bottom: AppSpacing.xs),
       child: SegmentedButton<DailyView>(
         key: const Key('dailyViewSwitch'),
         showSelectedIcon: false,
+        expandedInsets: EdgeInsets.zero,
         segments: [
-          ButtonSegment(value: DailyView.courtWise, label: Text(l.courtWise), icon: const Icon(Icons.account_balance_outlined)),
-          ButtonSegment(value: DailyView.advocateCode, label: Text(l.advocateCodeWise), icon: const Icon(Icons.badge_outlined)),
+          ButtonSegment(value: DailyView.courtWise, label: Text(l.courtWise), icon: const Icon(AppIcons.court)),
+          ButtonSegment(
+            value: DailyView.advocateCode,
+            label: Text(l.advocateCodeWise),
+            icon: const Icon(AppIcons.advocateCode),
+          ),
         ],
         selected: {_view},
         onSelectionChanged: (s) => setState(() => _view = s.first),
@@ -40,11 +45,11 @@ class _DailyCauseListScreenState extends State<DailyCauseListScreen> {
   }
 
   Widget _passedOverAction(BuildContext context) => IconButton(
-        key: const Key('openPassedOver'),
-        tooltip: context.l10n.passedOverList,
-        icon: const Icon(Icons.low_priority),
-        onPressed: () => context.push('/cause-list/passed-over'),
-      );
+    key: const Key('openPassedOver'),
+    tooltip: context.l10n.passedOverList,
+    icon: const Icon(AppIcons.passedOver),
+    onPressed: () => context.push('/cause-list/passed-over'),
+  );
 
   @override
   Widget build(BuildContext context) {

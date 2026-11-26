@@ -4,9 +4,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../shared/widgets/widgets.dart';
 import '../../theme/app_theme.dart';
+import 'auth_layout.dart';
 import 'auth_messages.dart';
 import 'session_controller.dart';
-import 'splash_screen.dart';
 
 /// Step 2 of sign-in: link the (server-verified) Google account to an advocate code.
 /// The backend checks the code against the advocate registry automatically - no approval step.
@@ -48,76 +48,86 @@ class _AdvocateCodeScreenState extends ConsumerState<AdvocateCodeScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final t = Theme.of(context);
+    final tk = context.tokens;
     final s = ref.watch(sessionProvider);
     final email = s is SessionNeedsAdvocateCode ? s.googleEmail : '';
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                const Center(child: BrandMark(size: 64)),
-                const SizedBox(height: AppSpacing.xl),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.xl),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                      Text(l.advocateCodeTitle, style: t.textTheme.titleLarge),
-                      const SizedBox(height: AppSpacing.md),
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(12)),
-                        child: Row(children: [
-                          const Icon(Icons.account_circle_outlined, color: AppColors.navy),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(l.signedInAsGoogle(email),
-                                key: const Key('googleEmailText'), style: const TextStyle(color: AppColors.navy)),
-                          ),
-                        ]),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      TextField(
-                        key: const Key('advocateCodeField'),
-                        controller: _code,
-                        autofocus: true,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(8)],
-                        decoration: InputDecoration(labelText: l.advocateCode, hintText: l.advocateCodeHint),
-                        onSubmitted: (_) => _verify(),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      FilledButton(
-                        key: const Key('verifyAdvocateButton'),
-                        onPressed: _busy ? null : _verify,
-                        child: _busy
-                            ? const SizedBox(
-                                width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white))
-                            : Text(l.verifyAndContinue),
-                      ),
-                      TextButton(
-                        onPressed: _busy ? null : () => ref.read(sessionProvider.notifier).useDifferentAccount(),
-                        child: Text(l.useDifferentAccount),
-                      ),
-                    ]),
+    return AuthLayout(
+      compactHero: true,
+      card: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l.stepOf(2, 2).toUpperCase(),
+            style: t.textTheme.labelSmall?.copyWith(color: tk.goldText, letterSpacing: 1.2),
+          ),
+          const SizedBox(height: 6),
+          Text(l.advocateCodeTitle, style: t.textTheme.titleLarge),
+          const SizedBox(height: AppSpacing.lg),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 10),
+            decoration: BoxDecoration(color: tk.goldSoft, borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
+            child: Row(
+              children: [
+                Icon(AppIcons.email, size: AppIcons.sizeSm, color: tk.onGoldSoft),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l.signedInAsGoogle(email),
+                    key: const Key('googleEmailText'),
+                    style: t.textTheme.bodySmall?.copyWith(color: tk.onGoldSoft, fontWeight: FontWeight.w600),
                   ),
                 ),
-                if (_error != null) ...[
-                  const SizedBox(height: AppSpacing.md),
-                  Semantics(
-                    liveRegion: true,
-                    child: Text(_error!,
-                        key: const Key('linkError'), textAlign: TextAlign.center, style: TextStyle(color: t.colorScheme.error)),
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.xl),
-                Text(l.googleSignInNote, textAlign: TextAlign.center, style: t.textTheme.bodySmall),
-              ]),
+              ],
             ),
           ),
-        ),
+          const SizedBox(height: AppSpacing.lg),
+          TextField(
+            key: const Key('advocateCodeField'),
+            controller: _code,
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(8)],
+            style: t.textTheme.titleMedium?.copyWith(letterSpacing: 1.5),
+            decoration: InputDecoration(
+              labelText: l.advocateCode,
+              hintText: l.advocateCodeHint,
+              prefixIcon: const Icon(AppIcons.advocateCode, size: AppIcons.size),
+            ),
+            onSubmitted: (_) => _verify(),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          PrimaryButton(
+            key: const Key('verifyAdvocateButton'),
+            onPressed: _verify,
+            busy: _busy,
+            label: l.verifyAndContinue,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          TextButton.icon(
+            onPressed: _busy ? null : () => ref.read(sessionProvider.notifier).useDifferentAccount(),
+            icon: const Icon(AppIcons.switchAccount, size: AppIcons.sizeSm),
+            label: Text(l.useDifferentAccount),
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            AuthError(message: _error!, textKey: const Key('linkError')),
+          ],
+        ],
+      ),
+      footer: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(AppIcons.shield, size: 16, color: tk.textTertiary),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              l.googleSignInNote,
+              textAlign: TextAlign.center,
+              style: t.textTheme.bodySmall?.copyWith(color: tk.textTertiary),
+            ),
+          ),
+        ],
       ),
     );
   }
